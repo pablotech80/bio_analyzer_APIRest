@@ -22,13 +22,14 @@ class TestInformeCompleto(unittest.TestCase):
 
     def test_informe_completo_exitoso_mujer(self):
         data = {
-            "peso": 65,
-            "altura": 165,
-            "edad": 28,
+            "peso": 63,
+            "altura": 170,
+            "edad": 22,
             "genero": "m",
-            "cuello": 35,
-            "cintura": 70,
-            "cadera": 95,
+            "cuello": 32,
+            "cintura": 76,
+            "cadera": 100,
+            "objetivo": 'perder grasa'
         }
         resultado = informe_completo(data)
 
