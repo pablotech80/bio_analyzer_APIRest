@@ -1,18 +1,33 @@
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from flask import Flask
-from prometheus_flask_exporter import PrometheusMetrics
+from body_analyzer.routes import all_blueprints  # Correcto desde dentro de src
 
+# Configuración de Flask como constante
+FLASK_CONFIG = {
+    "DEBUG": True,
+    "JSON_SORT_KEYS": False,
+}
 
-from src.body_analyzer.constantes import *
-from src.body_analyzer.endpoints import configure_routes
+def register_blueprints(app):
+    """Registra todos los blueprints en la aplicación Flask."""
+    for bp in all_blueprints:
+        app.register_blueprint(bp)
 
-app = Flask(__name__, template_folder="templates")
-metrics = PrometheusMetrics(app)
-configure_routes(app)
+def create_app():
+    app = Flask(__name__)
+    app.config.update(FLASK_CONFIG)
+    register_blueprints(app)
 
-# Imprimir las rutas registradas
-for rule in app.url_map.iter_rules():
-    print(rule)
+    @app.route("/")
+    def welcome_message():
+        return "Bienvenido a la API Bio Analyzer"
+
+    return app
 
 if __name__ == "__main__":
-    app.run(host = "0.0.0.0", port = 5000, debug = True)
-
+    flask_app = create_app()
+    flask_app.run()

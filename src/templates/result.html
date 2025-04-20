@@ -1,19 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-    <title>Resultados del Análisis</title>
+    <meta charset="UTF-8">
+    <title>Resultados del Análisis Corporal</title>
 </head>
 <body>
     <h1>Resultados del Análisis Corporal</h1>
+
     <h2>Datos Calculados:</h2>
     <ul>
         <li><strong>IMC:</strong> {{ resultados.imc }}</li>
         <li><strong>TMB:</strong> {{ resultados.tmb }}</li>
-        <li><strong>Porcentaje de Grasa Corporal:</strong> {{ resultados.porcentaje_grasa }}%</li>
+        <li><strong>Porcentaje de Grasa:</strong> {{ resultados.porcentaje_grasa }}%</li>
+        <li><strong>Masa Muscular:</strong> {{ resultados.masa_muscular }} kg</li>
+        <li><strong>Agua Total:</strong> {{ resultados.agua_total }} L</li>
+        <li><strong>FFMI:</strong> {{ resultados.ffmi }}</li>
+        <li><strong>Peso Saludable:</strong> {{ resultados.peso_saludable.min }} kg - {{ resultados.peso_saludable.max }} kg</li>
+        <li><strong>Sobrepeso:</strong> {{ resultados.sobrepeso }} kg</li>
+        <li><strong>RCC:</strong> {{ resultados.rcc }}</li>
+        <li><strong>Ratio Cintura/Altura:</strong> {{ resultados.ratio_cintura_altura }}</li>
         <li><strong>Calorías Diarias:</strong> {{ resultados.calorias_diarias }}</li>
-        <li><strong>Interpretación IMC:</strong> {{ interpretaciones.imc }}</li>
-        <li><strong>Interpretación RCC:</strong> {{ interpretaciones.rcc }}</li>
+        <li><strong>Proteínas:</strong> {{ resultados.macronutrientes.proteinas }} g</li>
+        <li><strong>Carbohidratos:</strong> {{ resultados.macronutrientes.carbohidratos }} g</li>
+        <li><strong>Grasas:</strong> {{ resultados.macronutrientes.grasas }} g</li>
     </ul>
+
+    <h2>Interpretaciones:</h2>
+    <ul>
+        <li><strong>Interpretación IMC:</strong> {{ interpretaciones.imc }}</li>
+        <li><strong>Interpretación Grasa Corporal:</strong> {{ interpretaciones.porcentaje_grasa }}</li>
+        <li><strong>Interpretación FFMI:</strong> {{ interpretaciones.ffmi }}</li>
+        <li><strong>Interpretación RCC:</strong> {{ interpretaciones.rcc }}</li>
+        <li><strong>Interpretación Ratio Cintura/Altura:</strong> {{ interpretaciones.ratio_cintura_altura }}</li>
+    </ul>
+
     <a href="/">Volver al Formulario</a>
 </body>
 </html>

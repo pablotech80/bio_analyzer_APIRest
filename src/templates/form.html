@@ -1,41 +1,131 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
     <title>Formulario de Análisis Corporal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fdfdfd;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        fieldset {
+            border: 1px solid #bbb;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+
+        legend {
+            font-weight: bold;
+            color: #444;
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 4px;
+            font-weight: 500;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .error {
+            background-color: #fdd;
+            color: #900;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #e00;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Ingrese sus Datos para el Análisis</h1>
-    <form action="/analizar" method="post">  <!-- Ruta POST para enviar los datos -->
-        <label for="peso">Peso (kg):</label>
-        <input type="number" id="peso" name="peso" step="0.1" required><br>
+    <h1>Ingrese sus Datos para el Análisis Corporal</h1>
 
-        <label for="altura">Altura (cm):</label>
-        <input type="number" id="altura" name="altura" step="0.1" required><br>
+    {% if error %}
+        <div class="error"><strong>Error:</strong> {{ error }}</div>
+    {% endif %}
 
-        <label for="edad">Edad:</label>
-        <input type="number" id="edad" name="edad" required><br>
+    <form action="/analizar" method="post">
+        <fieldset>
+            <legend>Datos Personales</legend>
 
-        <label for="genero">Género:</label>
-        <select id="genero" name="genero" required>
-            <option value="h">Hombre</option>
-            <option value="m">Mujer</option>
-        </select><br>
+            <label for="peso">Peso (kg):</label>
+            <input type="number" id="peso" name="peso" step="0.1" placeholder="Ej: 70.5" required>
 
-        <label for="cuello">Perímetro del Cuello (cm):</label>
-        <input type="number" id="cuello" name="cuello" step="0.1" required><br>
+            <label for="altura">Altura (cm):</label>
+            <input type="number" id="altura" name="altura" step="0.1" placeholder="Ej: 175" required>
 
-        <label for="cintura">Perímetro de la Cintura (cm):</label>
-        <input type="number" id="cintura" name="cintura" step="0.1" required><br>
+            <label for="edad">Edad (años):</label>
+            <input type="number" id="edad" name="edad" placeholder="Ej: 30" required>
 
-        <label for="cadera">Perímetro de la Cadera (cm, solo para mujeres):</label>
-        <input type="number" id="cadera" name="cadera" step="0.1"><br>
+            <label for="genero">Género:</label>
+            <select id="genero" name="genero" required>
+                <option value="">Seleccione...</option>
+                <option value="h">Hombre</option>
+                <option value="m">Mujer</option>
+            </select>
+        </fieldset>
 
-        <label for="objetivo">Objetivo Nutricional:</label>
-        <select id="objetivo" name="objetivo" required>
-            <option value="mantener peso">Mantener Peso</option>
-            <option value="perder grasa">Perder Grasa</option>
-            <option value="ganar masa muscular">Ganar Masa Muscular</option>
-        </select><br>
+        <fieldset>
+            <legend>Medidas Corporales</legend>
+
+            <label for="cuello">Perímetro del Cuello (cm):</label>
+            <input type="number" id="cuello" name="cuello" step="0.1" placeholder="Ej: 38" required>
+
+            <label for="cintura">Perímetro de la Cintura (cm):</label>
+            <input type="number" id="cintura" name="cintura" step="0.1" placeholder="Ej: 85" required>
+
+            <label for="cadera">Perímetro de la Cadera (cm, solo mujeres):</label>
+            <input type="number" id="cadera" name="cadera" step="0.1" placeholder="Ej: 95">
+        </fieldset>
+
+        <fieldset>
+            <legend>Objetivo Nutricional</legend>
+
+            <label for="objetivo">Seleccione su objetivo:</label>
+            <select id="objetivo" name="objetivo" required>
+                <option value="">Seleccione...</option>
+                <option value="mantener peso">Mantener Peso</option>
+                <option value="perder grasa">Perder Grasa</option>
+                <option value="ganar masa muscular">Ganar Masa Muscular</option>
+            </select>
+        </fieldset>
 
         <button type="submit">Calcular</button>
     </form>
