@@ -1,12 +1,12 @@
 # **Bio Analyze API** 🚀
 
-<img src="./logo.JPG" alt="Logo" width="250" />
+<img src="./bio_analyze.JPG" alt="Logo" width="300" />
 
 [![Version](https://img.shields.io/badge/version-1.0.0--beta-blue)]()
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
 [![License](https://img.shields.io/badge/license-MIT-yellow)]()  
 [![Deployed on Heroku](https://img.shields.io/badge/Heroku-Live-purple)](https://your-heroku-app.herokuapp.com)  
-> **Biometric analysis API designed for healthcare professionals, nutritionists and personal trainers.**
+> **Biometric analysis API designed for healthcare professional nutritionists and personal trainers.**
 
 ---
 
@@ -34,10 +34,10 @@ It is designed as a **BACKEND** tool that can be integrated with a web form or a
 
 It is ideal for:
 - **Personal trainers**: Initial setup of training plans and goals.
-- **Nutritionists**: Personalized dietary recommendations.
+- **Nutritionists**: Personalised dietary recommendations.
 - **Health professionals**: Fast and accurate assessments.
 
-You can try the **beta** version in production here: 🌐 [**Body Analyzer API en Heroku**](https://bioanalyze-f0d59edaef22.herokuapp.com)
+You can try the **beta** version in production here: 🌐 [**Body Analyzer API in Heroku**](https://bioanalyze-f0d59edaef22.herokuapp.com)
 
 ---
 
@@ -91,9 +91,9 @@ The API will be available at http://127.0.0.1:5000
 ## **Local tests**
 
 You can test the API locally with Postman, cURL, or any tool that supports HTTP requests.
-Here is an example for the main endpoint:
+Here is an example of the main endpoint:
 
-Example of request with cURL
+Example of requests with cURL
 ```bash
 curl -X POST http://127.0.0.1:5000/informe_completo \
 -H "Content-Type: application/json" \
@@ -172,14 +172,14 @@ _Method / Path / Description_
 The API is deployed on Heroku in beta: 🌐 Body Analyzer API on Heroku
 https://bioanalyze-f0d59edaef22.herokuapp.com
 
-Testing in production
-You can use the same routes and data mentioned in the previous sections, 
+Testing in production,
+You can use the same routes and data mentioned in the previous sections
 but replace http://127.0.0.1:5000 with the Heroku URL.
 ---
 
 ## **Endnotes**
 
-Future Releases:
+Future Releases
 * Authentication implementation.
 * Database integration.
 * Creation of a frontend to facilitate the use of the API.
@@ -221,7 +221,7 @@ Permission is granted to anyone to contribute, modify, and/or improve this proje
 - Contributions will be reviewed and approved by the project's authors or maintainers.
 
 3. **Redistribution and Derivative Uses**:
-- If you decide to redistribute a modified version of the project, you must include this same license along with the original author's copyright.
+- If you decide to redistribute a modified version of the project, you must include this same licence along with the original author's copyright.
 - Commercial use of the project or its modifications is not permitted without the explicit written permission of the author.
 
 ---
@@ -236,7 +236,7 @@ Permission is granted to anyone to contribute, modify, and/or improve this proje
 - Commercial use of the project, whether in its original or modified form, is prohibited without express written permission.
 
 3. **Limitation of Liability**:
-- This software is provided "as is", without warranty of any kind, express or implied. 
+- This software is provided "as is", without a warranty of any kind, express or implied. 
 - In no event shall the authors be liable for damages or problems arising from the use of the project.
 
 ---
@@ -253,4 +253,4 @@ If you wish to contribute to this project:
 
 ### 4. Final Note
 
-By contributing to this project, you agree that your contributions may be used and distributed under the terms of this license.
+By contributing to this project, you agree that your contributions may be used and distributed under the terms of this licence.
