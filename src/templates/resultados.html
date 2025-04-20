@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Resultados del Informe Corporal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+
+        .section {
+            background-color: #fff;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .section h3 {
+            color: #34495e;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 8px 0;
+            padding: 6px 10px;
+            background: #ecf0f1;
+            border-radius: 4px;
+        }
+
+        strong {
+            color: #2c3e50;
+        }
+
+        .btn-volver {
+            display: block;
+            width: fit-content;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 30px;
+            font-weight: bold;
+        }
+
+        .btn-volver:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Informe Completo de Composición Corporal</h1>
+
+    <div class="section">
+        <h3>Resultados</h3>
+        <ul>
+            <li><strong>TMB:</strong> {{ resultados.tmb }} kcal</li>
+            <li><strong>IMC:</strong> {{ resultados.imc }}</li>
+            <li><strong>Porcentaje de Grasa:</strong> {{ resultados.porcentaje_grasa }}%</li>
+            <li><strong>Masa Muscular:</strong> {{ resultados.masa_muscular }} kg</li>
+            <li><strong>Agua Total:</strong> {{ resultados.agua_total }} L</li>
+            <li><strong>FFMI:</strong> {{ resultados.ffmi }}</li>
+            <li><strong>Peso Saludable:</strong> {{ resultados.peso_saludable.min }} - {{ resultados.peso_saludable.max }} kg</li>
+            <li><strong>Sobrepeso:</strong> {{ resultados.sobrepeso }} kg</li>
+            <li><strong>RCC:</strong> {{ resultados.rcc }}</li>
+            <li><strong>Ratio Cintura/Altura:</strong> {{ resultados.ratio_cintura_altura }}</li>
+            <li><strong>Calorías Diarias:</strong> {{ resultados.calorias_diarias }} kcal</li>
+            <li><strong>Macronutrientes:</strong>
+                <ul>
+                    <li>Proteínas: {{ resultados.macronutrientes.proteinas }} g</li>
+                    <li>Carbohidratos: {{ resultados.macronutrientes.carbohidratos }} g</li>
+                    <li>Grasas: {{ resultados.macronutrientes.grasas }} g</li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h3>Interpretaciones</h3>
+        <ul>
+            <li><strong>IMC:</strong> {{ interpretaciones.imc }}</li>
+            <li><strong>Porcentaje de Grasa:</strong> {{ interpretaciones.porcentaje_grasa }}</li>
+            <li><strong>FFMI:</strong> {{ interpretaciones.ffmi }}</li>
+            <li><strong>RCC:</strong> {{ interpretaciones.rcc }}</li>
+            <li><strong>Ratio Cintura/Altura:</strong> {{ interpretaciones.ratio_cintura_altura }}</li>
+        </ul>
+    </div>
+
+    <a href="/informe_web" class="btn-volver">← Volver al formulario</a>
+
+</body>
+</html>

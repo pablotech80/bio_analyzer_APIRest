@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+from flask import Flask, redirect, url_for
+
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from flask import Flask
@@ -23,8 +25,8 @@ def create_app():
     register_blueprints(app)
 
     @app.route("/")
-    def welcome_message():
-        return "Bienvenido a la API Bio Analyzer"
+    def index():
+        return redirect(url_for("informe_web.informe_web"))
 
     return app
 
