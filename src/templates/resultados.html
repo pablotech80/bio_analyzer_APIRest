@@ -6,72 +6,72 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 900px;
+            max-width: 700px;
             margin: 40px auto;
             padding: 20px;
+            background-color: #fdfdfd;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        fieldset {
+            border: 1px solid #bbb;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
             background-color: #f9f9f9;
         }
 
-        h1, h2 {
-            text-align: center;
-            color: #2c3e50;
-        }
-
-        .section {
-            background-color: #fff;
-            padding: 25px;
-            margin-bottom: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .section h3 {
-            color: #34495e;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 8px;
-            margin-bottom: 15px;
+        legend {
+            font-weight: bold;
+            color: #444;
         }
 
         ul {
-            list-style: none;
-            padding: 0;
+            list-style-type: none;
+            padding-left: 0;
         }
 
         li {
             margin: 8px 0;
-            padding: 6px 10px;
-            background: #ecf0f1;
+            padding: 8px;
+            background-color: #f0f0f0;
             border-radius: 4px;
         }
 
         strong {
-            color: #2c3e50;
+            color: #222;
         }
 
         .btn-volver {
             display: block;
-            width: fit-content;
-            margin: 0 auto;
-            padding: 10px 20px;
-            background-color: #3498db;
-            color: #fff;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            text-align: center;
             text-decoration: none;
             border-radius: 5px;
             margin-top: 30px;
-            font-weight: bold;
         }
 
         .btn-volver:hover {
-            background-color: #2980b9;
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
 
-    <h1>Informe Completo de Composición Corporal</h1>
+    <h1>Resultados del Análisis Corporal</h1>
 
-    <div class="section">
-        <h3>Resultados</h3>
+    <fieldset>
+        <legend>Datos Calculados</legend>
         <ul>
             <li><strong>TMB:</strong> {{ resultados.tmb }} kcal</li>
             <li><strong>IMC:</strong> {{ resultados.imc }}</li>
@@ -84,18 +84,20 @@
             <li><strong>RCC:</strong> {{ resultados.rcc }}</li>
             <li><strong>Ratio Cintura/Altura:</strong> {{ resultados.ratio_cintura_altura }}</li>
             <li><strong>Calorías Diarias:</strong> {{ resultados.calorias_diarias }} kcal</li>
-            <li><strong>Macronutrientes:</strong>
-                <ul>
-                    <li>Proteínas: {{ resultados.macronutrientes.proteinas }} g</li>
-                    <li>Carbohidratos: {{ resultados.macronutrientes.carbohidratos }} g</li>
-                    <li>Grasas: {{ resultados.macronutrientes.grasas }} g</li>
-                </ul>
-            </li>
         </ul>
-    </div>
+    </fieldset>
 
-    <div class="section">
-        <h3>Interpretaciones</h3>
+    <fieldset>
+        <legend>Macronutrientes Recomendados</legend>
+        <ul>
+            <li><strong>Proteínas:</strong> {{ resultados.macronutrientes.proteinas }} g</li>
+            <li><strong>Carbohidratos:</strong> {{ resultados.macronutrientes.carbohidratos }} g</li>
+            <li><strong>Grasas:</strong> {{ resultados.macronutrientes.grasas }} g</li>
+        </ul>
+    </fieldset>
+
+    <fieldset>
+        <legend>Interpretaciones</legend>
         <ul>
             <li><strong>IMC:</strong> {{ interpretaciones.imc }}</li>
             <li><strong>Porcentaje de Grasa:</strong> {{ interpretaciones.porcentaje_grasa }}</li>
@@ -103,7 +105,7 @@
             <li><strong>RCC:</strong> {{ interpretaciones.rcc }}</li>
             <li><strong>Ratio Cintura/Altura:</strong> {{ interpretaciones.ratio_cintura_altura }}</li>
         </ul>
-    </div>
+    </fieldset>
 
     <a href="/informe_web" class="btn-volver">← Volver al formulario</a>
 
