@@ -1,15 +1,12 @@
 from flask import Flask
 from prometheus_flask_exporter import PrometheusMetrics
 
+
 from src.body_analyzer.constantes import *
 from src.body_analyzer.endpoints import configure_routes
 
-app = Flask(__name__)
-
-# Inicializar PrometheusMetrics para que exponga el endpoint /metrics
+app = Flask(__name__, template_folder="templates")
 metrics = PrometheusMetrics(app)
-
-# Llama a la función para configurar las rutas
 configure_routes(app)
 
 # Imprimir las rutas registradas

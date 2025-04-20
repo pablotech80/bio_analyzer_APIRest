@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultados del Análisis</title>
+</head>
+<body>
+    <h1>Resultados del Análisis Corporal</h1>
+    <h2>Datos Calculados:</h2>
+    <ul>
+        <li><strong>IMC:</strong> {{ resultados.imc }}</li>
+        <li><strong>TMB:</strong> {{ resultados.tmb }}</li>
+        <li><strong>Porcentaje de Grasa Corporal:</strong> {{ resultados.porcentaje_grasa }}%</li>
+        <li><strong>Calorías Diarias:</strong> {{ resultados.calorias_diarias }}</li>
+        <li><strong>Interpretación IMC:</strong> {{ interpretaciones.imc }}</li>
+        <li><strong>Interpretación RCC:</strong> {{ interpretaciones.rcc }}</li>
+    </ul>
+    <a href="/">Volver al Formulario</a>
+</body>
+</html>

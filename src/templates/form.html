@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Formulario de Análisis Corporal</title>
+</head>
+<body>
+    <h1>Ingrese sus Datos para el Análisis</h1>
+    <form action="/analizar" method="post">  <!-- Ruta POST para enviar los datos -->
+        <label for="peso">Peso (kg):</label>
+        <input type="number" id="peso" name="peso" step="0.1" required><br>
+
+        <label for="altura">Altura (cm):</label>
+        <input type="number" id="altura" name="altura" step="0.1" required><br>
+
+        <label for="edad">Edad:</label>
+        <input type="number" id="edad" name="edad" required><br>
+
+        <label for="genero">Género:</label>
+        <select id="genero" name="genero" required>
+            <option value="h">Hombre</option>
+            <option value="m">Mujer</option>
+        </select><br>
+
+        <label for="cuello">Perímetro del Cuello (cm):</label>
+        <input type="number" id="cuello" name="cuello" step="0.1" required><br>
+
+        <label for="cintura">Perímetro de la Cintura (cm):</label>
+        <input type="number" id="cintura" name="cintura" step="0.1" required><br>
+
+        <label for="cadera">Perímetro de la Cadera (cm, solo para mujeres):</label>
+        <input type="number" id="cadera" name="cadera" step="0.1"><br>
+
+        <label for="objetivo">Objetivo Nutricional:</label>
+        <select id="objetivo" name="objetivo" required>
+            <option value="mantener peso">Mantener Peso</option>
+            <option value="perder grasa">Perder Grasa</option>
+            <option value="ganar masa muscular">Ganar Masa Muscular</option>
+        </select><br>
+
+        <button type="submit">Calcular</button>
+    </form>
+</body>
+</html>
