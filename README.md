@@ -1,6 +1,6 @@
 # **Bio Analyze API** 🚀
 
-<img src="./bio_analyze.JPG" alt="Logo" width="300" />
+<img src="src/body_analyzer/static/img/bio_analyze.jpg" alt="Logo" width="300" />
 
 [![Version](https://img.shields.io/badge/version-1.0.0--beta-blue)]()
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()

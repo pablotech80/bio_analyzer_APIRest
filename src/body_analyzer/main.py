@@ -1,4 +1,5 @@
 import sys
+import os
 from pathlib import Path
 
 from flask import Flask, redirect, url_for
@@ -20,7 +21,11 @@ def register_blueprints(app):
         app.register_blueprint(bp)
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        template_folder= 'templates',
+        static_folder= 'static'
+        )
     app.config.update(FLASK_CONFIG)
     register_blueprints(app)
 

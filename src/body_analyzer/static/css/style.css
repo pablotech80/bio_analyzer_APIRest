@@ -1,0 +1,43 @@
+/* style.css */
+
+body {
+    background-color: #0a0f2c; /* Azul oscuro, fondo limpio */
+    color: #e0e0e0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+h1, h2 {
+    font-weight: bold;
+}
+
+.intro-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.intro-section img {
+    width: 100px;
+    margin-bottom: 20px;
+}
+
+.intro-section .text-info {
+    color: #00bcd4;
+}
+
+.lead {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.btn-info {
+    background-color: #00bcd4;
+    border: none;
+}
+
+.btn-info:hover {
+    background-color: #00acc1;
+}
+.small-input {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.9rem;
+}
