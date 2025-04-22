@@ -19,12 +19,12 @@
         <h6 class="form-section-title border-bottom pb-1">📋 Datos Personales</h6>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-12 col-md-3">
         <label for="edad" class="form-label">Edad</label>
         <input type="number" class="form-control" id="edad" name="edad" value="{{ form_data.get('edad', '') }}">
     </div>
 
-    <div class="col-md-3">
+    <div class="col-12 col-md-3">
         <label for="genero" class="form-label">Género</label>
         <select class="form-select" id="genero" name="genero">
             <option value="">Seleccionar</option>
@@ -38,27 +38,27 @@
         <h6 class="form-section-title border-bottom pb-1">📏 Medidas Corporales</h6>
     </div>
 
-    <div class="col-md-3">
+    <div class="col-12 col-md-3">
         <label for="peso" class="form-label">Peso (kg)</label>
         <input type="number" step="0.1" class="form-control" id="peso" name="peso" value="{{ form_data.get('peso', '') }}">
     </div>
 
-    <div class="col-md-3">
+    <div class="col-12 col-md-3">
         <label for="altura" class="form-label">Altura (cm)</label>
         <input type="number" class="form-control" id="altura" name="altura" value="{{ form_data.get('altura', '') }}">
     </div>
 
-    <div class="col-md-3">
+    <div class="col-12 col-md-3">
         <label for="cuello" class="form-label">Cuello (cm)</label>
         <input type="number" class="form-control" id="cuello" name="cuello" value="{{ form_data.get('cuello', '') }}">
     </div>
 
-    <div class="col-md-3">
+    <div class="col-12 col-md-3">
         <label for="cintura" class="form-label">Cintura (cm)</label>
         <input type="number" class="form-control" id="cintura" name="cintura" value="{{ form_data.get('cintura', '') }}">
     </div>
 
-    <div class="col-md-3" id="grupo-cadera">
+    <div class="col-12 col-md-3" id="grupo-cadera">
         <label for="cadera" class="form-label">Cadera (cm) <span class="text-muted">(solo mujeres)</span></label>
         <input type="number" class="form-control" id="cadera" name="cadera" value="{{ form_data.get('cadera', '') }}">
     </div>
@@ -68,7 +68,7 @@
         <h6 class="form-section-title border-bottom pb-1">🎯 Objetivo</h6>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-12 col-md-4">
         <label for="objetivo" class="form-label">Objetivo</label>
         <select class="form-select" id="objetivo" name="objetivo">
             <option value="">Seleccionar</option>

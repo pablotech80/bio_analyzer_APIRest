@@ -18,7 +18,7 @@
     <h6 class="form-section-title border-bottom pb-1">🔥 Metabolismo</h6>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">
@@ -35,7 +35,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">
@@ -55,7 +55,7 @@
 
   {% for key, value in resultados.items() %}
     {% if key in ['imc', 'porcentaje_grasa', 'rcc', 'ratio_cintura_altura', 'ffmi'] %}
-    <div class="col-md-6">
+    <div class="col-12 col-md-6">
       <div class="card shadow-sm">
         <div class="card-body">
           <h6 class="card-title mb-1">
@@ -82,7 +82,7 @@
     <h6 class="form-section-title border-bottom pb-1">💪 Composición Corporal</h6>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Masa Muscular: {{ resultados.masa_muscular }} kg</h6>
@@ -91,7 +91,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Agua Total: {{ resultados.agua_total }} L</h6>
@@ -101,7 +101,7 @@
   </div>
 
   <!-- 🎯 Peso saludable -->
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Peso Saludable Estimado</h6>
@@ -110,7 +110,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Sobrepeso: {{ resultados.sobrepeso }} kg</h6>
@@ -123,7 +123,7 @@
     <h6 class="form-section-title border-bottom pb-1">🍽️ Macronutrientes diarios</h6>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
         <p class="text-muted small mb-1">Proteínas: {{ resultados.macronutrientes.proteinas }} g</p>
