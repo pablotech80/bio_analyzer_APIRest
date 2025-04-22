@@ -14,13 +14,17 @@ from src.body_analyzer.interpretaciones import (
 
 informe_web_bp = Blueprint("informe_web", __name__, template_folder="../../templates")
 
+# Función auxiliar para aceptar coma o punto como separador decimal
+def parse_decimal(value):
+    return float(value.replace(",", "."))
+
 @informe_web_bp.route("/informe_web", methods=["GET", "POST"])
 def informe_web():
     if request.method == "POST":
         try:
             data = request.form
 
-            # Obtener y validar campos requeridos
+            # Captura de datos desde el formulario
             peso_str = data.get("peso", "").strip()
             altura_str = data.get("altura", "").strip()
             edad_str = data.get("edad", "").strip()
@@ -30,20 +34,21 @@ def informe_web():
             genero_str = data.get("genero", "").strip().lower()
             objetivo_str = data.get("objetivo", "").strip().lower()
 
+            # Validación de campos obligatorios
             if not all([peso_str, altura_str, edad_str, cuello_str, cintura_str, genero_str, objetivo_str]):
                 raise ValueError("Por favor complete todos los campos obligatorios.")
 
             # Conversión segura
-            peso = float(peso_str)
-            altura = float(altura_str)
+            peso = parse_decimal(peso_str)
+            altura = parse_decimal(altura_str)
             edad = int(edad_str)
-            cuello = float(cuello_str)
-            cintura = float(cintura_str)
-            cadera = float(cadera_str) if cadera_str else 0.0
+            cuello = parse_decimal(cuello_str)
+            cintura = parse_decimal(cintura_str)
+            cadera = parse_decimal(cadera_str) if cadera_str else 0.0
             genero = convertir_genero(genero_str)
             objetivo = convertir_objetivo(objetivo_str)
 
-            # Cálculos
+            # Cálculos biométricos
             porcentaje_grasa = calcular_porcentaje_grasa(cintura, cuello, altura, genero, cadera)
             tmb = calcular_tmb(peso, altura, edad, genero)
             imc = calcular_imc(peso, altura)
@@ -57,6 +62,7 @@ def informe_web():
             calorias_diarias = calcular_calorias_diarias(tmb, objetivo)
             proteinas, carbohidratos, grasas = calcular_macronutrientes(calorias_diarias, objetivo)
 
+            # Interpretaciones
             interpretaciones = {
                 "imc": interpretar_imc(imc, ffmi, genero),
                 "porcentaje_grasa": interpretar_porcentaje_grasa(porcentaje_grasa, genero),
@@ -65,6 +71,7 @@ def informe_web():
                 "ratio_cintura_altura": interpretar_ratio_cintura_altura(ratio_cintura_altura),
             }
 
+            # Resultados para renderizar
             resultados = {
                 "tmb": round(tmb, 2),
                 "imc": round(imc, 2),
@@ -86,9 +93,13 @@ def informe_web():
                     "grasas": round(grasas, 2),
                 },
             }
-            return render_template("resultados.html", resultados = resultados, interpretaciones = interpretaciones)
+
+            return render_template("resultados.html",
+                                   resultados=resultados,
+                                   interpretaciones=interpretaciones)
 
         except Exception as e:
-            return render_template("formulario.html", error=f"Error al procesar los datos: {e}"), 400
+            return render_template("formulario.html",
+                                   error=str(e), form_data=request.form), 400
 
-    return render_template("formulario.html")
+    return render_template("formulario.html", form_data={})

@@ -1,133 +1,87 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Formulario de Análisis Corporal</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 700px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: #fdfdfd;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-        }
+{% extends 'base.html' %}
+{% block title %}BioAnalyze | Formulario{% endblock %}
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
-        fieldset {
-            border: 1px solid #bbb;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            background-color: #f9f9f9;
-        }
-
-        legend {
-            font-weight: bold;
-            color: #444;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 4px;
-            font-weight: 500;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 8px 10px;
-            margin-bottom: 12px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        button {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background-color: #007bff;
-            color: white;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .error {
-            background-color: #fdd;
-            color: #900;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #e00;
-            border-radius: 5px;
-        }
-    </style>
-</head>
-<body>
-    <h1>Ingrese sus Datos para el Análisis Corporal</h1>
-
+{% block content %}
+<div class="text-center mb-4">
     {% if error %}
-        <div class="error"><strong>Error:</strong> {{ error }}</div>
+    <div class="alert alert-danger text-center">{{ error }}</div>
     {% endif %}
 
-    <form action="/informe_web" method="post">
-        <fieldset>
-            <legend>Datos Personales</legend>
+    <img src="{{ url_for('static', filename='img/bio_analyze.jpg') }}" alt="BioAnalyze Logo" width="160" class="rounded-circle mb-3">
+    <h1 class="mt-2">Bienvenido a <span class="text-info">Bio•Analyze</span></h1>
+    <p class="lead">Ingresa tus datos físicos y biométricos para obtener un informe detallado de tu composición corporal.<br> Utilizamos fórmulas científicas validadas con interpretaciones personalizadas.</p>
+</div>
 
-            <label for="peso">Peso (kg):</label>
-            <input type="number" id="peso" name="peso" step="0.1" placeholder="Ej: 70.5" required>
+<form method="POST" action="/informe_web" class="row g-4">
 
-            <label for="altura">Altura (cm):</label>
-            <input type="number" id="altura" name="altura" step="0.1" placeholder="Ej: 175" required>
+    <!-- Datos Personales -->
+    <div class="col-12">
+        <h6 class="form-section-title border-bottom pb-1">📋 Datos Personales</h6>
+    </div>
 
-            <label for="edad">Edad (años):</label>
-            <input type="number" id="edad" name="edad" placeholder="Ej: 30" required>
+    <div class="col-md-3">
+        <label for="edad" class="form-label">Edad</label>
+        <input type="number" class="form-control" id="edad" name="edad" value="{{ form_data.get('edad', '') }}">
+    </div>
 
-            <label for="genero">Género:</label>
-            <select id="genero" name="genero" required>
-                <option value="">Seleccione...</option>
-                <option value="h">Hombre</option>
-                <option value="m">Mujer</option>
-            </select>
-        </fieldset>
+    <div class="col-md-3">
+        <label for="genero" class="form-label">Género</label>
+        <select class="form-select" id="genero" name="genero">
+            <option value="">Seleccionar</option>
+            <option value="h" {% if form_data.get('genero') == 'h' %}selected{% endif %}>Masculino</option>
+            <option value="m" {% if form_data.get('genero') == 'm' %}selected{% endif %}>Femenino</option>
+        </select>
+    </div>
 
-        <fieldset>
-            <legend>Medidas Corporales</legend>
+    <!-- Medidas Corporales -->
+    <div class="col-12">
+        <h6 class="form-section-title border-bottom pb-1">📏 Medidas Corporales</h6>
+    </div>
 
-            <label for="cuello">Perímetro del Cuello (cm):</label>
-            <input type="number" id="cuello" name="cuello" step="0.1" placeholder="Ej: 38" required>
+    <div class="col-md-3">
+        <label for="peso" class="form-label">Peso (kg)</label>
+        <input type="number" step="0.1" class="form-control" id="peso" name="peso" value="{{ form_data.get('peso', '') }}">
+    </div>
 
-            <label for="cintura">Perímetro de la Cintura (cm):</label>
-            <input type="number" id="cintura" name="cintura" step="0.1" placeholder="Ej: 85" required>
+    <div class="col-md-3">
+        <label for="altura" class="form-label">Altura (cm)</label>
+        <input type="number" class="form-control" id="altura" name="altura" value="{{ form_data.get('altura', '') }}">
+    </div>
 
-            <label for="cadera">Perímetro de la Cadera (cm, solo mujeres):</label>
-            <input type="number" id="cadera" name="cadera" step="0.1" placeholder="Ej: 95">
-        </fieldset>
+    <div class="col-md-3">
+        <label for="cuello" class="form-label">Cuello (cm)</label>
+        <input type="number" class="form-control" id="cuello" name="cuello" value="{{ form_data.get('cuello', '') }}">
+    </div>
 
-        <fieldset>
-            <legend>Objetivo Nutricional</legend>
+    <div class="col-md-3">
+        <label for="cintura" class="form-label">Cintura (cm)</label>
+        <input type="number" class="form-control" id="cintura" name="cintura" value="{{ form_data.get('cintura', '') }}">
+    </div>
 
-            <label for="objetivo">Seleccione su objetivo:</label>
-            <select id="objetivo" name="objetivo" required>
-                <option value="">Seleccione...</option>
-                <option value="mantener peso">Mantener Peso</option>
-                <option value="perder grasa">Perder Grasa</option>
-                <option value="ganar masa muscular">Ganar Masa Muscular</option>
-            </select>
-        </fieldset>
+    <div class="col-md-3" id="grupo-cadera">
+        <label for="cadera" class="form-label">Cadera (cm) <span class="text-muted">(solo mujeres)</span></label>
+        <input type="number" class="form-control" id="cadera" name="cadera" value="{{ form_data.get('cadera', '') }}">
+    </div>
 
-        <button type="submit">Calcular</button>
-    </form>
-</body>
-</html>
+    <!-- Objetivo -->
+    <div class="col-12">
+        <h6 class="form-section-title border-bottom pb-1">🎯 Objetivo</h6>
+    </div>
+
+    <div class="col-md-4">
+        <label for="objetivo" class="form-label">Objetivo</label>
+        <select class="form-select" id="objetivo" name="objetivo">
+            <option value="">Seleccionar</option>
+            <option value="mantener peso" {% if form_data.get('objetivo') == 'mantener peso' %}selected{% endif %}>Mantener peso</option>
+            <option value="perder grasa" {% if form_data.get('objetivo') == 'perder grasa' %}selected{% endif %}>Perder grasa</option>
+            <option value="ganar masa muscular" {% if form_data.get('objetivo') == 'ganar masa muscular' %}selected{% endif %}>Ganar masa muscular</option>
+        </select>
+    </div>
+
+    <!-- Botones -->
+    <div class="col-12 text-center mt-3">
+        <button type="submit" class="btn btn-info px-4">Analizar</button>
+        <a href="/informe_web" class="btn btn-outline-light ms-2">Limpiar</a>
+    </div>
+</form>
+{% endblock %}
