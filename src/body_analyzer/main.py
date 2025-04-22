@@ -34,7 +34,7 @@ def create_app():
         return redirect(url_for("informe_web.informe_web"))
 
     return app
+app = create_app()
 
 if __name__ == "__main__":
-    flask_app = create_app()
-    flask_app.run()
+    app.run()
