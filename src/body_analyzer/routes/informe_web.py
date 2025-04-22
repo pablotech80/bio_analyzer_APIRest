@@ -94,9 +94,12 @@ def informe_web():
                 },
             }
 
-            return render_template("formulario.html", resultados=resultados, interpretaciones=interpretaciones)
+            return render_template("resultados.html",
+                                   resultados=resultados,
+                                   interpretaciones=interpretaciones)
 
         except Exception as e:
-            return render_template("formulario.html", error=f"Error al procesar los datos: {e}"), 400
+            return render_template("formulario.html",
+                                   error=str(e), form_data=request.form), 400
 
-    return render_template("formulario.html")
+    return render_template("formulario.html", form_data={})

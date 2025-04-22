@@ -27,15 +27,15 @@
 
     <div class="col-md-3">
         <label for="edad" class="form-label">Edad</label>
-        <input type="number" class="form-control form-control-sm form-mini" id="edad" name="edad" value="{{ request.form.get('edad', '') }}">
+        <input type="number" class="form-control form-control-sm form-mini" id="edad" name="edad" value="{{ form_data.get('edad', '') }}">
     </div>
 
     <div class="col-md-3">
         <label for="genero" class="form-label">Género</label>
         <select class="form-select form-select-sm form-mini" id="genero" name="genero">
             <option value="">Seleccionar</option>
-            <option value="h" {% if request.form.get('genero') == 'h' %}selected{% endif %}>Masculino</option>
-            <option value="m" {% if request.form.get('genero') == 'm' %}selected{% endif %}>Femenino</option>
+            <option value="h" {% if form_data.get('genero') == 'h' %}selected{% endif %}>Masculino</option>
+            <option value="m" {% if form_data.get('genero') == 'm' %}selected{% endif %}>Femenino</option>
         </select>
     </div>
 
@@ -46,27 +46,27 @@
 
     <div class="col-md-3">
         <label for="peso" class="form-label">Peso (kg)</label>
-        <input type="number" step="0.1" class="form-control form-control-sm form-mini" id="peso" name="peso" value="{{ request.form.get('peso', '') }}">
+        <input type="number" step="0.1" class="form-control form-control-sm form-mini" id="peso" name="peso" value="{{ form_data.get('peso', '') }}">
     </div>
 
     <div class="col-md-3">
         <label for="altura" class="form-label">Altura (cm)</label>
-        <input type="number" class="form-control form-control-sm form-mini" id="altura" name="altura" value="{{ request.form.get('altura', '') }}">
+        <input type="number" class="form-control form-control-sm form-mini" id="altura" name="altura" value="{{ form_data.get('altura', '') }}">
     </div>
 
     <div class="col-md-3">
         <label for="cuello" class="form-label">Cuello (cm)</label>
-        <input type="number" class="form-control form-control-sm form-mini" id="cuello" name="cuello" value="{{ request.form.get('cuello', '') }}">
+        <input type="number" class="form-control form-control-sm form-mini" id="cuello" name="cuello" value="{{ form_data.get('cuello', '') }}">
     </div>
 
     <div class="col-md-3">
         <label for="cintura" class="form-label">Cintura (cm)</label>
-        <input type="number" class="form-control form-control-sm form-mini" id="cintura" name="cintura" value="{{ request.form.get('cintura', '') }}">
+        <input type="number" class="form-control form-control-sm form-mini" id="cintura" name="cintura" value="{{ form_data.get('cintura', '') }}">
     </div>
 
     <div class="col-md-3" id="grupo-cadera">
         <label for="cadera" class="form-label">Cadera (cm) <span class="text-muted">(solo mujeres)</span></label>
-        <input type="number" class="form-control form-control-sm form-mini" id="cadera" name="cadera" value="{{ request.form.get('cadera', '') }}">
+        <input type="number" class="form-control form-control-sm form-mini" id="cadera" name="cadera" value="{{ form_data.get('cadera', '') }}">
     </div>
 
     <!-- Sección: Objetivo -->
@@ -78,9 +78,9 @@
         <label for="objetivo" class="form-label">Objetivo</label>
         <select class="form-select form-select-sm form-mini" id="objetivo" name="objetivo">
             <option value="">Seleccionar</option>
-            <option value="mantener peso" {% if request.form.get('objetivo') == 'mantener peso' %}selected{% endif %}>Mantener peso</option>
-            <option value="perder grasa" {% if request.form.get('objetivo') == 'perder grasa' %}selected{% endif %}>Perder grasa</option>
-            <option value="ganar masa muscular" {% if request.form.get('objetivo') == 'ganar masa muscular' %}selected{% endif %}>Ganar masa muscular</option>
+            <option value="mantener peso" {% if form_data.get('objetivo') == 'mantener peso' %}selected{% endif %}>Mantener peso</option>
+            <option value="perder grasa" {% if form_data.get('objetivo') == 'perder grasa' %}selected{% endif %}>Perder grasa</option>
+            <option value="ganar masa muscular" {% if form_data.get('objetivo') == 'ganar masa muscular' %}selected{% endif %}>Ganar masa muscular</option>
         </select>
     </div>
 
