@@ -3,45 +3,45 @@
 
 {% block content %}
 <div class="text-center mb-4">
-    <img src="{{ url_for('static', filename='img/bio_analyze.jpg') }}" alt="BioAnalyze Logo" width="200" class="rounded-circle">
-    <h1 class="mt-3">Resultado del Análisis e interpretaciones</h1>
-        <p class="lead text-center">
-        Tus métricas han sido analizadas con precisión para ofrecerte una visión clara de tu estado físico actual.
+    <img src="{{ url_for('static', filename='img/bio_analyze.jpg') }}" alt="BioAnalyze Logo" width="160" class="rounded-circle mb-3">
+    <h1 class="mt-2">Resultado del Análisis e interpretaciones</h1>
+    <p class="lead text-center">
+        Tus métricas han sido analizadas con precisión para ofrecerte una visión clara de tu estado físico actual.<br>
         Usa esta información como base para optimizar tu progreso y alcanzar tus objetivos.
-        </p>
+    </p>
 </div>
 
 <div class="row g-4">
 
   <!-- 🔥 Metabolismo -->
   <div class="col-12">
-    <h6 class="form-section-title text-info border-bottom pb-1">🔥 Metabolismo</h6>
+    <h6 class="form-section-title border-bottom pb-1">🔥 Metabolismo</h6>
   </div>
 
   <div class="col-md-6">
-    <div class="card bg-dark text-light shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">
           TMB: {{ resultados.tmb }} kcal
           <span data-bs-toggle="tooltip" title="Tasa Metabólica Basal. Calorías que tu cuerpo gasta en reposo.">
-            <i class="bi bi-info-circle text-info"></i>
+            <i class="bi bi-info-circle text-azul-logo"></i>
           </span>
         </h6>
-        <p class="mb-1 text-muted">Valor saludable depende de edad, sexo y masa muscular.</p>
+        <p class="text-muted small">Valor saludable depende de edad, sexo y masa muscular.</p>
         {% if interpretaciones.tmb %}
-        <p class="text-info small">{{ interpretaciones.tmb }}</p>
+        <p class="text-azul-logo small">{{ interpretaciones.tmb }}</p>
         {% endif %}
       </div>
     </div>
   </div>
 
   <div class="col-md-6">
-    <div class="card bg-dark text-light shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">
           Calorías Diarias: {{ resultados.calorias_diarias }} kcal
           <span data-bs-toggle="tooltip" title="Estimación de calorías para mantener tu peso actual.">
-            <i class="bi bi-info-circle text-info"></i>
+            <i class="bi bi-info-circle text-azul-logo"></i>
           </span>
         </h6>
       </div>
@@ -50,13 +50,13 @@
 
   <!-- 🧠 Indicadores -->
   <div class="col-12">
-    <h6 class="form-section-title text-info border-bottom pb-1">🧠 Indicadores de salud</h6>
+    <h6 class="form-section-title border-bottom pb-1">🧠 Indicadores de salud</h6>
   </div>
 
   {% for key, value in resultados.items() %}
     {% if key in ['imc', 'porcentaje_grasa', 'rcc', 'ratio_cintura_altura', 'ffmi'] %}
     <div class="col-md-6">
-      <div class="card bg-dark text-light shadow-sm">
+      <div class="card shadow-sm">
         <div class="card-body">
           <h6 class="card-title mb-1">
             {{ key | replace('_', ' ') | upper }}: {{ value }}
@@ -65,11 +65,11 @@
             {% elif key == 'ffmi' %}Índice de Masa Libre de Grasa. Evalúa la masa muscular real.
             {% elif key == 'rcc' %}Relación Cintura/Cadera. Valores altos indican riesgo cardiometabólico.
             {% elif key == 'ratio_cintura_altura' %}Relación cintura-altura. Ideal: menor a 0.5.{% endif %}">
-              <i class="bi bi-info-circle text-info"></i>
+              <i class="bi bi-info-circle text-azul-logo"></i>
             </span>
           </h6>
           {% if interpretaciones[key] %}
-          <p class="text-info small mt-1">{{ interpretaciones[key] }}</p>
+          <p class="text-azul-logo small">{{ interpretaciones[key] }}</p>
           {% endif %}
         </div>
       </div>
@@ -79,43 +79,39 @@
 
   <!-- 💪 Composición corporal -->
   <div class="col-12">
-    <h6 class="form-section-title text-info border-bottom pb-1">💪 Composición Corporal
-  <span data-bs-toggle="tooltip" title="Incluye masa muscular estimada y volumen de agua total. Sirve para evaluar la calidad de la composición corporal.">
-    <i class="bi bi-info-circle text-info"></i>
-  </span>
-    </h6>
+    <h6 class="form-section-title border-bottom pb-1">💪 Composición Corporal</h6>
   </div>
 
   <div class="col-md-6">
-    <div class="card bg-dark text-light shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Masa Muscular: {{ resultados.masa_muscular }} kg</h6>
-        <p class="mb-0 text-muted small">Estimación basada en composición corporal.</p>
+        <p class="text-muted small">Estimación basada en composición corporal.</p>
       </div>
     </div>
   </div>
 
   <div class="col-md-6">
-    <div class="card bg-dark text-light shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Agua Total: {{ resultados.agua_total }} L</h6>
-        <p class="mb-0 text-muted small">Valores normales: 45–60% del peso corporal.</p>
+        <p class="text-muted small">Valores normales: 45–60% del peso corporal.</p>
       </div>
     </div>
   </div>
 
   <!-- 🎯 Peso saludable -->
   <div class="col-md-6">
-    <div class="card bg-dark text-light shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Peso Saludable Estimado</h6>
-        <p class="mb-0">Entre {{ resultados.peso_saludable.min }} kg y {{ resultados.peso_saludable.max }} kg</p>
+        <p class="text-muted small">Entre {{ resultados.peso_saludable.min }} kg y {{ resultados.peso_saludable.max }} kg</p>
       </div>
     </div>
   </div>
 
   <div class="col-md-6">
-    <div class="card bg-dark text-light shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-body">
         <h6 class="card-title mb-1">Sobrepeso: {{ resultados.sobrepeso }} kg</h6>
       </div>
@@ -124,26 +120,21 @@
 
   <!-- 🍽️ Macronutrientes -->
   <div class="col-12">
-    <h6 class="form-section-title text-info border-bottom pb-1">🍽️ Macronutrientes diarios
-  <span data-bs-toggle="tooltip" title="Distribución diaria recomendada de proteínas, carbohidratos y grasas según tu objetivo.">
-    <i class="bi bi-info-circle text-info"></i>
-  </span>
-    </h6>
+    <h6 class="form-section-title border-bottom pb-1">🍽️ Macronutrientes diarios</h6>
   </div>
 
   <div class="col-md-6">
-    <div class="card bg-dark text-light shadow-sm">
+    <div class="card shadow-sm">
       <div class="card-body">
-        <p class="mb-1">Proteínas: {{ resultados.macronutrientes.proteinas }} g</p>
-        <p class="mb-1">Carbohidratos: {{ resultados.macronutrientes.carbohidratos }} g</p>
-        <p class="mb-0">Grasas: {{ resultados.macronutrientes.grasas }} g</p>
+        <p class="text-muted small mb-1">Proteínas: {{ resultados.macronutrientes.proteinas }} g</p>
+        <p class="text-muted small mb-1">Carbohidratos: {{ resultados.macronutrientes.carbohidratos }} g</p>
+        <p class="text-muted small mb-0">Grasas: {{ resultados.macronutrientes.grasas }} g</p>
       </div>
     </div>
   </div>
-
 </div>
 
 <div class="text-center mt-4">
-  <a href="/informe_web" class="btn btn-outline-light">← Volver al formulario</a>
+  <a href="/informe_web" class="btn btn-outline-primary px-4">← Volver al formulario</a>
 </div>
 {% endblock %}
