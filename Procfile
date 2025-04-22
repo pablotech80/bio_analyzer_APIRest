@@ -1,4 +1,5 @@
-web: gunicorn src.body_analyzer.main:app
+web: gunicorn main:app
+
 
 
 
