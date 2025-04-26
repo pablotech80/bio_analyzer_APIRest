@@ -384,3 +384,32 @@ def calcular_peso_grasa_corporal(peso: float, porcentaje_grasa: float) -> float:
     peso_grasa_corporal = peso * (porcentaje_grasa / 100)
 
     return round(peso_grasa_corporal, 2)
+
+
+def calcular_macronutrientes_porcentajes(
+        calorias: float, porcentaje_proteinas: float, porcentaje_carbohidratos: float, porcentaje_grasas: float
+        ):
+    """
+    Calcula los gramos diarios de proteínas, carbohidratos y grasas a partir del reparto porcentual de calorías.
+
+    Args:
+        calorias (float):
+        Calorías totales diarias.
+        porcentaje_proteinas (float): % de proteínas.
+        porcentaje_carbohidratos (float): % de carbohidratos.
+        porcentaje_grasas (float): % de grasas.
+
+    Returns:
+        tuple: (proteinas_gramos, carbohidratos_gramos, grasas_gramos)
+    """
+    if calorias <= 0:
+        raise ValueError("Las calorías deben ser un número positivo.")
+
+    if (porcentaje_proteinas + porcentaje_carbohidratos + porcentaje_grasas) != 100:
+        raise ValueError("La suma de los porcentajes debe ser igual a 100%.")
+
+    proteinas = (calorias * (porcentaje_proteinas / 100)) / 4
+    carbohidratos = (calorias * (porcentaje_carbohidratos / 100)) / 4
+    grasas = (calorias * (porcentaje_grasas / 100)) / 9
+
+    return proteinas, carbohidratos, grasas

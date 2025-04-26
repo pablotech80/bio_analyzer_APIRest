@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from src.body_analyzer.calculos import calcular_tmb, calcular_calorias_diarias, calcular_macronutrientes
+from src.body_analyzer.calculos import (calcular_tmb, calcular_calorias_diarias,
+                                        calcular_macronutrientes, calcular_macronutrientes_porcentajes)
 from src.body_analyzer.utils import convertir_genero, convertir_objetivo
 
 nutricion_bp = Blueprint("nutricion", __name__)
@@ -74,6 +75,39 @@ def macronutrientes_endpoint():
 
     except Exception as e:
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
+
+
+@nutricion_bp.route("/macros_porcentajes", methods=["POST"])
+def calcular_macronutrientes_porcentajes_endpoint():
+    """
+    Endpoint para calcular los gramos de proteínas, carbohidratos y grasas a partir del reparto porcentual de calorías.
+    """
+    try:
+        data = request.get_json()
+
+        calorias = float(data.get("calorias"))
+        porcentaje_proteinas = float(data.get("porcentaje_proteinas"))
+        porcentaje_carbohidratos = float(data.get("porcentaje_carbohidratos"))
+        porcentaje_grasas = float(data.get("porcentaje_grasas"))
+
+        # Llamada a la función de cálculo
+        proteinas, carbohidratos, grasas = calcular_macronutrientes_porcentajes(
+            calorias,
+            porcentaje_proteinas,
+            porcentaje_carbohidratos,
+            porcentaje_grasas
+        )
+
+        return jsonify({
+            "macronutrientes": {
+                "proteinas": round(proteinas, 2),
+                "carbohidratos": round(carbohidratos, 2),
+                "grasas": round(grasas, 2)
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 __all__ = ["nutricion_bp"]

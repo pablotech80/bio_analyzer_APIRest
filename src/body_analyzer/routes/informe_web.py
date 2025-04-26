@@ -5,8 +5,9 @@ from src.body_analyzer.calculos import (
     calcular_porcentaje_grasa, calcular_tmb, calcular_imc,
     calcular_agua_total, calcular_ffmi, calcular_peso_saludable,
     calcular_sobrepeso, calcular_rcc, calcular_ratio_cintura_altura,
-    calcular_calorias_diarias, calcular_macronutrientes
-)
+    calcular_calorias_diarias, calcular_macronutrientes, calcular_macronutrientes_porcentajes,
+    )
+
 from src.body_analyzer.interpretaciones import (
     interpretar_imc, interpretar_porcentaje_grasa, interpretar_ffmi,
     interpretar_rcc, interpretar_ratio_cintura_altura
@@ -24,7 +25,7 @@ def informe_web():
         try:
             data = request.form
 
-            # Captura de datos desde el formulario
+            # Captura de datos
             peso_str = data.get("peso", "").strip()
             altura_str = data.get("altura", "").strip()
             edad_str = data.get("edad", "").strip()
@@ -33,6 +34,7 @@ def informe_web():
             cadera_str = data.get("cadera", "").strip()
             genero_str = data.get("genero", "").strip().lower()
             objetivo_str = data.get("objetivo", "").strip().lower()
+            nivel = data.get("nivel", "").strip().lower()
 
             # Validación de campos obligatorios
             if not all([peso_str, altura_str, edad_str, cuello_str, cintura_str, genero_str, objetivo_str]):
@@ -48,6 +50,24 @@ def informe_web():
             genero = convertir_genero(genero_str)
             objetivo = convertir_objetivo(objetivo_str)
 
+            # Distribuciones por nivel
+            if nivel == "saludable":
+                distribucion = {
+                    "mantener peso": {"proteinas": 30, "carbohidratos": 40, "grasas": 30},
+                    "perder grasa": {"proteinas": 40, "carbohidratos": 20, "grasas": 40},
+                    "ganar masa muscular": {"proteinas": 25, "carbohidratos": 50, "grasas": 20},
+                }
+            elif nivel == "fitness":
+                distribucion = {
+                    "mantener peso": {"proteinas": 30, "carbohidratos": 45, "grasas": 25},
+                    "perder grasa": {"proteinas": 50, "carbohidratos": 20, "grasas": 30},
+                    "ganar masa muscular": {"proteinas": 30, "carbohidratos": 50, "grasas": 20},
+                }
+            elif nivel == "competicion":
+                distribucion = None  # A futuro capturará macros por gramos/kg
+            else:
+                raise ValueError("Nivel de ajuste de macronutrientes no válido.")
+
             # Cálculos biométricos
             porcentaje_grasa = calcular_porcentaje_grasa(cintura, cuello, altura, genero, cadera)
             tmb = calcular_tmb(peso, altura, edad, genero)
@@ -59,8 +79,42 @@ def informe_web():
             sobrepeso = calcular_sobrepeso(peso, altura)
             rcc = calcular_rcc(cintura, cadera) if genero == Sexo.MUJER else "N/A"
             ratio_cintura_altura = calcular_ratio_cintura_altura(cintura, altura)
+
+            # Calorías
             calorias_diarias = calcular_calorias_diarias(tmb, objetivo)
-            proteinas, carbohidratos, grasas = calcular_macronutrientes(calorias_diarias, objetivo)
+
+            # Cálculo de macronutrientes
+            if distribucion:
+                # Distribución estándar por nivel seleccionado
+                macros = distribucion[objetivo_str]
+                porcentaje_proteinas = macros["proteinas"]
+                porcentaje_carbohidratos = macros["carbohidratos"]
+                porcentaje_grasas = macros["grasas"]
+
+                proteinas, carbohidratos, grasas = calcular_macronutrientes_porcentajes(
+                    calorias_diarias,
+                    porcentaje_proteinas,
+                    porcentaje_carbohidratos,
+                    porcentaje_grasas
+                )
+            else:
+                # Distribución especial por gramos/kg (competición)
+                proteinas_kg_str = data.get("proteinas_kg", "").strip()
+                carbohidratos_kg_str = data.get("carbohidratos_kg", "").strip()
+                grasas_kg_str = data.get("grasas_kg", "").strip()
+
+                if not all([proteinas_kg_str, carbohidratos_kg_str, grasas_kg_str]):
+                    raise ValueError("Debe completar los gr. por kg de peso para proteínas, carbohidratos y grasas.")
+
+                gramos_proteinas_kg = float(proteinas_kg_str)
+                gramos_carbohidratos_kg = float(carbohidratos_kg_str)
+                gramos_grasas_kg = float(grasas_kg_str)
+
+                proteinas = peso * gramos_proteinas_kg
+                carbohidratos = peso * gramos_carbohidratos_kg
+                grasas = peso * gramos_grasas_kg
+
+                calorias_diarias = (proteinas * 4) + (carbohidratos * 4) + (grasas * 9)
 
             # Interpretaciones
             interpretaciones = {
@@ -71,7 +125,7 @@ def informe_web():
                 "ratio_cintura_altura": interpretar_ratio_cintura_altura(ratio_cintura_altura),
             }
 
-            # Resultados para renderizar
+            # Resultados
             resultados = {
                 "tmb": round(tmb, 2),
                 "imc": round(imc, 2),
@@ -88,9 +142,9 @@ def informe_web():
                 "ratio_cintura_altura": round(ratio_cintura_altura, 2),
                 "calorias_diarias": round(calorias_diarias, 2),
                 "macronutrientes": {
-                    "proteinas": round(proteinas, 2),
-                    "carbohidratos": round(carbohidratos, 2),
-                    "grasas": round(grasas, 2),
+                    "proteinas": round(proteinas, 2) if proteinas is not None else None,
+                    "carbohidratos": round(carbohidratos, 2) if carbohidratos is not None else None,
+                    "grasas": round(grasas, 2) if grasas is not None else None,
                 },
             }
 

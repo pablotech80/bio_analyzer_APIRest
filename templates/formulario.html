@@ -50,16 +50,25 @@
 
     <div class="col-12 col-md-3">
         <label for="cuello" class="form-label">Cuello (cm)</label>
+        <span data-bs-toggle="tooltip" title="Perimetro del cuello, medir justo debajo de la tráquea (punto más estrecho).">
+            <i class="bi bi-info-circle text-azul-logo"></i>
+        </span>
         <input type="number" class="form-control" id="cuello" name="cuello" value="{{ form_data.get('cuello', '') }}">
     </div>
 
     <div class="col-12 col-md-3">
         <label for="cintura" class="form-label">Cintura (cm)</label>
+        <span data-bs-toggle="tooltip" title="Perimetro de la cintura, medir en el punto más estrecho del abdomen, generalmente cerca del ombligo.">
+            <i class="bi bi-info-circle text-azul-logo"></i>
+        </span>
         <input type="number" class="form-control" id="cintura" name="cintura" value="{{ form_data.get('cintura', '') }}">
     </div>
 
     <div class="col-12 col-md-3" id="grupo-cadera">
         <label for="cadera" class="form-label">Cadera (cm) <span class="text-muted">(solo mujeres)</span></label>
+        <span data-bs-toggle="tooltip" title="Perimetro de la cadera, medir en la parte más ancha de las caderas y glúteos.">
+            <i class="bi bi-info-circle text-azul-logo"></i>
+        </span>
         <input type="number" class="form-control" id="cadera" name="cadera" value="{{ form_data.get('cadera', '') }}">
     </div>
 
@@ -67,7 +76,6 @@
     <div class="col-12">
         <h6 class="form-section-title border-bottom pb-1">🎯 Objetivo</h6>
     </div>
-
     <div class="col-12 col-md-4">
         <label for="objetivo" class="form-label">Objetivo</label>
         <select class="form-select" id="objetivo" name="objetivo">
@@ -77,6 +85,60 @@
             <option value="ganar masa muscular" {% if form_data.get('objetivo') == 'ganar masa muscular' %}selected{% endif %}>Ganar masa muscular</option>
         </select>
     </div>
+<!--Ajustes de macronutrientes-->
+    <div class="col-12 col-md-4">
+        <label for="nivel" class="form-label">
+    Ajuste de Macronutrientes
+    <span data-bs-toggle="tooltip" title="
+    • Saludable: Ajuste estándar para salud & bienestar.
+    • Fitness: Ajuste enfocado en composición corporal recreativa.
+    • Competición: Ajuste avanzado para atletas que requieren control preciso de macros.">
+        <i class="bi bi-info-circle text-azul-logo"></i>
+    </span>
+    </label>
+        <select id="nivel" name="nivel" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="saludable">Saludable (Bienestar general)</option>
+            <option value="fitness">Fitness Recreativo</option>
+            <option value="competicion">Atletas Competición</option>
+        </select>
+    </div>
+    <!-- Ajustes Avanzados para Competición -->
+    <div id="ajustes-competicion" class="row g-3 mt-4" style="display: none;">
+    <fieldset>
+        <legend class="form-section-title border-bottom pb-1">Ajustes de Macronutrientes Atletas Competición</legend>
+
+        <div class="col-12 col-md-4">
+            <label for="proteinas_kg" class="form-label">
+                Proteínas (g/kg)
+                <span data-bs-toggle="tooltip" title="Gramos de proteína por kilogramo de peso corporal.">
+                    <i class="bi bi-info-circle text-azul-logo"></i>
+                </span>
+            </label>
+            <input type="number" id="proteinas_kg" name="proteinas_kg" step="0.01" class="form-control">
+        </div>
+
+        <div class="col-12 col-md-4">
+            <label for="carbohidratos_kg" class="form-label">
+                Carbohidratos (g/kg)
+                <span data-bs-toggle="tooltip" title="Gramos de carbohidrato por kilogramo de peso corporal.">
+                    <i class="bi bi-info-circle text-azul-logo"></i>
+                </span>
+            </label>
+            <input type="number" id="carbohidratos_kg" name="carbohidratos_kg" step="0.01" class="form-control">
+        </div>
+
+        <div class="col-12 col-md-4">
+            <label for="grasas_kg" class="form-label">
+                Grasas (g/kg)
+                <span data-bs-toggle="tooltip" title="Gramos de grasa por kilogramo de peso corporal.">
+                    <i class="bi bi-info-circle text-azul-logo"></i>
+                </span>
+            </label>
+            <input type="number" id="grasas_kg" name="grasas_kg" step="0.01" class="form-control">
+        </div>
+    </fieldset>
+</div>
 
     <!-- Botones -->
     <div class="col-12 text-center mt-3">
@@ -84,4 +146,16 @@
         <a href="/informe_web" class="btn btn-outline-light ms-2">Limpiar</a>
     </div>
 </form>
+    <!-- JavaScript -->
+    <script>
+document.getElementById('nivel').addEventListener('change', function() {
+    var ajustes = document.getElementById('ajustes-competicion');
+    if (this.value === 'competicion') {
+        ajustes.style.display = 'block';
+    } else {
+        ajustes.style.display = 'none';
+    }
+});
+    </script>
+
 {% endblock %}
