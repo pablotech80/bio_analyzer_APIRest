@@ -160,3 +160,34 @@ def interpretar_ratio_cintura_altura(ratio: float) -> str:
         return "Moderado riesgo"
     else:
         return "Bajo riesgo"
+
+
+def interpretar_edad_metabolica_avanzada(edad_cronologica, edad_metabolica, imc, porcentaje_grasa, ratio_cintura_altura, genero):
+    """
+        Interpretación clínica de la edad metabólica, considerando también obesidad, grasa corporal y obesidad abdominal.
+        """
+
+    # Detectar si existe obesidad o problemas serios de composición corporal
+    obesidad_detectada = (
+            imc >= 30 or
+            (genero == "hombre" and porcentaje_grasa >= 25) or
+            (genero == "mujer" and porcentaje_grasa >= 32) or
+            ratio_cintura_altura > 0.5
+    )
+
+    diferencia = edad_metabolica - edad_cronologica
+
+    if obesidad_detectada:
+        if diferencia <= 5:
+            return "Tu metabolismo en reposo es aceptable, pero tu composición corporal indica un riesgo metabólico significativo. Se recomienda mejora urgente."
+        else:
+            return "Estado metabólico alterado debido a obesidad o composición corporal desfavorable. Riesgo metabólico elevado."
+    else:
+        if diferencia <= -5:
+            return "Excelente estado metabólico: tu metabolismo y composición corporal son muy buenos para tu edad."
+        elif -5 < diferencia <= 5:
+            return "Buen estado metabólico: tu metabolismo y composición corporal son adecuados para tu edad."
+        elif 5 < diferencia <= 10:
+            return "Estado metabólico moderadamente envejecido: sería ideal mejorar tu condición física general."
+        else:
+            return "Estado metabólico envejecido: se recomienda intervención en estilo de vida y salud metabólica."

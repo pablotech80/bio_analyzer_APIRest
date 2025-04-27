@@ -72,9 +72,40 @@
         <input type="number" class="form-control" id="cadera" name="cadera" value="{{ form_data.get('cadera', '') }}">
     </div>
 
+    <!-- Nivel de Actividad Física -->
+    <div class="col-12">
+        <h6 class="form-section-title border-bottom pb-1">🔥 Nivel de Actividad Física General</h6>
+    </div>
+    <div class="col-12 col-md-4">
+        <label for="factor_actividad" class="form-label">
+            Nivel de Actividad (FA)
+            <span data-bs-toggle="tooltip" title="Considera tu actividad diaria completa: trabajo, desplazamientos y entrenamientos. Entrenar una hora no compensa 8-10 horas de sedentarismo.">
+                <i class="bi bi-info-circle text-azul-logo"></i>
+            </span>
+        </label>
+        <select id="factor_actividad" name="factor_actividad" class="form-select" required>
+            <option value="">Seleccionar</option>
+            <option value="1.2" {% if form_data.get('factor_actividad') == '1.2' %}selected{% endif %}>Sedentario (trabajo de oficina, poca actividad física)</option>
+            <option value="1.375" {% if form_data.get('factor_actividad') == '1.375' %}selected{% endif %}>Ligero (trabajo sedentario + 1-2 entrenamientos/semana)</option>
+            <option value="1.55" {% if form_data.get('factor_actividad') == '1.55' %}selected{% endif %}>Moderado (vida activa + 3-5 entrenamientos/semana)</option>
+            <option value="1.725" {% if form_data.get('factor_actividad') == '1.725' %}selected{% endif %}>Activo (trabajo físico o entrenos diarios)</option>
+            <option value="1.9" {% if form_data.get('factor_actividad') == '1.9' %}selected{% endif %}>Muy activo (atleta, 2 entrenos/día o actividad muy exigente)</option>
+        </select>
+    </div>
+        <!-- Separador: Opcional -->
+    <div class="col-12 mt-4">
+        <h6 class="form-section-title border-bottom pb-1 text-info">
+            🎯 Opcional: Personalización de Objetivos y Macronutrientes
+        </h6>
+        <p class="text-muted small">
+            Esta sección no forma parte del diagnóstico de composición corporal.<br>
+            Si deseas conocer una distribución adecuada de calorías y macronutrientes según tu objetivo (mantener, perder grasa, ganar músculo), puedes completarlo.
+        </p>
+    </div>
+
     <!-- Objetivo -->
     <div class="col-12">
-        <h6 class="form-section-title border-bottom pb-1">🎯 Objetivo</h6>
+        <h6 class="form-section-title border-bottom pb-1">🎯 Objetivos</h6>
     </div>
     <div class="col-12 col-md-4">
         <label for="objetivo" class="form-label">Objetivo</label>
@@ -142,8 +173,8 @@
 
     <!-- Botones -->
     <div class="col-12 text-center mt-3">
-        <button type="submit" class="btn btn-info px-4">Analizar</button>
-        <a href="/informe_web" class="btn btn-outline-light ms-2">Limpiar</a>
+        <button type="submit" class="btn btn-info px-4">Analizar datos</button>
+        <a href="/informe_web" class="btn btn-outline-light ms-2">Limpiar datos</a>
     </div>
 </form>
     <!-- JavaScript -->

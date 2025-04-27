@@ -4,7 +4,7 @@
 {% block content %}
 <div class="text-center mb-4">
     <img src="{{ url_for('static', filename='img/bio_analyze.jpg') }}" alt="BioAnalyze Logo" width="160" class="rounded-circle mb-3">
-    <h1 class="mt-2">Resultado del Análisis e interpretaciones</h1>
+    <h1 class="mt-2">Resultado del Análisis e Interpretaciones</h1>
     <p class="lead text-center">
         Tus métricas han sido analizadas con precisión para ofrecerte una visión clara de tu estado físico actual.<br>
         Usa esta información como base para optimizar tu progreso y alcanzar tus objetivos.
@@ -17,7 +17,7 @@
   <div class="col-12">
     <h6 class="form-section-title border-bottom pb-1">🔥 Metabolismo</h6>
   </div>
-
+    <!-- TMB -->
   <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
@@ -34,7 +34,39 @@
       </div>
     </div>
   </div>
+        <!-- TDEE -->
+    <div class="col-12 col-md-6">
+    <div class="card shadow-sm">
+        <div class="card-body">
+        <h6 class="card-title mb-1">
+            TDEE (Gasto Energético Diario Estimado): {{ resultados.tdee }} kcal
+            <span data-bs-toggle="tooltip" title="Tu gasto calórico diario estimado considerando tu nivel de actividad física general.">
+            <i class="bi bi-info-circle text-azul-logo"></i>
+            </span>
+        </h6>
+        <p class="text-muted small">Basado en tu TMB multiplicado por tu nivel de actividad física.</p>
+        </div>
+        <!-- Edad Metabólica -->
+    </div>
+    </div>
+    <div class="col-12 col-md-6">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h6 class="card-title mb-1">
+        Edad Metabólica: {{ resultados.edad_metabolica }} años
+        <span data-bs-toggle="tooltip" title="Edad metabólica ajustada considerando tu metabolismo basal y composición corporal (IMC, porcentaje de grasa y obesidad abdominal). Una edad metabólica más elevada puede indicar riesgo metabólico, incluso si tu metabolismo basal es adecuado.">
+            <i class="bi bi-info-circle text-azul-logo"></i>
+        </span>
+      </h6>
+      <p class="text-muted small">Un metabolismo más joven indica buena condición física y salud metabólica.</p>
+      {% if interpretaciones.edad_metabolica %}
+      <p class="text-azul-logo small">{{ interpretaciones.edad_metabolica }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
 
+ <!-- Calorias Diarias -->
   <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
@@ -119,10 +151,11 @@
   </div>
 
   <!-- 🍽️ Macronutrientes -->
-  <div class="col-12">
-    <h6 class="form-section-title border-bottom pb-1">🍽️ Macronutrientes diarios</h6>
-  </div>
+<div class="col-12">
+  <h6 class="form-section-title border-bottom pb-1">🍽️ Macronutrientes diarios</h6>
+</div>
 
+{% if resultados.macronutrientes and resultados.macronutrientes.proteinas %}
   <div class="col-12 col-md-6">
     <div class="card shadow-sm">
       <div class="card-body">
@@ -132,9 +165,20 @@
       </div>
     </div>
   </div>
-</div>
+{% else %}
+  <div class="col-12 col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <p class="text-muted small mb-0">No se calcularon macronutrientes porque no seleccionaste objetivo.</p>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 
 <div class="text-center mt-4">
   <a href="/informe_web" class="btn btn-outline-primary px-4">← Volver al formulario</a>
 </div>
+</div>
+
 {% endblock %}

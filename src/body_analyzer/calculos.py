@@ -413,3 +413,42 @@ def calcular_macronutrientes_porcentajes(
     grasas = (calorias * (porcentaje_grasas / 100)) / 9
 
     return proteinas, carbohidratos, grasas
+
+def calcular_edad_metabolica_avanzada(tmb, genero, edad_cronologica, imc, porcentaje_grasa, ratio_cintura_altura):
+    """
+        Calcula la edad metabólica ajustada clínicamente con un límite de penalización para evitar interpretaciones médicas incorrectas.
+        """
+    # Tabla de TMB promedio
+    tmb_por_edad_hombre = {
+        18: 1660, 25: 1600, 30: 1550, 35: 1500, 40: 1450, 45: 1400, 50: 1350, 55: 1300, 60: 1250
+        }
+    tmb_por_edad_mujer = {
+        18: 1450, 25: 1400, 30: 1350, 35: 1300, 40: 1250, 45: 1200, 50: 1150, 55: 1100, 60: 1050
+        }
+
+    tabla = tmb_por_edad_hombre if genero == "hombre" else tmb_por_edad_mujer
+    edad_metabolica_base = min(tabla.keys(), key = lambda edad: abs(tmb - tabla[edad]))
+
+    penalizacion = 0
+
+    if 25 <= imc < 30:
+        penalizacion += 3
+    elif 30 <= imc < 35:
+        penalizacion += 7
+    elif 35 <= imc < 40:
+        penalizacion += 10
+    elif imc >= 40:
+        penalizacion += 15
+
+    if (genero == "hombre" and porcentaje_grasa >= 25) or (genero == "mujer" and porcentaje_grasa >= 32):
+        penalizacion += 5
+
+    if ratio_cintura_altura > 0.5:
+        penalizacion += 3
+
+    # Limitar penalización máxima a +20 años
+    penalizacion = min(penalizacion, 20)
+
+    edad_metabolica_ajustada = edad_metabolica_base + penalizacion
+
+    return edad_metabolica_ajustada
