@@ -93,14 +93,14 @@ def informe_web():
 
                 if nivel == "saludable":
                     distribucion = {
-                        "mantener peso": {"proteinas": 30, "carbohidratos": 40, "grasas": 30},
-                        "perder grasa": {"proteinas": 40, "carbohidratos": 20, "grasas": 40},
-                        "ganar masa muscular": {"proteinas": 25, "carbohidratos": 50, "grasas": 20},
+                        "mantener peso": {"proteinas": 25, "carbohidratos": 50, "grasas": 25},
+                        "perder grasa": {"proteinas": 35, "carbohidratos": 30, "grasas": 35},
+                        "ganar masa muscular": {"proteinas": 30, "carbohidratos": 55, "grasas": 15},
                     }
                 elif nivel == "fitness":
                     distribucion = {
                         "mantener peso": {"proteinas": 30, "carbohidratos": 45, "grasas": 25},
-                        "perder grasa": {"proteinas": 50, "carbohidratos": 20, "grasas": 30},
+                        "perder grasa": {"proteinas": 40, "carbohidratos": 20, "grasas": 40},
                         "ganar masa muscular": {"proteinas": 30, "carbohidratos": 50, "grasas": 20},
                     }
                 elif nivel == "competicion":
