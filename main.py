@@ -1,16 +1,13 @@
 import sys
 import os
 from pathlib import Path
-
-
 from dotenv import load_dotenv
-load_dotenv()
 from flask import redirect, url_for
-
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-
 from flask import Flask
 from src.body_analyzer.routes import all_blueprints
+
+load_dotenv()
 
 # Configuración de Flask como constante
 FLASK_CONFIG = {
