@@ -1,13 +1,13 @@
 import sys
 import os
 from pathlib import Path
-from dotenv import load_dotenv
+
 from flask import redirect, url_for
+
 sys.path.append(str(Path(__file__).resolve().parent.parent))
+
 from flask import Flask
 from src.body_analyzer.routes import all_blueprints
-
-load_dotenv()
 
 # Configuración de Flask como constante
 FLASK_CONFIG = {
@@ -26,7 +26,7 @@ def create_app():
         template_folder= 'templates',
         static_folder= 'static'
         )
-    app.secret_key = os.getenv('SECRET_KEY')
+    app.secret_key = 'bioanalyze_super_secret_key'
     app.config.update(FLASK_CONFIG)
     register_blueprints(app)
 
