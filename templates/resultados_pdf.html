@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Informe Bio•Analyze</title>
+    <style>
+        body {
+            font-family: Helvetica, sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #000;
+            margin: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #040054;
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #040054;
+            font-size: 14px;
+            border-bottom: 1px solid #ccc;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .section {
+            margin-bottom: 15px;
+        }
+
+        .key {
+            font-weight: bold;
+            display: inline-block;
+            width: 220px;
+        }
+
+        .value {
+            display: inline-block;
+        }
+
+        .footer {
+            margin-top: 40px;
+            border-top: 1px solid #ccc;
+            font-size: 10px;
+            text-align: center;
+            padding-top: 10px;
+            color: #777;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="logo">
+        <img src="{{ logo_path }}" width="130" alt="BioAnalyze Logo">
+    </div>
+
+    <h1>Informe de Composición Corporal</h1>
+
+    <div class="section">
+        <h2>Metabolismo</h2>
+        <p><span class="key">Tasa Metabólica Basal (TMB):</span> {{ resultados["TMB"] }} kcal</p>
+        <p><span class="key">Edad Metabólica:</span> {{ resultados["Edad Metabólica"] }}</p>
+    </div>
+
+    <div class="section">
+        <h2>Composición Corporal</h2>
+        <p><span class="key">Porcentaje de Grasa Corporal:</span> {{ resultados["% Grasa"] }}%</p>
+        <p><span class="key">Índice de Masa Corporal (IMC):</span> {{ resultados["IMC"] }}</p>
+        <p><span class="key">Relación Cintura-Cadera (RCC):</span> {{ resultados["RCC"] }}</p>
+    </div>
+
+    {% if "Macronutrientes" in resultados %}
+  <div class="section">
+      <h2>Macronutrientes Recomendados</h2>
+      <p><span class="key">Proteínas:</span> {{ resultados["Macronutrientes"]["Proteínas"] }}</p>
+      <p><span class="key">Grasas:</span> {{ resultados["Macronutrientes"]["Grasas"] }}</p>
+      <p><span class="key">Carbohidratos:</span> {{ resultados["Macronutrientes"]["Carbohidratos"] }}</p>
+  </div>
+{% endif %}
+
+
+    {% if "Peso Saludable" in resultados %}
+  <div class="section">
+      <h2>Peso Saludable</h2>
+      <p><span class="key">Rango Saludable:</span> {{ resultados["Peso Saludable"]["rango"] }}</p>
+      <p><span class="key">Recomendación:</span> {{ resultados["Peso Saludable"]["recomendacion"] }}</p>
+  </div>
+{% endif %}
+
+
+    <div class="section">
+        <h2>Interpretación General</h2>
+        {% for frase in interpretaciones %}
+            <p>{{ frase }}</p>
+        {% endfor %}
+    </div>
+
+    <div class="footer">
+        Informe generado automáticamente por Bio•Analyze<br>
+        <strong>Powered by ptech.dev</strong>
+    </div>
+
+</body>
+</html>

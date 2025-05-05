@@ -1,6 +1,5 @@
 from flask import Blueprint, request, render_template, session
-
-
+from .generate_pdf import bp as generate_pdf_bp
 from src.body_analyzer.model import Sexo
 from src.body_analyzer.utils import convertir_genero, convertir_objetivo
 from src.body_analyzer.calculos import (
@@ -170,6 +169,9 @@ def informe_web():
 
             form_data = data.to_dict()
             session["form_data"] = form_data
+            session["resultados"] = resultados
+            session["interpretaciones"] = interpretaciones
+
             return render_template("resultados.html", resultados=resultados, interpretaciones=interpretaciones, form_data=form_data)
 
         except Exception as e:
@@ -177,5 +179,6 @@ def informe_web():
 
     form_data = session.pop('form_data', {})
     return render_template("formulario.html", form_data=form_data)
+
 
 

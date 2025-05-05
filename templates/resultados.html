@@ -178,6 +178,8 @@
 
 <div class="text-center mt-4">
   <a href="/informe_web" class="btn btn-outline-primary px-4">← Volver al formulario</a>
+  <a href="{{ url_for('generate_pdf.generate_pdf') }}" class="btn btn-outline-primary">Ver Informe PDF</a>
+  <a href="{{ url_for('generate_pdf.generate_pdf') }}?descargar=1" class="btn btn-primary">Descargar Informe PDF</a>
 </div>
 </div>
 
