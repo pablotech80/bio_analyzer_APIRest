@@ -1,99 +1,104 @@
-# **Bio Analyze API** 🚀
+# **Bio•Analyze API** 
 
-<img src="/body_analyzer/static/img/bio_analyze.jpg" alt="Logo" width="300" />
+<img src="bio_analyze.jpg" alt="Logo" width="300" title="Bioanalyze"/>
 
-[![Version](https://img.shields.io/badge/version-1.0.0--beta-blue)]()
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)]()
-[![License](https://img.shields.io/badge/license-MIT-yellow)]()  
-[![Deployed on Heroku](https://img.shields.io/badge/Heroku-Live-purple)](https://your-heroku-app.herokuapp.com)  
-> **Biometric analysis API designed for healthcare professional nutritionists and personal trainers.**
+[![Versión](https://img.shields.io/badge/version-1.0.0--beta-blue)]()
+[![Estado](https://img.shields.io/badge/build-passing-brightgreen)]()
+[![Licencia](https://img.shields.io/badge/license-MIT-yellow)]()  
+[![Desplegado en Railway](https://img.shields.io/badge/Railway-Live-orange)](https://bioanalyze.up.railway.app/informe_web)
 
----
-
-## **Index**
-1. [Description](#description)
-2. [Main Features](#main-features)
-3. [Requirements](#requirements)
-4. [Installation and use](#installation-and-use)
-5. [Local tests](#local-tests)
-6. [Available endpoints](#available-endpoints)
-7. [Flowchart](#flowchart)
-8. [Production](#production)
-9. [Endnotes](#endnotes)
-10. [Contributions](#contributions)
-11. [License](#license)
-
+> **API para análisis de composición corporal y recomendaciones nutricionales. Ideal para entrenadores personales, 
+> nutricionistas y profesionales de la salud.**
 
 ---
 
-## **Description**
+## Índice
 
-The **Bio Analyze** API allows for advanced biometric calculations and initial nutritional recommendations from basic user data. 
-
-It is designed as a **BACKEND** tool that can be integrated with a web form or app to capture input data.
-
-It is ideal for:
-- **Personal trainers**: Initial setup of training plans and goals.
-- **Nutritionists**: Personalised dietary recommendations.
-- **Health professionals**: Fast and accurate assessments.
-
-You can try the **beta** version in production here: 🌐 [**Body Analyzer API in Heroku**](https://bioanalyze-f0d59edaef22.herokuapp.com)
+1. [Descripción](#descripción)
+2. [Funciones principales](#funciones-principales)
+3. [Requisitos](#requisitos)
+4. [Instalación y uso](#instalación-y-uso)
+5. [Pruebas locales](#pruebas-locales)
+6. [Endpoints disponibles](#endpoints-disponibles)
+7. [Diagrama de flujo](#diagrama-de-flujo)
+8. [Producción](#producción)
+9. [Notas finales](#notas-finales)
+10. [Contribuciones](#contribuciones)
+11. [Licencia](#licencia)
 
 ---
 
-## **Main Features**
+## Descripción
 
-1. **Advanced calculations:**
+**Bio•Analyze** es una API que permite realizar cálculos biométricos avanzados y obtener recomendaciones iniciales de nutrición. Diseñada como herramienta backend para integrarse con formularios web o aplicaciones.
 
-- **BMI**: Detects if high BMI is due to muscle mass or excess fat.
-- **Body fat percentage**: Estimates based on proven formulas.
-- **BMR and daily calories**: Adjusted according to the goal.
+Pensado para:
+- Entrenadores personales
+- Nutricionistas y dietistas
+- Profesionales del bienestar y salud
 
-2. **Customizable goals:**
-- Lose fat.
-- Maintain weight.
-- Gain muscle mass.
+Puedes probar la versión beta en producción: 🌐 [Bio Analyze API en Railway](https://bioanalyze.up.railway.app/informe_web)
 
-3. **Macronutrient recommendations**: Protein, carbohydrate and fat ratios according to the goal.
-
-4. **Easy integration**: Designed to be integrated into a website or application.
 ---
 
-## **Requirements**
+## Funciones principales
 
-- **Python 3.13+**
-- Required libraries (installed automatically from `pyproject.toml` file).
+1. **Cálculos precisos y automáticos**:
+   - IMC (con interpretación contextualizada)
+   - Porcentaje de grasa corporal
+   - TMB (Tasa Metabólica Basal) y calorías recomendadas
+   - Agua total, masa muscular estimada, sobrepeso
+
+2. **Objetivos personalizables**:
+   - Perder grasa
+   - Mantener peso
+   - Ganar masa muscular
+
+3. **Macronutrientes sugeridos** (proteínas, grasas, carbohidratos)
+
+4. **Interpretaciones inteligentes**:
+   - Basadas en fórmulas científicas
+   - Incluyen riesgos cardiovasculares (ratio cintura-altura, RCC)
+   - Diagnóstico visual inmediato
+
+5. **Frontend moderno y responsive**:
+   - Formularios claros
+   - Visualización detallada en tarjetas
+   - Compatible con móvil y escritorio
+
 ---
 
-## **Installation and use**
+## Requisitos
 
-### **1. Clone the repository**
+- Python 3.13+
+- Librerías listadas en `pyproject.toml`
+
+---
+
+## Instalación y uso
+
+### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/your_user/body_analyzer.git
-cd body_analyzer
+git clone https://github.com/tu_usuario/bioanalyze.git
+cd bioanalyze
 ```
-### **2. Install the dependencies**
+### 2. Instalar Dependencias
 ```bash
 pip install .
-```
-Or, if you prefer to use the Makefile:
-```bash
+# o usando Makefile:
 make install
 ```
-### **3. Run the API locally**
+### 3. Ejecuta la API localmente
 ```bash
 python src/body_analyzer/main.py
 ```
-The API will be available at http://127.0.0.1:5000
+Disponible en: http://127.0.0.1:5000
 
----
+## Pruebas locales
 
-## **Local tests**
+Puedes probar la API con Postman, cURL u otra herramienta HTTP.
 
-You can test the API locally with Postman, cURL, or any tool that supports HTTP requests.
-Here is an example of the main endpoint:
-
-Example of requests with cURL
+Ejemplo con cURL:
 ```bash
 curl -X POST http://127.0.0.1:5000/informe_completo \
 -H "Content-Type: application/json" \
@@ -109,8 +114,7 @@ curl -X POST http://127.0.0.1:5000/informe_completo \
 }'
 ```
 
-### Expected response
-
+Respuesta esperada:
 ```bash
 {
   "interpretaciones": {
@@ -143,114 +147,124 @@ curl -X POST http://127.0.0.1:5000/informe_completo \
   }
 }
 ```
-
----
-## **Available Endpoints**
-
-_Method / Path / Description_
-
-* GET / Verifies that the server is running.
-
-* POST /full_report / Generates a full biometric report.
-* POST /calculate_bmi / Calculates the body mass index (BMI).
-* POST /calculate_weight_body_fat / Calculates body fat in kilograms.
-* POST /daily_calories / Calculates the recommended daily calories.
-* POST /macronutrients / Calculates the macronutrient distribution.
-* And more in the endpoints.py file
 ---
 
-## **Flowchart**
+## Endpoints disponibles
+
+| Método | Ruta                                   | Descripción                          |
+|:-------|:---------------------------------------|:-------------------------------------|
+| GET    | `/`                                    | Verifica que el servidor esté activo |
+| POST   | `/informe_completo`                    | Genera informe completo              |
+| POST   | `/calcular_imc`                        | Calcula el IMC                       |
+| POST   | `/calcular_porcentaje_grasa`           | Grasa corporal (kg)                  |
+| POST   | `/calcular_calorias_diarias`           | Calorías diarias recomendadas        |
+| POST   | `/calcular_macronutrientes_porcentaje` | Reparto de macronutrientes           |
+| ...    | *Ver archivo `calculos.py`*            | Más funciones disponibles            |
+
+---
+
+## Diagrama de flujo
+
+Este diagrama representa cómo se procesa la información dentro de la API Bio•Analyze desde la entrada del usuario hasta la entrega del informe:
+
+1. **Inicio**  
+   El usuario completa un formulario con sus datos físicos y biométricos (edad, peso, altura, género, etc.).
+
+2. **Validación de datos**  
+   Se comprueba que todos los campos requeridos sean válidos. Si hay errores, se muestra un mensaje al usuario.
+
+3. **Procesamiento de datos en backend**  
+   Se realizan cálculos biométricos como IMC, TMB, FFMI, porcentaje de grasa corporal, masa muscular, agua corporal y otros indicadores.
+
+4. **Generación de interpretaciones**  
+   Se aplican reglas personalizadas para interpretar los resultados y brindar contexto útil (por ejemplo, si un IMC alto se debe a masa muscular).
+
+5. **Cálculo de macronutrientes**  
+   Basado en el objetivo del usuario (perder grasa, mantener, ganar masa muscular), se ajustan los gramos de proteínas, grasas y carbohidratos diarios.
+
+6. **Informe final**  
+   Todos los resultados se presentan al usuario en formato visual con tarjetas informativas. 
+7. Próximamente podrá exportarse en PDF.
 
 
 [![](https://mermaid.ink/img/pako:eNptkUtOwzAQhq9ied1eIAskRCsEElBRYIG8GewhsYg90dhGgqYHYsGKI-RiOE7UglSv5h9_895JTQZlJWuGrhEPK-VFfo8hAVsSy-VZv_bvwzcIA5GCuN7e3fbifHM1cdkozBO01sxMLyal7fDjJ-yPo-AXxIw6Ui82TBoDOIs-0gT_cxX8Ej0yCMaQ2ggmt_FiyQ1fka0e690fPqYMRz0PEBnrMV6TQz82Qh6D6JAD-dzaJxjIaeahT7e8ZiYupbqEIULRysuFdMgOrMk73I2hSsYGHSpZZdMAvymp_D5zkCJtP7yWVeSEC8mU6kZWr9CGrFKXl4crC_kQ7uDtwD8THTUaG4lvppOVy-1_AZSnoCA?type=png)](https://mermaid.live/edit#pako:eNptkUtOwzAQhq9ied1eIAskRCsEElBRYIG8GewhsYg90dhGgqYHYsGKI-RiOE7UglSv5h9_895JTQZlJWuGrhEPK-VFfo8hAVsSy-VZv_bvwzcIA5GCuN7e3fbifHM1cdkozBO01sxMLyal7fDjJ-yPo-AXxIw6Ui82TBoDOIs-0gT_cxX8Ej0yCMaQ2ggmt_FiyQ1fka0e690fPqYMRz0PEBnrMV6TQz82Qh6D6JAD-dzaJxjIaeahT7e8ZiYupbqEIULRysuFdMgOrMk73I2hSsYGHSpZZdMAvymp_D5zkCJtP7yWVeSEC8mU6kZWr9CGrFKXl4crC_kQ7uDtwD8THTUaG4lvppOVy-1_AZSnoCA)
 
+---
+
+##  Producción
+
+La API está desplegada actualmente en Railway (versión beta):  
+🌐 https://bioanalyze.up.railway.app/informe_web
+
+Puedes utilizar los mismos endpoints mencionados anteriormente, 
+solo debes reemplazar `http://127.0.0.1:5000` por la URL en producción.
 
 ---
 
-## **Production**
+## Notas finales
 
-The API is deployed on Heroku in beta: 🌐 Body Analyzer API on Heroku
-https://bioanalyze-f0d59edaef22.herokuapp.com
+**Próximas versiones incluirán:**
+- Implementación de autenticación.
+- Integración con base de datos para guardar historiales.
+- Integración con FitMasterAI (GPT personalizado)
+- Exportación de informes en PDF.
+- Frontend para facilitar el uso desde móvil y escritorio.
 
-Testing in production,
-You can use the same routes and data mentioned in the previous sections
-but replace http://127.0.0.1:5000 with the Heroku URL.
 ---
 
-## **Endnotes**
+## Contribuciones
 
-Future Releases
-* Authentication implementation.
-* Database integration.
-* Creation of a frontend to facilitate the use of the API.
----
+¡Este proyecto está abierto a contribuciones! Si deseas participar:
 
-## **Contributions**
-
-This project is open for contributions! If you'd like to contribute:
-
-1. Fork the repository.
-2. Create a new branch for your changes:
+1. Haz un fork del repositorio.
+2. Crea una nueva rama para tus cambios:
 ```bash
-git checkout -b feature/new-feature
+git checkout -b feature/nueva-funcionalidad
 ```
-3. Commit your changes and make descriptive commits:
-```bash
-git commit -m "Added new feature to calculate ..."
+
+Realiza tus cambios y agrega un commit descriptivo:
+
+```bash 
+git commit -m "Agregado nuevo cálculo para ..."
 ```
-4. Submit a pull request explaining your changes.
 
-Please make sure to follow coding best practices and, if possible, add unit tests for any new features.
----
+Envía un pull request explicando lo que has modificado.
+Asegúrate de seguir las buenas prácticas de programación y, 
+si es posible, añade pruebas unitarias para cualquier nueva funcionalidad.
 
-## **License**
+## Licencia
 
-Copyright © 2024 Pablo Techera Sosa. All rights reserved.
+Copyright © 2024 Pablo Techera Sosa.
 
----
+1. Permisos
+Se otorgan los siguientes permisos bajo las siguientes condiciones:
 
-### 1. Permissions
+Uso personal y educativo:
+Puedes usar este proyecto libremente para fines de aprendizaje o educación.
+Modificaciones y colaboraciones:
+Puedes modificar el código y colaborar mediante pull requests.
+Las contribuciones serán revisadas y aprobadas por los mantenedores del proyecto.
 
-Permission is granted to anyone to contribute, modify, and/or improve this project under the following conditions:
+Redistribución:
+Si redistribuyes una versión modificada, debes incluir esta misma licencia.
+El uso comercial del proyecto está prohibido sin autorización explícita del autor.
 
-1. **Personal and Educational Use**:
-- You may use this project for educational or learning purposes without any restrictions.
+2. Restricciones
+Derechos de autor:
+Este proyecto es propiedad intelectual de Pablo Techera Sosa.
+Todas las contribuciones aceptadas se considerarán licenciadas para el uso dentro del proyecto original.
 
-2. **Modifications and Collaborations**:
-- You may modify the code and collaborate on the development by submitting pull requests to the official repository.
-- Contributions will be reviewed and approved by the project's authors or maintainers.
+Uso comercial:
+Prohibido el uso comercial sin permiso expreso y por escrito.
 
-3. **Redistribution and Derivative Uses**:
-- If you decide to redistribute a modified version of the project, you must include this same licence along with the original author's copyright.
-- Commercial use of the project or its modifications is not permitted without the explicit written permission of the author.
+Limitación de responsabilidad:
+Este software se proporciona "tal cual", sin garantías.
+Los autores no serán responsables de daños derivados del uso del proyecto.
 
----
+3. Cómo contribuir
+Haz un fork del repositorio.
+Crea una nueva rama para tus modificaciones.
+Envía un pull request explicando claramente los cambios.
 
-### 2. Restrictions
-
-1. **Copyright**:
-- This project remains the intellectual property of Pablo Techera Sosa.
-- All accepted contributions to the official repository are considered licensed for use within the original project under the terms of this license.
-
-2. **Commercial Use**:
-- Commercial use of the project, whether in its original or modified form, is prohibited without express written permission.
-
-3. **Limitation of Liability**:
-- This software is provided "as is", without a warranty of any kind, express or implied. 
-- In no event shall the authors be liable for damages or problems arising from the use of the project.
-
----
-
-### 3. How to Contribute
-
-If you wish to contribute to this project:
-
-1. Fork the repository.
-2. Create a new branch for your modifications.
-3. Send a pull request clearly describing the changes made.
-
----
-
-### 4. Final Note
-
-By contributing to this project, you agree that your contributions may be used and distributed under the terms of this licence.
+4. Nota final
+Al contribuir en este proyecto, aceptas que tus aportaciones pueden ser utilizadas y distribuidas bajo esta licencia.
