@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Inicio - CoachBodyFit360{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h1 class="display-4 mb-4">
+                <i class="fas fa-dumbbell text-primary"></i>
+                Bienvenido a CoachBodyFit360
+            </h1>
+            
+            <p class="lead mb-4">
+                Tu plataforma integral para análisis corporal, nutrición y entrenamiento personalizado.
+            </p>
+            
+            {% if current_user.is_authenticated %}
+                <div class="alert alert-success">
+                    <h4><i class="fas fa-user-check"></i> ¡Hola, {{ current_user.username }}!</h4>
+                    <p>Has iniciado sesión correctamente.</p>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <i class="fas fa-chart-line fa-3x text-primary mb-3"></i>
+                                <h5>Análisis Corporal</h5>
+                                <p class="text-muted">Próximamente</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <i class="fas fa-utensils fa-3x text-success mb-3"></i>
+                                <h5>Nutrición</h5>
+                                <p class="text-muted">Próximamente</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <i class="fas fa-dumbbell fa-3x text-danger mb-3"></i>
+                                <h5>Entrenamiento</h5>
+                                <p class="text-muted">Próximamente</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            {% else %}
+                <div class="row mt-5">
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <i class="fas fa-user-plus fa-3x text-primary mb-3"></i>
+                                <h3>¿Nuevo aquí?</h3>
+                                <p class="text-muted">Crea tu cuenta y comienza tu transformación</p>
+                                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                                    Registrarse Gratis
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="card shadow-sm">
+                            <div class="card-body p-4">
+                                <i class="fas fa-sign-in-alt fa-3x text-success mb-3"></i>
+                                <h3>¿Ya tienes cuenta?</h3>
+                                <p class="text-muted">Accede a tu panel de control</p>
+                                <a href="{{ url_for('auth.login') }}" class="btn btn-success btn-lg">
+                                    Iniciar Sesión
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

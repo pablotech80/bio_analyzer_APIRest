@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Perfil - CoachBodyFit360{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-edit"></i> Editar Perfil
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('auth.edit_profile') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <!-- Username -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.username.label(class="form-label") }}
+                                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                                {% if form.username.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.username.errors[0] }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Email -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.email.label(class="form-label") }}
+                                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), type="email") }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.email.errors[0] }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- First Name -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.first_name.label(class="form-label") }}
+                                {{ form.first_name(class="form-control") }}
+                            </div>
+                            
+                            <!-- Last Name -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.last_name.label(class="form-label") }}
+                                {{ form.last_name(class="form-control") }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <!-- Phone -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.phone.label(class="form-label") }}
+                                {{ form.phone(class="form-control", placeholder="+34 123 456 789") }}
+                            </div>
+                            
+                            <!-- Date of Birth -->
+                            <div class="col-md-6 mb-3">
+                                {{ form.date_of_birth.label(class="form-label") }}
+                                {{ form.date_of_birth(class="form-control") }}
+                            </div>
+                        </div>
+                        
+                        <!-- Gender -->
+                        <div class="mb-3">
+                            {{ form.gender.label(class="form-label") }}
+                            {{ form.gender(class="form-select") }}
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- Buttons -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('auth.profile') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancelar
+                            </a>
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

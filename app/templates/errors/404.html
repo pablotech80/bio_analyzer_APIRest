@@ -1,0 +1,15 @@
+<!-- app/templates/errors/404.html -->
+{% extends "base.html" %}
+
+{% block title %}404 - Página no encontrada{% endblock %}
+
+{% block content %}
+<div class="container text-center my-5">
+    <h1 class="display-1">404</h1>
+    <h2>Página no encontrada</h2>
+    <p class="lead">Lo sentimos, la página que buscas no existe.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-home"></i> Volver al inicio
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil - CoachBodyFit360{% endblock %}
+
+{% block content %}
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-md-8 mx-auto">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">
+                            <i class="fas fa-user-circle"></i> Mi Perfil
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-sm-4 font-weight-bold">Nombre de usuario:</div>
+                            <div class="col-sm-8">{{ user.username }}</div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4 font-weight-bold">Email:</div>
+                            <div class="col-sm-8">
+                                {{ user.email }}
+                                {% if user.is_verified %}
+                                    <span class="badge bg-success">
+                <i class="fas fa-check-circle"></i> Verificado
+            </span>
+                                {% else %}
+                                    <span class="badge bg-warning">
+                <i class="fas fa-exclamation-circle"></i> No verificado
+            </span>
+                                    <form method="POST" action="{{ url_for('auth.resend_verification') }}"
+                                          class="d-inline">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="btn btn-sm btn-outline-primary ms-2">
+                                            <i class="fas fa-envelope"></i> Reenviar verificación
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4 font-weight-bold">Nombre completo:</div>
+                            <div class="col-sm-8">
+                                {{ user.full_name if user.first_name else 'No especificado' }}
+                            </div>
+                        </div>
+
+                        {% if user.phone %}
+                            <div class="row mb-3">
+                                <div class="col-sm-4 font-weight-bold">Teléfono:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-phone"></i> {{ user.phone }}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if user.date_of_birth %}
+                            <div class="row mb-3">
+                                <div class="col-sm-4 font-weight-bold">Fecha de nacimiento:</div>
+                                <div class="col-sm-8">
+                                    <i class="fas fa-birthday-cake"></i>
+                                    {{ user.date_of_birth.strftime('%d/%m/%Y') }}
+                                    {% set age = ((now().date() - user.date_of_birth).days / 365.25) | int %}
+                                    <span class="text-muted">({{ age }} años)</span>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        {% if user.gender %}
+                            <div class="row mb-3">
+                                <div class="col-sm-4 font-weight-bold">Género:</div>
+                                <div class="col-sm-8">
+                                    {% if user.gender == 'male' %}
+                                        <i class="fas fa-mars text-primary"></i> Masculino
+                                    {% elif user.gender == 'female' %}
+                                        <i class="fas fa-venus text-danger"></i> Femenino
+                                    {% else %}
+                                        <i class="fas fa-genderless"></i> Otro
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4 font-weight-bold">Rol:</div>
+                            <div class="col-sm-8">
+                            <span class="badge bg-info">
+                                {{ user.role.name if user.role else 'Sin rol' }}
+                            </span>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4 font-weight-bold">Miembro desde:</div>
+                            <div class="col-sm-8">
+                                {{ user.created_at.strftime('%d/%m/%Y') if user.created_at else 'N/A' }}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-sm-4 font-weight-bold">Último acceso:</div>
+                            <div class="col-sm-8">
+                                {{ user.last_login.strftime('%d/%m/%Y %H:%M') if user.last_login else 'Primer acceso' }}
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{{ url_for('auth.change_password') }}" class="btn btn-warning">
+                                <i class="fas fa-key"></i> Cambiar Contraseña
+                            </a>
+                            <a href="{{ url_for('auth.edit_profile') }}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Editar Perfil
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
