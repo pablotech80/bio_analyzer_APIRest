@@ -1,0 +1,87 @@
+<!-- app/templates/auth/register.html -->
+{% extends "base.html" %}
+
+{% block title %}Registro - CoachBodyFit360{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-container">
+        <h2 class="text-center mb-4">
+            <i class="fas fa-user-plus"></i> Crear Cuenta
+        </h2>
+
+        <form method="POST" action="{{ url_for('auth.register') }}">
+            {{ form.hidden_tag() }}
+
+            <!-- Username -->
+            <div class="mb-3">
+                {{ form.username.label(class="form-label") }}
+                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else "")) }}
+                {% if form.username.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.username.errors[0] }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                {{ form.email.label(class="form-label") }}
+                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), type="email") }}
+                {% if form.email.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.email.errors[0] }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- First Name -->
+            <div class="mb-3">
+                {{ form.first_name.label(class="form-label") }}
+                {{ form.first_name(class="form-control") }}
+            </div>
+
+            <!-- Last Name -->
+            <div class="mb-3">
+                {{ form.last_name.label(class="form-label") }}
+                {{ form.last_name(class="form-control") }}
+            </div>
+
+            <!-- Password -->
+            <div class="mb-3">
+                {{ form.password.label(class="form-label") }}
+                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                {% if form.password.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.password.errors[0] }}
+                    </div>
+                {% endif %}
+                <small class="form-text text-muted">Mínimo 8 caracteres</small>
+            </div>
+
+            <!-- Password Confirm -->
+            <div class="mb-3">
+                {{ form.password_confirm.label(class="form-label") }}
+                {{ form.password_confirm(class="form-control" + (" is-invalid" if form.password_confirm.errors else "")) }}
+                {% if form.password_confirm.errors %}
+                    <div class="invalid-feedback">
+                        {{ form.password_confirm.errors[0] }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                {{ form.submit(class="btn btn-primary btn-lg") }}
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <p class="text-center mb-0">
+            ¿Ya tienes una cuenta?
+            <a href="{{ url_for('auth.login') }}">Inicia Sesión</a>
+        </p>
+    </div>
+</div>
+{% endblock %}

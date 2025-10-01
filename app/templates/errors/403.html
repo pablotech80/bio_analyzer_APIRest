@@ -1,0 +1,15 @@
+<!-- app/templates/errors/403.html -->
+{% extends "base.html" %}
+
+{% block title %}403 - Acceso Prohibido{% endblock %}
+
+{% block content %}
+<div class="container text-center my-5">
+    <h1 class="display-1">403</h1>
+    <h2>Acceso Prohibido</h2>
+    <p class="lead">No tienes permisos para acceder a esta página.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">
+        <i class="fas fa-home"></i> Volver al inicio
+    </a>
+</div>
+{% endblock %}
