@@ -1,0 +1,8 @@
+[
+    {
+        "type": "command",
+        "details": {
+            "key": "python-envs.terminal.activate"
+        }
+    }
+]
