@@ -2,6 +2,21 @@ from src.body_analyzer.constantes import *
 from src.body_analyzer.model import Sexo
 
 
+def _normalizar_genero_texto(genero):
+    """Devuelve 'hombre' o 'mujer' a partir de distintos formatos de entrada."""
+    if isinstance(genero, Sexo):
+        return "hombre" if genero == Sexo.HOMBRE else "mujer"
+
+    if isinstance(genero, str):
+        genero_normalizado = genero.strip().lower()
+        if genero_normalizado in {"h", "hombre"}:
+            return "hombre"
+        if genero_normalizado in {"m", "mujer"}:
+            return "mujer"
+
+    raise ValueError("Género no válido. Usa 'h'/'hombre' o 'm'/'mujer'.")
+
+
 def interpretar_imc(imc: float, ffmi: float, genero: Sexo) -> str:
     """
     Interpreta el resultado del IMC considerando el FFMI.
@@ -167,11 +182,13 @@ def interpretar_edad_metabolica_avanzada(edad_cronologica, edad_metabolica, imc,
         Interpretación clínica de la edad metabólica, considerando también obesidad, grasa corporal y obesidad abdominal.
         """
 
+    genero_texto = _normalizar_genero_texto(genero)
+
     # Detectar si existe obesidad o problemas serios de composición corporal
     obesidad_detectada = (
             imc >= 30 or
-            (genero == "hombre" and porcentaje_grasa >= 25) or
-            (genero == "mujer" and porcentaje_grasa >= 32) or
+            (genero_texto == "hombre" and porcentaje_grasa >= 25) or
+            (genero_texto == "mujer" and porcentaje_grasa >= 32) or
             ratio_cintura_altura > 0.5
     )
 

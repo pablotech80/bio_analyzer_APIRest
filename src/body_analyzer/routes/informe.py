@@ -26,37 +26,47 @@ informe_bp = Blueprint("informe", __name__)
 
 @informe_bp.route("/informe_completo", methods=["POST"])
 def informe_completo_endpoint():
+    data = request.get_json() or {}
+
+    peso = data.get("peso")
+    altura = data.get("altura")
+    edad = data.get("edad")
+    genero = data.get("genero", "").strip().lower()
+    cuello = data.get("cuello")
+    cintura = data.get("cintura")
+    cadera = data.get("cadera")
+    objetivo = data.get("objetivo")
+
+    if None in (peso, altura, edad, cuello, cintura, objetivo) or not genero:
+        return jsonify({"error": "Faltan parámetros obligatorios"}), 400
+
     try:
-        data = request.get_json()
+        peso = float(peso)
+        altura = float(altura)
+        edad = int(edad)
+        cuello = float(cuello)
+        cintura = float(cintura)
+        cadera = float(cadera) if cadera not in (None, "") else None
+    except (TypeError, ValueError):
+        return jsonify({"error": "Parámetros numéricos inválidos"}), 400
 
-        peso = data.get("peso")
-        altura = data.get("altura")
-        edad = data.get("edad")
-        genero = data.get("genero", "").strip().lower()
-        cuello = data.get("cuello")
-        cintura = data.get("cintura")
-        cadera = data.get("cadera")
-        objetivo = data.get("objetivo")
+    if peso <= 0 or altura <= 0 or edad <= 0:
+        return jsonify({"error": "Peso, altura y edad deben ser mayores que cero"}), 400
 
-        if None in (peso, altura, edad, genero, cuello, cintura, objetivo):
-            return jsonify({"error": "Faltan parámetros obligatorios"}), 400
-
-        try:
-            peso = float(peso)
-            altura = float(altura)
-            edad = int(edad)
-            cuello = float(cuello)
-            cintura = float(cintura)
-            cadera = float(cadera) if cadera is not None else 0
-        except ValueError:
-            return jsonify({"error": "Parámetros numéricos inválidos"}), 400
-
-        if peso <= 0 or altura <= 0 or edad <= 0:
-            return jsonify({"error": "Peso, altura y edad deben ser mayores que cero"}), 400
-
+    try:
         genero_enum = convertir_genero(genero)
-        objetivo_enum = convertir_objetivo(objetivo)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
 
+    if genero_enum == Sexo.MUJER and cadera is None:
+        return jsonify({"error": "Para mujeres, la cadera debe ser especificada."}), 400
+
+    try:
+        objetivo_enum = convertir_objetivo(objetivo)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    try:
         porcentaje_grasa = calcular_porcentaje_grasa(cintura, cuello, altura, genero_enum, cadera)
         tmb = calcular_tmb(peso, altura, edad, genero_enum)
         imc = calcular_imc(peso, altura)
@@ -101,7 +111,8 @@ def informe_completo_endpoint():
         }
 
         return jsonify({"resultados": resultados, "interpretaciones": interpretaciones}), 200
-
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
     except Exception as e:
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
