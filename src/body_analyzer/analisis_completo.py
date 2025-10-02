@@ -1,6 +1,7 @@
 from .calculos import *
 from .interpretaciones import *
 from .model import Sexo, ObjetivoNutricional
+from .utils import convertir_genero, convertir_objetivo
 
 
 def validar_parametro(nombre, valor, tipos, positivo=True):
@@ -25,6 +26,10 @@ def calcular_resultados(
         cintura, cuello, altura, genero_enum, cadera
     )
 
+    peso_grasa_corporal = calcular_peso_grasa_corporal(peso, porcentaje_grasa)
+    masa_muscular = calcular_masa_muscular(peso, porcentaje_grasa)
+    ffmi = calcular_ffmi(masa_muscular, altura)
+
     # Calorías diarias según el objetivo
     calorias_diarias = calcular_calorias_diarias(tmb, objetivo)
 
@@ -33,13 +38,15 @@ def calcular_resultados(
         calorias_diarias, objetivo
     )
 
+    ratio_cintura_altura = calcular_ratio_cintura_altura(cintura, altura)
+
     return {
         "tmb": tmb,
         "imc": calcular_imc(peso, altura),
         "porcentaje_grasa": porcentaje_grasa,
-        "peso_grasa_corporal": calcular_peso_grasa_corporal(peso, porcentaje_grasa),
-        "masa_muscular": peso - calcular_peso_grasa_corporal(peso, porcentaje_grasa),
-        "ffmi": calcular_masa_muscular(peso, porcentaje_grasa),
+        "peso_grasa_corporal": peso_grasa_corporal,
+        "masa_muscular": masa_muscular,
+        "ffmi": ffmi,
         "calorias_diarias": calorias_diarias,
         "macronutrientes": {
             "proteinas": proteinas,
@@ -47,7 +54,7 @@ def calcular_resultados(
             "grasas": grasas,
         },
         "rcc": calcular_rcc(cintura, cadera) if genero_enum == Sexo.MUJER else "N/A",
-        "ratio_cintura_altura": cintura / altura,
+        "ratio_cintura_altura": ratio_cintura_altura,
     }
 
 
@@ -82,16 +89,21 @@ def informe_completo(data):
             "genero",
             "cuello",
             "cintura",
-            "objetivo",
         ]
         for campo in campos_obligatorios:
             if data.get(campo) is None:
                 raise ValueError(f"Falta el parámetro obligatorio: {campo}")
 
-        peso, altura, edad, genero, cuello, cintura, objetivo = [
+        peso, altura, edad, genero, cuello, cintura = [
             data.get(c) for c in campos_obligatorios
         ]
+
+        genero = str(genero).strip().lower()
+        if not genero:
+            raise ValueError("Falta el parámetro obligatorio: genero")
+
         cadera = data.get("cadera") if genero == "m" else None
+        objetivo = data.get("objetivo") or "mantener peso"
 
         # Validación de valores y tipos
         validar_parametro("peso", peso, (int, float))
@@ -101,15 +113,17 @@ def informe_completo(data):
         validar_parametro("cintura", cintura, (int, float))
         if genero == "m":
             validar_parametro("cadera", cadera, (int, float))
-        genero_enum = Sexo.HOMBRE if genero == "h" else Sexo.MUJER
+
+        try:
+            genero_enum = convertir_genero(genero)
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         # Convertir objetivo a enum ObjetivoNutricional
         try:
-            objetivo_enum = ObjetivoNutricional(objetivo)
-        except ValueError:
-            raise ValueError(
-                "El objetivo debe ser 'mantener peso', 'perder grasa' o 'ganar masa muscular'."
-            )
+            objetivo_enum = convertir_objetivo(objetivo)
+        except ValueError as exc:
+            return {"error": str(exc)}
 
         # Realización de cálculos e interpretaciones
         resultados = calcular_resultados(

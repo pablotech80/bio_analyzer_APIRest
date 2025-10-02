@@ -4,6 +4,21 @@ from .constantes import CARB_DIVISOR, FAT_DIVISOR, PROTEIN_DIVISOR
 from .model import ObjetivoNutricional, Sexo
 
 
+def _normalizar_genero_texto(genero):
+    """Convierte distintos formatos de género en 'hombre' o 'mujer'."""
+    if isinstance(genero, Sexo):
+        return "hombre" if genero == Sexo.HOMBRE else "mujer"
+
+    if isinstance(genero, str):
+        genero_normalizado = genero.strip().lower()
+        if genero_normalizado in {"h", "hombre"}:
+            return "hombre"
+        if genero_normalizado in {"m", "mujer"}:
+            return "mujer"
+
+    raise ValueError("El valor de 'genero' debe ser 'h'/'hombre' o 'm'/'mujer'.")
+
+
 # Funciones Lógicas
 def calcular_porcentaje_grasa(
     cintura: float,
@@ -294,32 +309,42 @@ def calcular_ratio_cintura_altura(cintura: float, altura: float) -> float:
 def calcular_calorias_diarias(
     tmb: float,
     objetivo: ObjetivoNutricional,
+    factor_actividad: float = 1.2,
 ) -> float:
     """
-    Calcula las calorías diarias necesarias basadas en la TMB y el objetivo nutricional.
+    Calcula las calorías diarias necesarias basadas en la TMB, el factor de actividad
+    y el objetivo nutricional.
 
     Args:
         tmb (float): Tasa Metabólica Basal calculada.
         objetivo (ObjetivoNutricional): Objetivo nutricional
-        ('mantener peso', 'perder grasa' o 'ganar masa muscular').
+            ('mantener peso', 'perder grasa' o 'ganar masa muscular').
+        factor_actividad (float): Factor de actividad física (sedentarismo = 1.2 por defecto).
 
     Returns:
         float: Calorías diarias ajustadas según el objetivo, redondeadas a dos decimales.
 
     Raises:
-        ValueError: Si el objetivo no es uno de los valores esperados.
+        ValueError: Si el objetivo o el factor de actividad no son válidos.
     """
     if not isinstance(objetivo, ObjetivoNutricional):
         raise ValueError(
             "El objetivo debe ser una instancia de ObjetivoNutricional: 'mantener peso', 'perder grasa' o 'ganar masa muscular'."
         )
 
+    if factor_actividad <= 0:
+        raise ValueError("El factor de actividad debe ser un número positivo.")
+
+    mantenimiento = tmb * factor_actividad
+
     if objetivo == ObjetivoNutricional.MANTENER_PESO:
-        calorias = tmb * 1.2
+        calorias = mantenimiento
     elif objetivo == ObjetivoNutricional.PERDER_GRASA:
-        calorias = tmb * 1.2 * 0.8  # 20% de reducción calórica
+        calorias = mantenimiento * 0.8  # 20% de reducción calórica
     elif objetivo == ObjetivoNutricional.GANAR_MASA_MUSCULAR:
-        calorias = tmb * 1.2 * 1.2  # 20% de aumento calórico
+        calorias = mantenimiento * 1.2  # 20% de aumento calórico
+    else:  # Salvaguarda en caso de nuevos valores sin actualizar la lógica.
+        raise ValueError("Objetivo nutricional no soportado.")
 
     return round(calorias, 2)
 
@@ -426,7 +451,9 @@ def calcular_edad_metabolica_avanzada(tmb, genero, edad_cronologica, imc, porcen
         18: 1450, 25: 1400, 30: 1350, 35: 1300, 40: 1250, 45: 1200, 50: 1150, 55: 1100, 60: 1050
         }
 
-    tabla = tmb_por_edad_hombre if genero == "hombre" else tmb_por_edad_mujer
+    genero_texto = _normalizar_genero_texto(genero)
+
+    tabla = tmb_por_edad_hombre if genero_texto == "hombre" else tmb_por_edad_mujer
     edad_metabolica_base = min(tabla.keys(), key = lambda edad: abs(tmb - tabla[edad]))
 
     penalizacion = 0
@@ -440,7 +467,7 @@ def calcular_edad_metabolica_avanzada(tmb, genero, edad_cronologica, imc, porcen
     elif imc >= 40:
         penalizacion += 15
 
-    if (genero == "hombre" and porcentaje_grasa >= 25) or (genero == "mujer" and porcentaje_grasa >= 32):
+    if (genero_texto == "hombre" and porcentaje_grasa >= 25) or (genero_texto == "mujer" and porcentaje_grasa >= 32):
         penalizacion += 5
 
     if ratio_cintura_altura > 0.5:

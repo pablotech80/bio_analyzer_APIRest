@@ -73,10 +73,10 @@ def informe_web():
 
             # Cálculo edad metabólica avanzada
             edad_metabolica = calcular_edad_metabolica_avanzada(
-                tmb, genero_str, edad, imc, porcentaje_grasa, ratio_cintura_altura
+                tmb, genero, edad, imc, porcentaje_grasa, ratio_cintura_altura
             )
             interpretacion_edad_metabolica = interpretar_edad_metabolica_avanzada(
-                edad, edad_metabolica, imc, porcentaje_grasa, ratio_cintura_altura, genero_str
+                edad, edad_metabolica, imc, porcentaje_grasa, ratio_cintura_altura, genero
             )
 
             # Calorías de mantenimiento
@@ -89,7 +89,7 @@ def informe_web():
             # SOLO si el usuario eligió objetivo y nivel, calculamos macros
             if objetivo_str and nivel:
                 objetivo = convertir_objetivo(objetivo_str)
-                calorias_diarias = calcular_calorias_diarias(tdee, objetivo)
+                calorias_diarias = calcular_calorias_diarias(tmb, objetivo, factor_actividad)
 
                 if nivel == "saludable":
                     distribucion = {
@@ -177,5 +177,4 @@ def informe_web():
 
     form_data = session.pop('form_data', {})
     return render_template("formulario.html", form_data=form_data)
-
 

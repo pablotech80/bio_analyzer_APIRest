@@ -12,15 +12,16 @@ def calorias_diarias_endpoint():
     Calcula las calorías diarias recomendadas a partir de peso, altura, edad, género y objetivo.
     """
     try:
-        data = request.get_json()
+        data = request.get_json() or {}
 
         peso = data.get("peso")
         altura = data.get("altura")
         edad = data.get("edad")
         genero = data.get("genero", "").strip().lower()
         objetivo = data.get("objetivo")
+        factor_actividad = data.get("factor_actividad")
 
-        if None in (peso, altura, edad, genero, objetivo):
+        if None in (peso, altura, edad, objetivo) or not genero:
             return jsonify({"error": "Faltan parámetros obligatorios"}), 400
 
         peso = float(peso)
@@ -30,14 +31,24 @@ def calorias_diarias_endpoint():
         if peso <= 0 or altura <= 0 or edad <= 0:
             return jsonify({"error": "Peso, altura y edad deben ser mayores que cero."}), 400
 
+        try:
+            factor_actividad = float(factor_actividad) if factor_actividad not in (None, "") else 1.2
+        except (TypeError, ValueError):
+            return jsonify({"error": "El factor de actividad debe ser numérico."}), 400
+
+        if factor_actividad <= 0:
+            return jsonify({"error": "El factor de actividad debe ser mayor que cero."}), 400
+
         genero_enum = convertir_genero(genero)
         objetivo_enum = convertir_objetivo(objetivo)
 
         tmb = calcular_tmb(peso, altura, edad, genero_enum)
-        calorias_diarias = round(calcular_calorias_diarias(tmb, objetivo_enum), 2)
+        calorias_diarias = round(calcular_calorias_diarias(tmb, objetivo_enum, factor_actividad), 2)
 
         return jsonify({"calorias_diarias": calorias_diarias}), 200
 
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
     except Exception as e:
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
@@ -73,6 +84,8 @@ def macronutrientes_endpoint():
             }
         }), 200
 
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
     except Exception as e:
         return jsonify({"error": f"Error interno del servidor: {str(e)}"}), 500
 
