@@ -61,6 +61,9 @@ def create_app(config_name = 'development'):
 		from app.blueprints.auth import auth_bp
 		app.register_blueprint(auth_bp, url_prefix = '/auth')
 
+		from app.blueprints.bioanalyze import bioanalyze_bp
+		app.register_blueprint(bioanalyze_bp)
+
 		# BioAnalyze blueprint (migrar el existente después)
 		# from app.blueprints.bioanalyze import bioanalyze_bp
 		# app.register_blueprint(bioanalyze_bp, url_prefix='/bioanalyze')

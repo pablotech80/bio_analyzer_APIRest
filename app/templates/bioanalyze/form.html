@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% set form_values = form_data or {} %}
+
+{% block title %}Nuevo análisis biométrico{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-xl-8 col-lg-9 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-1">Registro de análisis biométrico</h1>
+                    <p class="text-muted mb-0">Completa tus datos corporales para generar un informe detallado y guardarlo en tu historial.</p>
+                </div>
+                <a class="btn btn-outline-secondary" href="{{ url_for('bioanalyze.history') }}">
+                    <i class="fas fa-history me-2"></i>Historial de análisis
+                </a>
+            </div>
+
+            <form method="post" action="{{ url_for('bioanalyze.informe_web') }}" class="card shadow-sm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Datos personales</h2>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="peso">Peso (kg)</label>
+                            <input class="form-control" id="peso" name="peso" type="number" step="0.1" min="1" required value="{{ form_values.get('peso', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="altura">Altura (cm)</label>
+                            <input class="form-control" id="altura" name="altura" type="number" step="0.1" min="1" required value="{{ form_values.get('altura', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edad">Edad</label>
+                            <input class="form-control" id="edad" name="edad" type="number" min="1" required value="{{ form_values.get('edad', '') }}">
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <label class="form-label d-block">Género</label>
+                            <div class="btn-group" role="group">
+                                <input type="radio" class="btn-check" name="genero" id="genero_h" value="h" {% if form_values.get('genero', 'h') == 'h' %}checked{% endif %}>
+                                <label class="btn btn-outline-primary" for="genero_h"><i class="fas fa-mars me-1"></i>Hombre</label>
+                                <input type="radio" class="btn-check" name="genero" id="genero_m" value="m" {% if form_values.get('genero') == 'm' %}checked{% endif %}>
+                                <label class="btn btn-outline-primary" for="genero_m"><i class="fas fa-venus me-1"></i>Mujer</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="factor_actividad">Nivel de actividad</label>
+                            <select class="form-select" id="factor_actividad" name="factor_actividad" required>
+                                <option value="" {% if not form_values.get('factor_actividad') %}selected{% endif %}>Selecciona tu nivel</option>
+                                <option value="1.2" {% if form_values.get('factor_actividad') == '1.2' %}selected{% endif %}>Sedentario (1.2)</option>
+                                <option value="1.375" {% if form_values.get('factor_actividad') == '1.375' %}selected{% endif %}>Ligero (1.375)</option>
+                                <option value="1.55" {% if form_values.get('factor_actividad') == '1.55' %}selected{% endif %}>Moderado (1.55)</option>
+                                <option value="1.725" {% if form_values.get('factor_actividad') == '1.725' %}selected{% endif %}>Intenso (1.725)</option>
+                                <option value="1.9" {% if form_values.get('factor_actividad') == '1.9' %}selected{% endif %}>Muy intenso (1.9)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h2 class="h5 mb-3">Medidas corporales</h2>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="cuello">Cuello (cm)</label>
+                            <input class="form-control" id="cuello" name="cuello" type="number" step="0.1" min="1" required value="{{ form_values.get('cuello', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="cintura">Cintura (cm)</label>
+                            <input class="form-control" id="cintura" name="cintura" type="number" step="0.1" min="1" required value="{{ form_values.get('cintura', '') }}">
+                        </div>
+                        <div class="col-md-4" id="hip-field">
+                            <label class="form-label" for="cadera">Cadera (cm)</label>
+                            <input class="form-control" id="cadera" name="cadera" type="number" step="0.1" min="1" value="{{ form_values.get('cadera', '') }}">
+                            <div class="form-text">Obligatorio sólo para mujeres.</div>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    <h2 class="h5 mb-3">Objetivo y macros</h2>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="objetivo">Objetivo principal</label>
+                            <select class="form-select" id="objetivo" name="objetivo">
+                                <option value="mantener peso" {% if form_values.get('objetivo', 'mantener peso') == 'mantener peso' %}selected{% endif %}>Mantener peso</option>
+                                <option value="perder grasa" {% if form_values.get('objetivo') == 'perder grasa' %}selected{% endif %}>Perder grasa</option>
+                                <option value="ganar masa muscular" {% if form_values.get('objetivo') == 'ganar masa muscular' %}selected{% endif %}>Ganar masa muscular</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="nivel">Enfoque de ajuste</label>
+                            <select class="form-select" id="nivel" name="nivel">
+                                <option value="" {% if not form_values.get('nivel') %}selected{% endif %}>Automático</option>
+                                <option value="saludable" {% if form_values.get('nivel') == 'saludable' %}selected{% endif %}>Saludable</option>
+                                <option value="fitness" {% if form_values.get('nivel') == 'fitness' %}selected{% endif %}>Fitness</option>
+                                <option value="competicion" {% if form_values.get('nivel') == 'competicion' %}selected{% endif %}>Competición (usar g/kg)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-4">
+                            <label class="form-label" for="proteinas_kg">Proteínas (g/kg)</label>
+                            <input class="form-control" id="proteinas_kg" name="proteinas_kg" type="number" step="0.01" min="0" value="{{ form_values.get('proteinas_kg', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="carbohidratos_kg">Carbohidratos (g/kg)</label>
+                            <input class="form-control" id="carbohidratos_kg" name="carbohidratos_kg" type="number" step="0.01" min="0" value="{{ form_values.get('carbohidratos_kg', '') }}">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="grasas_kg">Grasas (g/kg)</label>
+                            <input class="form-control" id="grasas_kg" name="grasas_kg" type="number" step="0.01" min="0" value="{{ form_values.get('grasas_kg', '') }}">
+                            <div class="form-text">Solo se usan si eliges "Competición".</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer text-end bg-light">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-calculator me-2"></i>Generar informe
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function() {
+        const genderInputs = document.querySelectorAll('input[name="genero"]');
+        const hipField = document.getElementById('hip-field');
+
+        function toggleHipField() {
+            const selected = document.querySelector('input[name="genero"]:checked');
+            if (!selected || selected.value === 'h') {
+                hipField.style.display = 'none';
+            } else {
+                hipField.style.display = '';
+            }
+        }
+
+        genderInputs.forEach(input => {
+            input.addEventListener('change', toggleHipField);
+        });
+
+        toggleHipField();
+    })();
+</script>
+{% endblock %}

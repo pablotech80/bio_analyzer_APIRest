@@ -32,6 +32,12 @@ class User(db.Model, UserMixin):
 	# Rol
 	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 	role = db.relationship('Role', back_populates = 'users')
+	biometric_analyses = db.relationship(
+		'BiometricAnalysis',
+		back_populates = 'user',
+		lazy = 'dynamic',
+		cascade = 'all, delete-orphan'
+		)
 
 	# Timestamps
 	created_at = db.Column(db.DateTime, default = datetime.utcnow, nullable = False)

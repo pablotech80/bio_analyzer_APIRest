@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Historial de análisis{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-xl-10 mx-auto">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-1">Historial de análisis</h1>
+                    <p class="text-muted mb-0">Consulta y gestiona los análisis que has realizado con la plataforma.</p>
+                </div>
+                <a class="btn btn-primary" href="{{ url_for('bioanalyze.informe_web') }}">
+                    <i class="fas fa-plus me-2"></i>Nuevo análisis
+                </a>
+            </div>
+
+            {% if analyses %}
+                <div class="table-responsive">
+                    <table class="table align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Peso (kg)</th>
+                                <th scope="col">IMC</th>
+                                <th scope="col">% Grasa</th>
+                                <th scope="col">TMB</th>
+                                <th scope="col" class="text-end">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for analysis in analyses %}
+                                <tr>
+                                    <td>{{ analysis.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                                    <td>{{ '%.1f'|format(analysis.weight) }}</td>
+                                    <td>{{ '%.2f'|format(analysis.bmi) }}</td>
+                                    <td>{{ '%.2f'|format(analysis.body_fat_percentage) if analysis.body_fat_percentage is not none else '—' }}</td>
+                                    <td>{{ '%.2f'|format(analysis.bmr) }}</td>
+                                    <td class="text-end">
+                                        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('bioanalyze.analysis_detail', analysis_id=analysis.id) }}">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <form method="post" action="{{ url_for('bioanalyze.delete_analysis', analysis_id=analysis.id) }}" class="d-inline">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <button class="btn btn-outline-danger btn-sm" type="submit" onclick="return confirm('¿Eliminar este análisis?');">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>No tienes análisis registrados todavía. Realiza tu primer análisis para comenzar a construir tu historial.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
