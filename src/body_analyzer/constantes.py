@@ -1,4 +1,4 @@
-from constantes_enum import Enum
+from .constantes_enum import Enum
 
 # ---------------------------
 # ENUMS
@@ -21,6 +21,11 @@ class Macronutrientes:
     PROTEIN_DIVISOR = 4
     CARB_DIVISOR = 4
     FAT_DIVISOR = 9
+
+# Exportar divisores como variables de módulo para import directo
+PROTEIN_DIVISOR = Macronutrientes.PROTEIN_DIVISOR
+CARB_DIVISOR = Macronutrientes.CARB_DIVISOR
+FAT_DIVISOR = Macronutrientes.FAT_DIVISOR
 
 # ---------------------------
 # PORCENTAJE DE GRASA (%)
