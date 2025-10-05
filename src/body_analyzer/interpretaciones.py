@@ -65,16 +65,16 @@ def interpretar_porcentaje_grasa(porcentaje_grasa: float, genero: Sexo) -> str:
         raise ValueError("Género no válido. Debe ser 'Sexo.HOMBRE' o 'Sexo.MUJER'.")
 
     if genero == Sexo.HOMBRE:
-        if porcentaje_grasa > GRASA_ALTA_HOMBRES:
+        if porcentaje_grasa > GrasaCorporal.ALTA_HOMBRES:
             return "Alto"
-        elif porcentaje_grasa < GRASA_BAJA_HOMBRES:
+        elif porcentaje_grasa < GrasaCorporal.BAJA_HOMBRES:
             return "Bajo"
         else:
             return "Normal"
     else:  # Sexo.MUJER
-        if porcentaje_grasa > GRASA_ALTA_MUJERES:
+        if porcentaje_grasa > GrasaCorporal.ALTA_MUJERES:
             return "Alto"
-        elif porcentaje_grasa < GRASA_BAJA_MUJERES:
+        elif porcentaje_grasa < GrasaCorporal.BAJA_MUJERES:
             return "Bajo"
         else:
             return "Normal"
@@ -97,7 +97,7 @@ def interpretar_ffmi(ffmi: float, genero: Sexo) -> str:
     if genero not in [Sexo.HOMBRE, Sexo.MUJER]:
         raise ValueError("Género no válido. Debe ser 'Sexo.HOMBRE' o 'Sexo.MUJER'.")
 
-    umbrales = FFMI_UMBRAL_HOMBRES if genero == Sexo.HOMBRE else FFMI_UMBRAL_MUJERES
+    umbrales = FFMI.UMBRAL_HOMBRES if genero == Sexo.HOMBRE else FFMI.UMBRAL_MUJERES
 
     if ffmi < umbrales[0]:
         return "Lejos del máximo potencial (pobre forma física)"
@@ -138,16 +138,16 @@ def interpretar_rcc(rcc: float, genero: Sexo) -> str:
         raise ValueError("Género no válido. Debe ser 'Sexo.HOMBRE' o 'Sexo.MUJER'.")
 
     if genero == Sexo.HOMBRE:
-        if rcc > RCC_ALTO_HOMBRES:
+        if rcc > RCC.ALTO_HOMBRES:
             return "Alto riesgo"
-        elif RCC_MODERADO_HOMBRES < rcc <= RCC_ALTO_HOMBRES:
+        elif RCC.MODERADO_HOMBRES < rcc <= RCC.ALTO_HOMBRES:
             return "Moderado riesgo"
         else:
             return "Bajo riesgo"
     else:  # Sexo.MUJER
-        if rcc > RCC_ALTO_MUJERES:
+        if rcc > RCC.ALTO_MUJERES:
             return "Alto riesgo"
-        elif RCC_MODERADO_MUJERES < rcc <= RCC_ALTO_MUJERES:
+        elif RCC.MODERADO_MUJERES < rcc <= RCC.ALTO_MUJERES:
             return "Moderado riesgo"
         else:
             return "Bajo riesgo"
@@ -169,9 +169,9 @@ def interpretar_ratio_cintura_altura(ratio: float) -> str:
     if ratio <= 0:
         raise ValueError("El valor del 'ratio' debe ser un número positivo.")
 
-    if ratio >= RATIO_ALTO_RIESGO:
+    if ratio >= RatioCinturaAltura.ALTO_RIESGO:
         return "Alto riesgo"
-    elif RATIO_MODERADO_RIESGO <= ratio < RATIO_ALTO_RIESGO:
+    elif RatioCinturaAltura.MODERADO_RIESGO <= ratio < RatioCinturaAltura.ALTO_RIESGO:
         return "Moderado riesgo"
     else:
         return "Bajo riesgo"

@@ -35,7 +35,7 @@ def informe_web():
             edad_str = data.get("edad", "").strip()
             cuello_str = data.get("cuello", "").strip()
             cintura_str = data.get("cintura", "").strip()
-            cadera_str = data.get("cadera", "").strip()
+            cadera_str = data.get("cadera", "").strip()  # Cadera solo si es mujer
             genero_str = data.get("genero", "").strip().lower()
             objetivo_str = data.get("objetivo", "").strip().lower()
             nivel = data.get("nivel", "").strip().lower()
@@ -56,7 +56,7 @@ def informe_web():
             edad = int(edad_str)
             cuello = parse_decimal(cuello_str)
             cintura = parse_decimal(cintura_str)
-            cadera = parse_decimal(cadera_str) if cadera_str else 0.0
+            cadera = parse_decimal(cadera_str) if (genero == Sexo.MUJER and cadera_str) else 0.0
             genero = convertir_genero(genero_str)
 
             # Cálculos biométricos

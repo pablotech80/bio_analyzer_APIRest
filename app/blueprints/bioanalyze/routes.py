@@ -32,7 +32,7 @@ def informe_web():
         flash("Análisis guardado en tu historial.", "success")
         return redirect(url_for("bioanalyze.analysis_detail", analysis_id=analysis.id))
 
-	return render_template("bioanalyze/form.html", form_data={})
+    return render_template("bioanalyze/form.html", form_data={})
 
 
 @bioanalyze_bp.route("/historial")
