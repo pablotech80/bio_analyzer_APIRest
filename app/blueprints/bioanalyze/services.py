@@ -47,6 +47,14 @@ class AnalysisPayload:
     results: Dict[str, Any]
     interpretations: Dict[str, Any]
 
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert the payload to a dictionary format."""
+        return {
+            "inputs": self.inputs,
+            "results": self.results,
+            "interpretations": self.interpretations
+        }
+
 
 _DISTRIBUCION_SALUDABLE = {
     "mantener peso": {"proteinas": 25, "carbohidratos": 50, "grasas": 25},
@@ -264,6 +272,10 @@ def persist_analysis(user, payload: AnalysisPayload) -> BiometricAnalysis:
         neck=inputs["cuello"],
         waist=inputs["cintura"],
         hip=inputs["cadera"],
+        # Medidas musculares opcionales
+        biceps=inputs.get("biceps"),
+        cuadriceps=inputs.get("cuadriceps"),
+        gemelos=inputs.get("gemelos"),
         activity_factor=inputs["factor_actividad"],
         activity_level=inputs.get("nivel"),
         goal=inputs.get("objetivo"),
