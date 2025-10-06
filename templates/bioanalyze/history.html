@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% block title %}BioAnalyze | Historial{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="text-center mb-4">
+        <img src="{{ url_for('static', filename='img/bio_analyze.jpg') }}" alt="BioAnalyze Logo" width="120" class="rounded-circle mb-3">
+        <h1 class="mt-2">Historial de <span class="text-info">Análisis</span></h1>
+        <p class="lead">Todos tus análisis biométricos guardados</p>
+    </div>
+
+    {% if analyses %}
+    <div class="row">
+        {% for analysis in analyses %}
+        <div class="col-lg-6 col-xl-4 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">📊 Análisis #{{ analysis.id }}</h6>
+                    <small>{{ analysis.created_at.strftime('%d/%m/%Y') }}</small>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center mb-3">
+                        <div class="col-4">
+                            <strong>{{ analysis.weight }}</strong><br>
+                            <small class="text-muted">kg</small>
+                        </div>
+                        <div class="col-4">
+                            <strong>{{ analysis.height }}</strong><br>
+                            <small class="text-muted">cm</small>
+                        </div>
+                        <div class="col-4">
+                            <strong>{{ analysis.age }}</strong><br>
+                            <small class="text-muted">años</small>
+                        </div>
+                    </div>
+
+                    {% if analysis.bmi %}
+                    <div class="row text-center mb-3">
+                        <div class="col-6">
+                            <strong>{{ "%.1f"|format(analysis.bmi) }}</strong><br>
+                            <small class="text-muted">IMC</small>
+                        </div>
+                        <div class="col-6">
+                            <strong>{{ "%.1f"|format(analysis.body_fat_percentage) }}%</strong><br>
+                            <small class="text-muted">Grasa</small>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Indicadores de FitMaster AI -->
+                    <div class="mb-3">
+                        {% if analysis.ai_interpretation %}
+                        <span class="badge bg-success me-1">🤖 AI</span>
+                        {% endif %}
+                        {% if analysis.nutrition_plan %}
+                        <span class="badge bg-primary me-1">🍎 Nutrición</span>
+                        {% endif %}
+                        {% if analysis.training_plan %}
+                        <span class="badge bg-danger me-1">💪 Entrenamiento</span>
+                        {% endif %}
+                        {% if not analysis.ai_interpretation and not analysis.nutrition_plan and not analysis.training_plan %}
+                        <span class="badge bg-secondary">📊 Básico</span>
+                        {% endif %}
+                    </div>
+
+                    {% if analysis.goal %}
+                    <p class="text-muted small mb-2">
+                        <strong>Objetivo:</strong> {{ analysis.goal }}
+                    </p>
+                    {% endif %}
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="d-flex justify-content-between">
+                        <a href="/informe_web/{{ analysis.id }}" class="btn btn-info btn-sm">
+                            👁️ Ver Detalle
+                        </a>
+                        <div>
+                            <a href="/debug/{{ analysis.id }}" class="btn btn-outline-secondary btn-sm me-1">
+                                🔍 Debug
+                            </a>
+                            <form method="POST" action="/historial/{{ analysis.id }}/eliminar" class="d-inline"
+                                  onsubmit="return confirm('¿Estás seguro de eliminar este análisis?')">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center">
+        <div class="card">
+            <div class="card-body py-5">
+                <h5 class="text-muted">No tienes análisis guardados</h5>
+                <p class="text-muted">Crea tu primer análisis biométrico para comenzar</p>
+                <a href="/informe_web" class="btn btn-info">🔄 Crear Primer Análisis</a>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Botón para nuevo análisis -->
+    <div class="text-center mt-4">
+        <a href="/informe_web" class="btn btn-info btn-lg">
+            ➕ Nuevo Análisis Biométrico
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -21,6 +21,11 @@ class BiometricAnalysis(db.Model):
     waist = db.Column(db.Float, nullable=False)
     hip = db.Column(db.Float)
 
+    # Medidas musculares opcionales
+    biceps = db.Column(db.Float, nullable=True)
+    cuadriceps = db.Column(db.Float, nullable=True)
+    gemelos = db.Column(db.Float, nullable=True)
+
     activity_factor = db.Column(db.Float)
     activity_level = db.Column(db.String(32))
     goal = db.Column(db.String(32))
@@ -41,6 +46,11 @@ class BiometricAnalysis(db.Model):
     protein_grams = db.Column(db.Float)
     carbs_grams = db.Column(db.Float)
     fats_grams = db.Column(db.Float)
+
+    # Nuevo: resultados de IA
+    ai_interpretation = db.Column(db.Text, nullable = True)
+    nutrition_plan = db.Column(db.JSON, nullable = True)  # en SQLite se guarda como texto JSON
+    training_plan = db.Column(db.JSON, nullable = True)
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
