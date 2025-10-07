@@ -143,7 +143,7 @@ class FitMasterService:
 	def _get_fallback_response(error_msg: str) -> Dict:
 		"""Respuesta de respaldo cuando hay errores."""
 		return {
-			"interpretation": f"No se pudo conectar con FitMaster AI. {error_msg}",
+			"interpretation": f"FitMaster AI no está disponible en este momento. Intenta nuevamente más tarde. {error_msg}",
 			"nutrition_plan": None,
 			"training_plan": None,
 			}
