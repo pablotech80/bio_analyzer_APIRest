@@ -10,9 +10,9 @@ venv/
 ENV/
 
 # Ignorar archivos de configuración y entorno
-*.env
 *.DS_Store
-
+.env/
+.env.example/
 # Ignorar configuraciones de IDEs y editores de texto
 .vscode/
 .idea/
