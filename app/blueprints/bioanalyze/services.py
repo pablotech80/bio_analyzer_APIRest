@@ -8,7 +8,7 @@ from werkzeug.datastructures import MultiDict
 
 from app import db
 from app.models import BiometricAnalysis
-from src.body_analyzer.calculos import (
+from app.body_analysis.calculos import (
     calcular_agua_total,
     calcular_calorias_diarias,
     calcular_ffmi,
@@ -23,7 +23,7 @@ from src.body_analyzer.calculos import (
     calcular_tmb,
     calcular_edad_metabolica_avanzada,
 )
-from src.body_analyzer.interpretaciones import (
+from app.body_analysis.interpretaciones import (
     interpretar_edad_metabolica_avanzada,
     interpretar_ffmi,
     interpretar_imc,
@@ -31,8 +31,8 @@ from src.body_analyzer.interpretaciones import (
     interpretar_rcc,
     interpretar_ratio_cintura_altura,
 )
-from src.body_analyzer.model import ObjetivoNutricional, Sexo
-from src.body_analyzer.utils import convertir_genero, convertir_objetivo
+from app.body_analysis.model import ObjetivoNutricional, Sexo
+from app.body_analysis.utils import convertir_genero, convertir_objetivo
 
 
 class AnalysisValidationError(ValueError):

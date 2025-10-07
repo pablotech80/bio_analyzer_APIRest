@@ -1,6 +1,6 @@
 # **Bio•Analyze API** 
 
-<img src="bio_analyze.jpg" alt="Logo" width="300" title="Bioanalyze"/>
+<img src="app/static/img/default_profile.png" alt="Logo" width="300" title="Bioanalyze"/>
 
 [![Versión](https://img.shields.io/badge/version-1.0.0--beta-blue)]()
 [![Estado](https://img.shields.io/badge/build-passing-brightgreen)]()
@@ -70,7 +70,7 @@ Puedes probar la versión beta en producción: 🌐 [Bio Analyze API en Railway]
 
 ## Requisitos
 
-- Python 3.13+
+- Python 3.11+
 - Librerías listadas en `pyproject.toml`
 
 ---
@@ -90,7 +90,7 @@ make install
 ```
 ### 3. Ejecuta la API localmente
 ```bash
-python src/body_analyzer/main.py
+python run.py
 ```
 Disponible en: http://127.0.0.1:5000
 

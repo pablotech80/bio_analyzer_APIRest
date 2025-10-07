@@ -24,27 +24,21 @@ classifiers = [
 ]
 
 dependencies = [
-    "blinker~=1.8.2",
-    "certifi~=2024.8.30",
-    "charset-normalizer~=3.4.0",
-    "click~=8.1.7",
-    "Flask~=3.0.3",
-    "idna~=3.10",
-    "iniconfig~=2.0.0",
-    "itsdangerous~=2.2.0",
-    "Jinja2~=3.1.4",
-    "MarkupSafe~=3.0.1",
-    "packaging~=24.2",
-    "pip~=24.3.1",
-    "pluggy~=1.5.0",
-    "prometheus_client~=0.21.0",
-    "prometheus_flask_exporter~= 0.23.1",
-    "pytest~=8.3.3",
-    "requests~=2.32.3",
-    "typing_extensions~=4.12.2",
-    "urllib3~=2.2.3",
-    "Werkzeug~=3.0.4"
-
+    "blinker>=1.8",
+    "Flask~=3.0",
+    "Flask-SQLAlchemy~=3.1",
+    "Flask-Migrate~=4.1",
+    "Flask-Login~=0.6",
+    "Flask-Bcrypt~=1.0",
+    "Flask-JWT-Extended~=4.6",
+    "Flask-WTF~=1.2",
+    "WTForms~=3.1",
+    "prometheus-client~=0.21",
+    "prometheus-flask-exporter~=0.23",
+    "requests~=2.32",
+    "openai>=2.2",
+    "python-dotenv~=1.0",
+    "gunicorn>=21.2"
 ]
 
 # tool define de donde se va a obtener la descripción del proyecto en este caso del fichero README.md
@@ -65,8 +59,8 @@ extended = [
 # tool.setuptools define donde están los archivos de código fuente y necesario para que setuptools sepa qué paquetes debe incluir.
 
 [tool.setuptools.packages.find]
-where = ["src"]
-include = ["body_analyzer"]
+where = ["."]
+include = ["app"]
 
 [tool.pytest.ini.options]
 addopts = "-v"
