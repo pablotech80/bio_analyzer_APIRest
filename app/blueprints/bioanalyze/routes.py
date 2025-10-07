@@ -7,6 +7,8 @@ Principios CoachBodyFit360:
 - SoC: Lógica de negocio delegada a services/
 - API-First: Rutas preparadas para devolver JSON si se solicita
 """
+import logging
+
 from flask import flash, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required
 
@@ -17,17 +19,14 @@ from app.blueprints.bioanalyze.services import (
 	build_interpretations_for_record,
 	run_biometric_analysis,
 	)
-
 # Nuevo servicio centralizado
 from app.services.biometric_service import (
 	create_analysis,
 	get_user_analyses,
 	get_analysis_by_id,
 	delete_analysis as delete_analysis_service,
-	add_fitmaster_analysis
+	add_fitmaster_analysis,
 	)
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -53,14 +52,53 @@ def new_analysis():
 				form_data = request.form.to_dict(flat = True),
 				)
 
-		# Preparar datos para el servicio
-		biometric_data = payload.to_dict()
+		# 🔥 Mapear datos del formulario español → inglés para el servicio
+		biometric_data = {
+			# Datos básicos (obligatorios)
+			'weight': payload.inputs['peso'],
+			'height': payload.inputs['altura'],
+			'age': payload.inputs['edad'],
+			'gender': 'male' if payload.inputs['genero'] == 'h' else 'female',
+			'neck': payload.inputs['cuello'],
+			'waist': payload.inputs['cintura'],
+			'hip': payload.inputs.get('cadera'),
+
+			# Medidas bilaterales (opcionales) desde el formulario
+			'biceps_left': float(request.form.get('biceps_izq') or 0) or None,
+			'biceps_right': float(request.form.get('biceps_der') or 0) or None,
+			'thigh_left': float(request.form.get('muslo_izq') or 0) or None,
+			'thigh_right': float(request.form.get('muslo_der') or 0) or None,
+			'calf_left': float(request.form.get('gemelo_izq') or 0) or None,
+			'calf_right': float(request.form.get('gemelo_der') or 0) or None,
+
+			# Activity data
+			'activity_factor': payload.inputs['factor_actividad'],
+			'activity_level': 'moderate',  # Default, puedes mapear del factor
+			'goal': payload.inputs['objetivo'],
+
+			# Métricas calculadas
+			'bmi': payload.results['imc'],
+			'bmr': payload.results['tmb'],
+			'tdee': payload.results['tdee'],
+			'body_fat_percentage': payload.results['porcentaje_grasa'],
+			'lean_mass': payload.results['masa_magra'],
+			'fat_mass': payload.results['masa_grasa'],
+			'ffmi': payload.results['ffmi'],
+			'body_water': payload.results['agua_total'],
+			'waist_hip_ratio': payload.results.get('rcc'),
+			'waist_height_ratio': payload.results['ratio_cintura_altura'],
+			'metabolic_age': payload.results.get('edad_metabolica'),
+			'maintenance_calories': payload.results['calorias_diarias'],
+			'protein_grams': payload.results['macronutrientes'].get('proteinas'),
+			'carbs_grams': payload.results['macronutrientes'].get('carbohidratos'),
+			'fats_grams': payload.results['macronutrientes'].get('grasas')
+			}
 
 		# Crear análisis usando el servicio
 		analysis, error = create_analysis(
 			user_id = current_user.id,
 			biometric_data = biometric_data,
-			request_fitmaster = True  # Siempre pedir FitMaster por ahora
+			request_fitmaster = True  # Siempre pedir FitMaster
 			)
 
 		if error:

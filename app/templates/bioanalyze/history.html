@@ -11,7 +11,7 @@
                     <h1 class="h3 mb-1">Historial de análisis</h1>
                     <p class="text-muted mb-0">Consulta y gestiona los análisis que has realizado con la plataforma.</p>
                 </div>
-                <a class="btn btn-primary rounded-pill btn-sm px-3 py-1 ms-3" href="{{ url_for('bioanalyze.informe_web') }}" style="font-size:1rem;">
+                <a class="btn btn-primary rounded-pill btn-sm px-3 py-1 ms-3" href="{{ url_for('bioanalyze.new_analysis') }}" style="font-size:1rem;">
                     <i class="fas fa-plus me-2"></i>Nuevo análisis
                 </a>
             </div>
@@ -50,10 +50,10 @@
                                     <td>{{ analysis.gemelo_izq and ('%.1f'|format(analysis.gemelo_izq)) or '—' }}</td>
                                     <td>{{ analysis.gemelo_der and ('%.1f'|format(analysis.gemelo_der)) or '—' }}</td>
                                     <td class="text-end">
-                                        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('bioanalyze.analysis_detail', analysis_id=analysis.id) }}">
+                                        <a class="btn btn-outline-primary btn-sm" href="{{ url_for('bioanalyze.result', analysis_id=analysis.id) }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        <form method="post" action="{{ url_for('bioanalyze.delete_analysis', analysis_id=analysis.id) }}" class="d-inline">
+                                        <form method="post" action="{{ url_for('bioanalyze.delete', analysis_id=analysis.id) }}" class="d-inline">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button class="btn btn-outline-danger btn-sm" type="submit" onclick="return confirm('¿Eliminar este análisis?');">
                                                 <i class="fas fa-trash"></i>
@@ -78,7 +78,7 @@
                                             <h5 class="mb-1">{{ '%.1f'|format(analysis.weight) }} kg | IMC: {{ '%.2f'|format(analysis.bmi) }}</h5>
                                             <div class="small text-muted">% Grasa: {{ analysis.body_fat_percentage is not none and ('%.2f'|format(analysis.body_fat_percentage)) or '—' }} | TMB: {{ '%.0f'|format(analysis.bmr) }} kcal</div>
                                         </div>
-                                        <a class="btn btn-outline-primary btn-sm rounded-pill ms-2" href="{{ url_for('bioanalyze.analysis_detail', analysis_id=analysis.id) }}">
+                                        <a class="btn btn-outline-primary btn-sm rounded-pill ms-2" href="{{ url_for('bioanalyze.result', analysis_id=analysis.id) }}">
                                             Ver informe
                                         </a>
                                     </div>
@@ -91,7 +91,7 @@
                                         <div class="col-4">Gemelo der: <strong>{{ analysis.gemelo_der and ('%.1f'|format(analysis.gemelo_der)) or '—' }}</strong></div>
                                     </div>
                                     <div class="mt-2 text-end">
-                                        <form method="post" action="{{ url_for('bioanalyze.delete_analysis', analysis_id=analysis.id) }}" class="d-inline">
+                                        <form method="post" action="{{ url_for('bioanalyze.delete', analysis_id=analysis.id) }}" class="d-inline">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button class="btn btn-outline-danger btn-sm rounded-pill" type="submit" onclick="return confirm('¿Eliminar este análisis?');">
                                                 <i class="fas fa-trash"></i>
