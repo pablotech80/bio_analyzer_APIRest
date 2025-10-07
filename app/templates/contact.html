@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Contactar con Entrenador - CoachBodyFit360{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="card-title mb-4">
+                        💬 Contactar con el Entrenador
+                    </h2>
+
+                    <p class="text-muted mb-4">
+                        ¿Tienes dudas sobre tu análisis o necesitas asesoría personalizada?
+                        Envíame un mensaje y te responderé lo antes posible.
+                    </p>
+
+                    <form method="POST" action="{{ url_for('contact.send_message') }}">
+                        {{ form.hidden_tag() }}
+
+                        <!-- Asunto -->
+                        <div class="mb-3">
+                            <label for="subject" class="form-label">Asunto *</label>
+                            {{ form.subject(class="form-control", placeholder="Ej: Consulta sobre plan de nutrición") }}
+                            {% if form.subject.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.subject.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Mensaje -->
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Mensaje *</label>
+                            {{ form.message(class="form-control", rows="6", placeholder="Describe tu consulta...") }}
+                            {% if form.message.errors %}
+                                <div class="text-danger mt-1">
+                                    {% for error in form.message.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Análisis relacionado (opcional) -->
+                        <div class="mb-4">
+                            <label for="analysis_id" class="form-label">
+                                Análisis relacionado (opcional)
+                            </label>
+                            {{ form.analysis_id(class="form-select") }}
+                            <small class="form-text text-muted">
+                                Si tu consulta es sobre un análisis específico, selecciónalo aquí.
+                            </small>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="d-grid gap-2">
+                            {{ form.submit(class="btn btn-primary btn-lg") }}
+                            <a href="{{ url_for('index') }}" class="btn btn-outline-secondary">
+                                Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Info de contacto alternativa -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h5 class="card-title">Otros medios de contacto</h5>
+                    <p class="mb-2">
+                        <i class="fas fa-envelope text-primary"></i>
+                        <strong>Email:</strong> coachbodyfit@gmail.com
+                    </p>
+                    <p class="mb-0">
+                        <i class="fas fa-phone text-success"></i>
+                        <strong>WhatsApp:</strong> Disponible próximamente
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

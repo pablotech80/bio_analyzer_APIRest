@@ -28,6 +28,9 @@ class User(db.Model, UserMixin):
 	is_active = db.Column(db.Boolean, default = True, nullable = False)
 	is_verified = db.Column(db.Boolean, default = False, nullable = False)
 	email_verified_at = db.Column(db.DateTime)
+	
+	# Admin flag (quick access, complementa el sistema de roles)
+	is_admin = db.Column(db.Boolean, default = False, nullable = False)
 
 	# Rol
 	role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))

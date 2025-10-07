@@ -6,6 +6,7 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_wtf.csrf import CSRFProtect
+from flask_cors import CORS
 
 # Inicializar extensiones (sin app todavía)
 db = SQLAlchemy()
@@ -14,7 +15,7 @@ login_manager = LoginManager()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 csrf = CSRFProtect()
-
+cors = CORS()
 
 def create_app(config_name = 'development'):
 	"""
@@ -43,6 +44,17 @@ def create_app(config_name = 'development'):
 	bcrypt.init_app(app)
 	jwt.init_app(app)
 	csrf.init_app(app)
+	cors.init_app(app)
+
+	# Configure CORS for API endpoints
+	cors.init_app(app, resources={
+		r"/api/*": {
+			"origins": ["http://localhost:3000", "http://localhost:5173", "https://*.vercel.app"],
+			"methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+			"allow_headers": ["Content-Type", "Authorization"],
+			"supports_credentials": True
+		}
+	})
 
 	# Configurar Flask-Login
 	login_manager.login_view = 'auth.login'
@@ -59,18 +71,14 @@ def create_app(config_name = 'development'):
 	with app.app_context():
 		# Auth blueprint
 		from app.blueprints.auth import auth_bp
-		app.register_blueprint(auth_bp, url_prefix = '/auth')
-
 		from app.blueprints.bioanalyze import bioanalyze_bp
+		from app.blueprints.api import api_bp
+		from app.blueprints.contact import contact_bp
+
+		app.register_blueprint(auth_bp, url_prefix = '/auth')
 		app.register_blueprint(bioanalyze_bp)
-
-		# BioAnalyze blueprint (migrar el existente después)
-		# from app.blueprints.bioanalyze import bioanalyze_bp
-		# app.register_blueprint(bioanalyze_bp, url_prefix='/bioanalyze')
-
-		# API blueprint
-		# from app.blueprints.api import api_bp
-		# app.register_blueprint(api_bp, url_prefix='/api/v1')
+		app.register_blueprint(api_bp, url_prefix='/api/v1')
+		app.register_blueprint(contact_bp)
 
 		# Ruta principal temporal
 		@app.route('/')

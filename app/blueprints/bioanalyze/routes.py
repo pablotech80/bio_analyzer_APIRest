@@ -167,8 +167,8 @@ def result(analysis_id: int):
 		flash("Análisis no encontrado.", "danger")
 		return redirect(url_for("bioanalyze.history"))
 
-	# Verificar ownership
-	if analysis.user_id != current_user.id:
+	# Verificar ownership (admins pueden ver todos los análisis)
+	if analysis.user_id != current_user.id and not current_user.is_admin:
 		flash("No tienes permiso para ver este análisis.", "danger")
 		return redirect(url_for("bioanalyze.history"))
 
@@ -244,8 +244,8 @@ def request_ai_analysis(analysis_id: int):
 		flash("Análisis no encontrado.", "danger")
 		return redirect(url_for("bioanalyze.history"))
 
-	# Verificar ownership
-	if analysis.user_id != current_user.id:
+	# Verificar ownership (admins pueden ver todos los análisis)
+	if analysis.user_id != current_user.id and not current_user.is_admin:
 		flash("No tienes permiso para modificar este análisis.", "danger")
 		return redirect(url_for("bioanalyze.history"))
 
@@ -270,9 +270,14 @@ def request_ai_analysis(analysis_id: int):
 def debug_analysis(analysis_id: int):
 	"""
 	Debug route: Display raw FitMaster data for troubleshooting.
-
-	TODO: Remove in production or restrict to admin role
+	
+	Restricted to admin users only.
 	"""
+	# Verificar que el usuario es admin
+	if not current_user.is_admin:
+		flash('Acceso denegado. Solo administradores pueden ver esta página.', 'danger')
+		return redirect(url_for('bioanalyze.history'))
+	
 	analysis = get_analysis_by_id(analysis_id)
 
 	if not analysis:
