@@ -1,5 +1,5 @@
-from src.body_analyzer.constantes import *
-from src.body_analyzer.model import Sexo
+from .constantes import GrasaCorporal, RCC, RatioCinturaAltura, FFMI
+from .model import Sexo
 
 
 def _normalizar_genero_texto(genero):

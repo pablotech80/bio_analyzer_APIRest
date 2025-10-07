@@ -1,4 +1,4 @@
-from src.body_analyzer.model import Sexo, ObjetivoNutricional
+from .model import Sexo, ObjetivoNutricional
 
 def convertir_genero(genero_str):
     if genero_str == "h":
