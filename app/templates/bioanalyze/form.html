@@ -18,7 +18,7 @@
             </div>
 
 
-            <form method="post" action="{{ url_for('bioanalyze.informe_web') }}">
+            <form method="post" action="{{ url_for('bioanalyze.new_analysis') }}">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <!-- Card: Datos personales -->
