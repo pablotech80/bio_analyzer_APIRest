@@ -1,186 +1,304 @@
-"""Routes for biometric analysis capture, history and detail views."""
-import json
-from flask import flash, redirect, render_template, request, url_for
+# app/blueprints/bioanalyze/routes.py
+"""
+Routes for biometric analysis capture, history and detail views.
+
+Principios CoachBodyFit360:
+- SRP: Solo maneja routing y presentación (Controller layer)
+- SoC: Lógica de negocio delegada a services/
+- API-First: Rutas preparadas para devolver JSON si se solicita
+"""
+from flask import flash, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required
 
-from app.models import BiometricAnalysis
 from app.blueprints.bioanalyze import bioanalyze_bp
 from app.blueprints.bioanalyze.services import (
-    AnalysisPayload,
-    AnalysisValidationError,
-    build_interpretations_for_record,
-    persist_analysis,
-    run_biometric_analysis,
-)
+	AnalysisPayload,
+	AnalysisValidationError,
+	build_interpretations_for_record,
+	run_biometric_analysis,
+	)
 
-# Importamos el servicio FitMaster y la base de datos
-from app.services.fitmaster_service import FitMasterService
-from app import db
+# Nuevo servicio centralizado
+from app.services.biometric_service import (
+	create_analysis,
+	get_user_analyses,
+	get_analysis_by_id,
+	delete_analysis as delete_analysis_service,
+	add_fitmaster_analysis
+	)
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
-@bioanalyze_bp.route("/informe_web", methods=["GET", "POST"])
+@bioanalyze_bp.route("/nuevo", methods = ["GET", "POST"])
+@bioanalyze_bp.route("/informe_web", methods = ["GET", "POST"])  # Alias legacy
 @login_required
-def informe_web():
-    """Render the biometric analysis form and handle submissions."""
-    
-    if request.method == "POST":
-        try:
-            payload: AnalysisPayload = run_biometric_analysis(request.form)
-        except AnalysisValidationError as exc:
-            flash(str(exc), "danger")
-            return render_template(
-                "bioanalyze/form.html",
-                form_data=request.form.to_dict(flat=True),
-            )
+def new_analysis():
+	"""
+	Render the biometric analysis form and handle submissions.
 
-        # Guardar el análisis biométrico base
-        analysis = persist_analysis(current_user, payload)
+	GET: Display empty form
+	POST: Process form, create analysis, optionally request FitMaster
+	"""
+	if request.method == "POST":
+		try:
+			# Validar y procesar datos del formulario
+			payload: AnalysisPayload = run_biometric_analysis(request.form)
+		except AnalysisValidationError as exc:
+			flash(str(exc), "danger")
+			return render_template(
+				"bioanalyze/form.html",
+				form_data = request.form.to_dict(flat = True),
+				)
 
-        # Integración con FitMaster AI: enviar resultados y guardar respuesta
-        print(f"[DEBUG] Iniciando integración con FitMaster AI para análisis {analysis.id}")
-        
-        try:
-            print(f"[DEBUG] Llamando a FitMasterService.analyze_bio_results()")
-            print(f"[DEBUG] Payload: {payload.to_dict()}")
-            
-            fitmaster_result = FitMasterService.analyze_bio_results(payload.to_dict())
-            
-            print(f"[DEBUG] Resultado de FitMaster: {fitmaster_result}")
-            
-            if fitmaster_result:
-                print(f"[DEBUG] Guardando resultados AI en la base de datos...")
-                analysis.ai_interpretation = fitmaster_result.get("interpretation")
-                analysis.nutrition_plan = fitmaster_result.get("nutrition_plan")
-                analysis.training_plan = fitmaster_result.get("training_plan")
-                
-                db.session.commit()
-                print(f"[DEBUG] Resultados AI guardados exitosamente")
-            else:
-                print(f"[DEBUG] FitMaster devolvió resultado vacío o None")
-                
-        except Exception as exc:
-            # Log del error para debugging
-            print(f"[FitMasterService] ERROR COMPLETO: {exc}")
-            import traceback
-            print(f"[FitMasterService] STACK TRACE: {traceback.format_exc()}")
-            flash("El análisis se guardó, pero no se pudo conectar con FitMaster AI.", "warning")
+		# Preparar datos para el servicio
+		biometric_data = payload.to_dict()
 
-        flash("Análisis guardado en tu historial.", "success")
-        return redirect(url_for("bioanalyze.analysis_detail", analysis_id=analysis.id))
+		# Crear análisis usando el servicio
+		analysis, error = create_analysis(
+			user_id = current_user.id,
+			biometric_data = biometric_data,
+			request_fitmaster = True  # Siempre pedir FitMaster por ahora
+			)
 
-    # Si es GET, mostrar formulario vacío
-    return render_template("bioanalyze/form.html", form_data={})
+		if error:
+			flash(f"Error al crear análisis: {error}", "danger")
+			return render_template(
+				"bioanalyze/form.html",
+				form_data = request.form.to_dict(flat = True),
+				)
+
+		# Success
+		logger.info(f"Analysis created: ID={analysis.id} for user={current_user.id}")
+
+		if analysis.has_fitmaster_analysis:
+			flash("Análisis guardado con interpretación de FitMaster AI.", "success")
+		else:
+			flash("Análisis guardado. (FitMaster AI no disponible)", "warning")
+
+		return redirect(url_for("bioanalyze.result", analysis_id = analysis.id))
+
+	# GET: Mostrar formulario vacío
+	return render_template("bioanalyze/form.html", form_data = {})
 
 
 @bioanalyze_bp.route("/historial")
 @login_required
 def history():
-    """List the authenticated user's previous biometric analyses."""
-    
-    analyses = (
-        BiometricAnalysis.query
-        .filter_by(user_id=current_user.id)
-        .order_by(BiometricAnalysis.created_at.desc())
-        .all()
-    )
+	"""
+	List the authenticated user's previous biometric analyses.
 
-    return render_template("bioanalyze/history.html", analyses=analyses)
+	Returns HTML or JSON based on Accept header.
+	"""
+	# Obtener análisis del usuario
+	analyses = get_user_analyses(current_user.id, limit = 50)
+
+	# Si se solicita JSON (API)
+	if request.accept_mimetypes.best == 'application/json':
+		return jsonify(
+			{
+				'success': True,
+				'count': len(analyses),
+				'analyses': [a.to_dict(include_fitmaster = False) for a in analyses]
+				}
+			), 200
+
+	# HTML (web)
+	return render_template("bioanalyze/history.html", analyses = analyses)
 
 
-@bioanalyze_bp.route("/informe_web/<int:analysis_id>")
+@bioanalyze_bp.route("/resultado/<int:analysis_id>")
+@bioanalyze_bp.route("/informe_web/<int:analysis_id>")  # Alias legacy
 @login_required
-def analysis_detail(analysis_id: int):
-    """Display a stored analysis with its interpretations."""
-    
-    analysis = (
-        BiometricAnalysis.query
-        .filter_by(id=analysis_id, user_id=current_user.id)
-        .first_or_404()
-    )
+def result(analysis_id: int):
+	"""
+	Display a stored analysis with its interpretations and FitMaster plan.
 
-    interpretaciones = build_interpretations_for_record(analysis)
+	Args:
+		analysis_id: ID of the analysis to display
 
-    # Preparar datos de FitMaster AI para el template
-    ai_data = {
-        'interpretation': analysis.ai_interpretation,
-        'nutrition_plan': analysis.nutrition_plan,
-        'training_plan': analysis.training_plan
-    }
+	Returns:
+		HTML page with analysis details and AI interpretation
+	"""
+	# Obtener análisis
+	analysis = get_analysis_by_id(analysis_id)
 
-    return render_template(
-        "bioanalyze/detail.html",
-        analysis=analysis,
-        interpretaciones=interpretaciones,
-        ai_data=ai_data,
-    )
+	if not analysis:
+		flash("Análisis no encontrado.", "danger")
+		return redirect(url_for("bioanalyze.history"))
+
+	# Verificar ownership
+	if analysis.user_id != current_user.id:
+		flash("No tienes permiso para ver este análisis.", "danger")
+		return redirect(url_for("bioanalyze.history"))
+
+	# Construir interpretaciones (del servicio legacy)
+	interpretaciones = build_interpretations_for_record(analysis)
+
+	# Preparar datos de FitMaster
+	fitmaster_data = None
+	if analysis.has_fitmaster_analysis:
+		fitmaster_data = analysis.fitmaster_data
+
+	# Si se solicita JSON (API)
+	if request.accept_mimetypes.best == 'application/json':
+		return jsonify(
+			{
+				'success': True,
+				'analysis': analysis.to_dict(include_fitmaster = True),
+				'interpretations': interpretaciones
+				}
+			), 200
+
+	# HTML (web)
+	return render_template(
+		"bioanalyze/result.html",
+		analysis = analysis,
+		interpretaciones = interpretaciones,
+		fitmaster_data = fitmaster_data
+		)
 
 
-@bioanalyze_bp.route("/historial/<int:analysis_id>/eliminar", methods=["POST"])
+@bioanalyze_bp.route("/historial/<int:analysis_id>/eliminar", methods = ["POST"])
 @login_required
-def delete_analysis(analysis_id: int):
-    """Allow users to delete one of their previously stored analyses."""
-    
-    analysis = (
-        BiometricAnalysis.query
-        .filter_by(id=analysis_id, user_id=current_user.id)
-        .first_or_404()
-    )
+def delete(analysis_id: int):
+	"""
+	Delete a biometric analysis (with ownership verification).
 
-    persist_id = analysis.id
-    flash_message = f"Análisis #{persist_id} eliminado."
+	Args:
+		analysis_id: ID of the analysis to delete
 
-    db.session.delete(analysis)
-    db.session.commit()
+	Returns:
+		Redirect to history page
+	"""
+	success, error = delete_analysis_service(analysis_id, current_user.id)
 
-    flash(flash_message, "info")
-    return redirect(url_for("bioanalyze.history"))
+	if not success:
+		flash(f"Error: {error}", "danger")
+	else:
+		flash(f"Análisis #{analysis_id} eliminado.", "info")
 
+	return redirect(url_for("bioanalyze.history"))
+
+
+@bioanalyze_bp.route("/resultado/<int:analysis_id>/solicitar-ia", methods = ["POST"])
+@login_required
+def request_ai_analysis(analysis_id: int):
+	"""
+	Manually request FitMaster analysis for an existing record.
+
+	Useful if:
+	- Original analysis failed to get FitMaster
+	- User wants to regenerate with updated AI model
+
+	Args:
+		analysis_id: ID of the analysis
+
+	Returns:
+		Redirect to result page
+	"""
+	# Obtener análisis
+	analysis = get_analysis_by_id(analysis_id)
+
+	if not analysis:
+		flash("Análisis no encontrado.", "danger")
+		return redirect(url_for("bioanalyze.history"))
+
+	# Verificar ownership
+	if analysis.user_id != current_user.id:
+		flash("No tienes permiso para modificar este análisis.", "danger")
+		return redirect(url_for("bioanalyze.history"))
+
+	# Preparar datos biométricos del análisis existente
+	biometric_data = analysis.to_dict(include_fitmaster = False)
+
+	# Solicitar análisis FitMaster
+	error = add_fitmaster_analysis(analysis_id, biometric_data)
+
+	if error:
+		flash(f"Error al solicitar FitMaster: {error}", "warning")
+	else:
+		flash("Análisis de FitMaster AI generado exitosamente.", "success")
+
+	return redirect(url_for("bioanalyze.result", analysis_id = analysis_id))
+
+
+# ========== LEGACY ROUTES (mantener por compatibilidad) ==========
 
 @bioanalyze_bp.route("/debug/<int:analysis_id>")
 @login_required
 def debug_analysis(analysis_id: int):
-    """Debug: Ver respuesta completa de FitMaster AI."""
-    
-    try:
-        analysis = BiometricAnalysis.query.filter_by(id=analysis_id, user_id=current_user.id).first()
-        
-        if not analysis:
-            return f"<h1>Análisis #{analysis_id} no encontrado</h1><p>User ID: {current_user.id}</p>"
-        
-        # Crear contenido muy simple sin caracteres especiales
-        ai_exists = "SI" if analysis.ai_interpretation else "NO"
-        nutrition_exists = "SI" if analysis.nutrition_plan else "NO" 
-        training_exists = "SI" if analysis.training_plan else "NO"
-        
-        ai_content = str(analysis.ai_interpretation)[:500] if analysis.ai_interpretation else "VACIO"
-        nutrition_content = str(analysis.nutrition_plan)[:500] if analysis.nutrition_plan else "VACIO"
-        training_content = str(analysis.training_plan)[:500] if analysis.training_plan else "VACIO"
-        
-        return f"""
-        <html>
-        <head><title>Debug Simple - Analisis {analysis.id}</title></head>
-        <body>
-            <h1>Debug FitMaster AI - Analisis #{analysis.id}</h1>
-            
-            <h2>Estado de Datos AI:</h2>
-            <p>AI Interpretation: {ai_exists}</p>
-            <p>Nutrition Plan: {nutrition_exists}</p>
-            <p>Training Plan: {training_exists}</p>
-            
-            <h2>Interpretacion AI (primeros 500 chars):</h2>
-            <textarea rows="10" cols="80">{ai_content}</textarea>
-            
-            <h2>Plan Nutricional (primeros 500 chars):</h2>
-            <textarea rows="10" cols="80">{nutrition_content}</textarea>
-            
-            <h2>Plan Entrenamiento (primeros 500 chars):</h2>
-            <textarea rows="10" cols="80">{training_content}</textarea>
-            
-            <p><a href="/informe_web/{analysis.id}">Volver al analisis</a></p>
-            <p><a href="/informe_web">Crear nuevo analisis</a></p>
-        </body>
-        </html>
-        """
-        
-    except Exception as e:
-        return f"<h1>Error: {str(e)}</h1><p>Analysis ID: {analysis_id}</p>"
+	"""
+	Debug route: Display raw FitMaster data for troubleshooting.
+
+	TODO: Remove in production or restrict to admin role
+	"""
+	analysis = get_analysis_by_id(analysis_id)
+
+	if not analysis:
+		return "<h1>Análisis no encontrado</h1>", 404
+
+	if analysis.user_id != current_user.id:
+		return "<h1>Sin permiso</h1>", 403
+
+	# Datos de debug
+	has_fitmaster = "SÍ" if analysis.has_fitmaster_analysis else "NO"
+	fitmaster_version = analysis.fitmaster_model_version or "N/A"
+	fitmaster_date = analysis.fitmaster_generated_at or "N/A"
+
+	fitmaster_content = ""
+	if analysis.fitmaster_data:
+		import json
+		fitmaster_content = json.dumps(analysis.fitmaster_data, indent = 2, ensure_ascii = False)
+
+	return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Debug - Análisis #{analysis.id}</title>
+        <style>
+            body {{ font-family: monospace; padding: 20px; }}
+            h1 {{ color: #333; }}
+            .info {{ background: #f0f0f0; padding: 10px; margin: 10px 0; }}
+            textarea {{ width: 100%; height: 400px; font-family: monospace; }}
+        </style>
+    </head>
+    <body>
+        <h1>🔍 Debug FitMaster - Análisis #{analysis.id}</h1>
+
+        <div class="info">
+            <strong>Usuario:</strong> {analysis.user_id}<br>
+            <strong>Fecha creación:</strong> {analysis.created_at}<br>
+            <strong>¿Tiene FitMaster?:</strong> {has_fitmaster}<br>
+            <strong>Versión modelo:</strong> {fitmaster_version}<br>
+            <strong>Generado el:</strong> {fitmaster_date}
+        </div>
+
+        <h2>Datos Biométricos:</h2>
+        <div class="info">
+            Peso: {analysis.weight} kg<br>
+            Altura: {analysis.height} cm<br>
+            Edad: {analysis.age} años<br>
+            Género: {analysis.gender}<br>
+            Bíceps L/R: {analysis.biceps_left} / {analysis.biceps_right} cm<br>
+            Muslo L/R: {analysis.thigh_left} / {analysis.thigh_right} cm<br>
+            Gemelo L/R: {analysis.calf_left} / {analysis.calf_right} cm
+        </div>
+
+        <h2>FitMaster Data (JSON):</h2>
+        <textarea readonly>{fitmaster_content or "No hay datos de FitMaster"}</textarea>
+
+        <p>
+            <a href="{url_for('bioanalyze.result', analysis_id = analysis.id)}">← Volver al análisis</a> |
+            <a href="{url_for('bioanalyze.history')}">Ver historial</a> |
+            <a href="{url_for('bioanalyze.new_analysis')}">Nuevo análisis</a>
+        </p>
+    </body>
+    </html>
+    """
+
+
+# Alias para compatibilidad con código existente
+analysis_detail = result
