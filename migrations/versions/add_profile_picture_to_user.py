@@ -6,7 +6,7 @@ Create Date: 2025-10-05
 
 # Alembic identifiers
 revision = 'add_profile_picture_to_user'
-down_revision = 'd8a613f94370'
+down_revision = None
 branch_labels = None
 depends_on = None
 from alembic import op
