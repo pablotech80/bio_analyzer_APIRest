@@ -68,23 +68,24 @@ def create_app(config_name = 'development'):
 		return User.query.get(int(user_id))
 
 	# Registrar Blueprints
-	with app.app_context():
-		# Auth blueprint
-		from app.blueprints.auth import auth_bp
-		from app.blueprints.bioanalyze import bioanalyze_bp
-		from app.blueprints.api import api_bp
-		from app.blueprints.contact import contact_bp
+	# Auth blueprint
+	from app.blueprints.auth import auth_bp
+	from app.blueprints.bioanalyze import bioanalyze_bp
+	from app.blueprints.api import api_bp
+	from app.blueprints.contact import contact_bp
+	from app.blueprints.admin.routes import admin_bp
 
-		app.register_blueprint(auth_bp, url_prefix = '/auth')
-		app.register_blueprint(bioanalyze_bp)
-		app.register_blueprint(api_bp, url_prefix='/api/v1')
-		app.register_blueprint(contact_bp)
+	app.register_blueprint(auth_bp, url_prefix = '/auth')
+	app.register_blueprint(bioanalyze_bp)
+	app.register_blueprint(api_bp, url_prefix='/api/v1')
+	app.register_blueprint(contact_bp)
+	app.register_blueprint(admin_bp)
 
-		# Ruta principal temporal
-		@app.route('/')
-		def index():
-			from flask import render_template
-			return render_template('index.html')
+	# Ruta principal temporal
+	@app.route('/')
+	def index():
+		from flask import render_template
+		return render_template('index.html')
 
 	# Registrar error handlers
 	from app.middleware.error_handlers import register_error_handlers

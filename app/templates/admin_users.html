@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios registrados - Admin{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2>👥 Usuarios registrados</h2>
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-3">
+            <select name="gender" class="form-select">
+                <option value="">Todos los géneros</option>
+                <option value="male" {% if request.args.get('gender') == 'male' %}selected{% endif %}>Hombre</option>
+                <option value="female" {% if request.args.get('gender') == 'female' %}selected{% endif %}>Mujer</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <input type="text" name="last_name" class="form-control" placeholder="Filtrar por apellido" value="{{ request.args.get('last_name', '') }}">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary">Filtrar</button>
+        </div>
+    </form>
+    {% if users %}
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Email</th>
+                    <th>Género</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.first_name }}</td>
+                    <td>{{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.gender }}</td>
+                    <td>
+                        <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" class="btn btn-sm btn-info">Ver análisis</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">No hay usuarios que coincidan con el filtro.</div>
+    {% endif %}
+</div>
+{% endblock %}

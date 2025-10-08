@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Análisis de usuario - Admin{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h2>📊 Análisis de {{ user.first_name }} {{ user.last_name }} ({{ user.email }})</h2>
+    {% if analyses %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Peso</th>
+                    <th>IMC</th>
+                    <th>Grasa (%)</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for analysis in analyses %}
+                <tr>
+                    <td>{{ analysis.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ analysis.weight }}</td>
+                    <td>{{ analysis.bmi }}</td>
+                    <td>{{ analysis.body_fat_percentage }}</td>
+                    <td>
+                        <a href="{{ url_for('bioanalyze.result', analysis_id=analysis.id) }}" class="btn btn-sm btn-primary" target="_blank">Ver detalle</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning">Este usuario no tiene análisis registrados.</div>
+    {% endif %}
+    <a href="{{ url_for('admin.users') }}" class="btn btn-secondary mt-3">Volver a usuarios</a>
+</div>
+{% endblock %}
