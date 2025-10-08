@@ -12,12 +12,17 @@ logger = logging.getLogger(__name__)
 # Inicializar cliente OpenAI con validación
 def _get_openai_client() -> Optional[OpenAI]:
 	"""Inicializar cliente OpenAI con validación de API key."""
+
 	api_key = os.getenv("OPENAI_API_KEY")
 	if not api_key:
 		logger.warning("OPENAI_API_KEY no está configurada en las variables de entorno")
 		return None
 
+	# Log parcial de la API key (por seguridad)
+	logger.info(f"OPENAI_API_KEY detectada, comienza por: {api_key[:8]}... (longitud: {len(api_key)})")
+
 	try:
+		logger.info("Inicializando cliente OpenAI...")
 		return OpenAI(api_key = api_key)
 	except Exception as e:
 		logger.error(f"Error al inicializar cliente OpenAI: {e}")
@@ -52,43 +57,44 @@ class FitMasterService:
 			logger.error("bio_payload está vacío")
 			return FitMasterService._get_fallback_response("Datos biométricos no válidos")
 
-		prompt = f"""
-        Eres FitMaster AI, un experto en fitness, nutrición y composición corporal.
-        Analiza los siguientes datos biométricos y genera:
 
-        1. Interpretación del estado corporal (peso, grasa, IMC, masa magra, metabolismo, etc.)
-        2. Plan nutricional diario (objetivo, calorías, macros y ejemplo de comidas)
-        3. Plan de entrenamiento semanal (frecuencia, tipo de rutina, ejercicios principales)
+				prompt = f"""
+				Eres FitMaster AI, un experto en fitness, nutrición y composición corporal.
+				Analiza los siguientes datos biométricos y genera:
 
-        Devuelve el resultado en formato JSON con esta estructura exacta:
-        {{
-          "interpretation": "...",
-          "nutrition_plan": {{
-            "goal": "...",
-            "daily_calories": 0,
-            "macros": {{"protein": 0, "carbs": 0, "fat": 0}},
-            "meals": [{{"name": "...", "description": "..."}}]
-          }},
-          "training_plan": {{
-            "frequency": "...",
-            "routine_type": "...",
-            "exercises": ["..."]
-          }}
-        }}
-		
-		IMPORTANTE: Responde ÚNICAMENTE con JSON válido. No agregues texto antes o después del JSON.
-		Ejemplo de formato esperado:
-		{{"interpretation": "...", "nutrition_plan": {{"goal": "..."}}, "training_plan": {{"frequency": "..."}}}}
-		
-		
-        Datos del usuario:
-        {bio_payload}
-        """
+				1. Interpretación del estado corporal (peso, grasa, IMC, masa magra, metabolismo, etc.)
+				2. Plan nutricional diario (objetivo, calorías, macros y ejemplo de comidas)
+				3. Plan de entrenamiento semanal (frecuencia, tipo de rutina, ejercicios principales)
+
+				Devuelve el resultado en formato JSON con esta estructura exacta:
+				{{
+					"interpretation": "...",
+					"nutrition_plan": {{
+						"goal": "...",
+						"daily_calories": 0,
+						"macros": {{"protein": 0, "carbs": 0, "fat": 0}},
+						"meals": [{{"name": "...", "description": "..."}}]
+					}},
+					"training_plan": {{
+						"frequency": "...",
+						"routine_type": "...",
+						"exercises": ["..."]
+					}}
+				}}
+
+				IMPORTANTE: Responde ÚNICAMENTE con JSON válido. No agregues texto antes o después del JSON.
+				Ejemplo de formato esperado:
+				{{"interpretation": "...", "nutrition_plan": {{"goal": "..."}}, "training_plan": {{"frequency": "..."}}}}
+
+				Datos del usuario:
+				{bio_payload}
+				"""
 
 		try:
-			logger.info("Enviando solicitud a OpenAI GPT-4o")
+			modelo_usado = "gpt-4o-mini"
+			logger.info(f"Enviando solicitud a OpenAI. Modelo: {modelo_usado}")
 			response = client.chat.completions.create(
-				model = "gpt-4o-mini",
+				model = modelo_usado,
 				messages = [
 					{"role": "system", "content": "Eres FitMaster, IA experta en fitness y nutrición."},
 					{"role": "user", "content": prompt},
@@ -122,6 +128,7 @@ class FitMasterService:
 
 		except Exception as exc:
 			logger.error(f"Error en la conexión con OpenAI: {exc}")
+			logger.error(f"Tipo de excepción: {type(exc)}")
 			return FitMasterService._get_fallback_response(f"Error de conexión: {str(exc)}")
 
 	@staticmethod
