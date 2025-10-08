@@ -62,8 +62,9 @@ class FitMasterService:
 		Analiza los siguientes datos biométricos y genera:
 
 		1. Interpretación del estado corporal (peso, grasa, IMC, masa magra, metabolismo, etc.)
-		2. Plan nutricional diario (objetivo, calorías, macros y ejemplo de comidas)
-		3. Plan de entrenamiento semanal (frecuencia, tipo de rutina, ejercicios principales)
+		2. Plan nutricional diario detallado por macros (objetivo, calorías, macros y ejemplo de comidas)
+		3. Plan de entrenamiento semanal detallado(frecuencia, tipo de rutina, ejercicios principales)
+		4. Recomendaciones adicionales (suplementos, hábitos de salud, etc.)
 
 		Devuelve el resultado en formato JSON con esta estructura exacta:
 		{{
