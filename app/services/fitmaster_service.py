@@ -53,43 +53,7 @@ class FitMasterService:
 		if not bio_payload:
 			logger.error("bio_payload está vacío")
 			return FitMasterService._get_fallback_response("Datos biométricos no válidos")
-
-<<<<<<< HEAD
-		prompt = f"""
-		Eres FitMaster AI, un experto en fitness, nutrición y composición corporal.
-		Analiza los siguientes datos biométricos y genera:
-
-		1. Interpretación del estado corporal (peso, grasa, IMC, masa magra, metabolismo, etc.)
-		2. Plan nutricional diario detallado por macros (objetivo, calorías, macros y ejemplo de comidas)
-		3. Plan de entrenamiento semanal detallado(frecuencia, tipo de rutina, ejercicios principales)
-		4. Recomendaciones adicionales (suplementos, hábitos de salud, etc.)
-
-		Devuelve el resultado en formato JSON con esta estructura exacta:
-		{{
-			"interpretation": "...",
-			"nutrition_plan": {{
-				"goal": "...",
-				"daily_calories": 0,
-				"macros": {{"protein": 0, "carbs": 0, "fat": 0}},
-				"meals": [{{"name": "...", "description": "..."}}]
-			}},
-			"training_plan": {{
-				"frequency": "...",
-				"routine_type": "...",
-				"exercises": ["..."]
-			}}
-		}}
-
-		IMPORTANTE: Responde ÚNICAMENTE con JSON válido. No agregues texto antes o después del JSON.
-		Ejemplo de formato esperado:
-		{{"interpretation": "...", "nutrition_plan": {{"goal": "..."}}, "training_plan": {{"frequency": "..."}}}}
-
-		Datos del usuario:
-		{bio_payload}
-		"""
-=======
 		prompt = FitMasterService._build_prompt(bio_payload)
->>>>>>> feature/authentication
 
 		try:
 			modelo_usado = "gpt-4o-mini"
