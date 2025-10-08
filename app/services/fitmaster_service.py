@@ -40,12 +40,9 @@ class FitMasterService:
 	@staticmethod
 	def analyze_bio_results(bio_payload: Dict) -> Optional[Dict]:
 		"""
-		Envía los resultados del análisis biométrico a GPT-4o y devuelve la
-		interpretación, plan de nutrición y entrenamiento.
-
+		Envía los resultados del análisis biométrico a GPT-4o y devuelve la interpretación, plan de nutrición y entrenamiento.
 		Args:
 			bio_payload: Diccionario con los datos biométricos del usuario
-
 		Returns:
 			Dict con interpretación, nutrition_plan y training_plan, o None si hay error
 		"""
@@ -57,38 +54,7 @@ class FitMasterService:
 			logger.error("bio_payload está vacío")
 			return FitMasterService._get_fallback_response("Datos biométricos no válidos")
 
-
-				prompt = f"""
-				Eres FitMaster AI, un experto en fitness, nutrición y composición corporal.
-				Analiza los siguientes datos biométricos y genera:
-
-				1. Interpretación del estado corporal (peso, grasa, IMC, masa magra, metabolismo, etc.)
-				2. Plan nutricional diario (objetivo, calorías, macros y ejemplo de comidas)
-				3. Plan de entrenamiento semanal (frecuencia, tipo de rutina, ejercicios principales)
-
-				Devuelve el resultado en formato JSON con esta estructura exacta:
-				{{
-					"interpretation": "...",
-					"nutrition_plan": {{
-						"goal": "...",
-						"daily_calories": 0,
-						"macros": {{"protein": 0, "carbs": 0, "fat": 0}},
-						"meals": [{{"name": "...", "description": "..."}}]
-					}},
-					"training_plan": {{
-						"frequency": "...",
-						"routine_type": "...",
-						"exercises": ["..."]
-					}}
-				}}
-
-				IMPORTANTE: Responde ÚNICAMENTE con JSON válido. No agregues texto antes o después del JSON.
-				Ejemplo de formato esperado:
-				{{"interpretation": "...", "nutrition_plan": {{"goal": "..."}}, "training_plan": {{"frequency": "..."}}}}
-
-				Datos del usuario:
-				{bio_payload}
-				"""
+		prompt = FitMasterService._build_prompt(bio_payload)
 
 		try:
 			modelo_usado = "gpt-4o-mini"
@@ -98,16 +64,14 @@ class FitMasterService:
 				messages = [
 					{"role": "system", "content": "Eres FitMaster, IA experta en fitness y nutrición."},
 					{"role": "user", "content": prompt},
-					],
+				],
 				temperature = 0.7,
 				max_tokens = 2600,
-				)
+			)
 
 			# Extraer y normalizar respuesta
 			message = response.choices[0].message.content
 			logger.info("Respuesta recibida de OpenAI")
-
-			# AGREGAR ESTA LÍNEA PARA VER LA RESPUESTA CRUDA:
 			logger.info(f"Respuesta cruda de OpenAI: {message[:200]}...")
 
 			# Intentar parsear JSON
@@ -118,18 +82,29 @@ class FitMasterService:
 			except json.JSONDecodeError as e:
 				logger.warning(f"Error al parsear JSON de OpenAI: {e}")
 				logger.warning(f"Respuesta que causó el error: {message[:500]}")
-
-				# Si no es JSON válido, usar como interpretación simple
 				return {
 					"interpretation": message if message else "No se recibió respuesta de OpenAI",
 					"nutrition_plan": None,
 					"training_plan": None,
-					}
-
+				}
 		except Exception as exc:
 			logger.error(f"Error en la conexión con OpenAI: {exc}")
 			logger.error(f"Tipo de excepción: {type(exc)}")
 			return FitMasterService._get_fallback_response(f"Error de conexión: {str(exc)}")
+
+	@staticmethod
+	def _build_prompt(bio_payload: Dict) -> str:
+		"""
+		Lee el prompt base desde fitmaster_prompt.txt y lo formatea con los datos biométricos.
+		"""
+		prompt_path = os.path.join(os.path.dirname(__file__), "fitmaster_prompt.txt")
+		try:
+			with open(prompt_path, "r", encoding="utf-8") as f:
+				prompt_template = f.read()
+		except Exception as e:
+			logger.error(f"No se pudo leer el prompt externo: {e}")
+			prompt_template = "Eres FitMaster AI. Analiza los datos: {bio_payload}"
+		return prompt_template.replace("{bio_payload}", json.dumps(bio_payload, ensure_ascii=False, indent=2))
 
 	@staticmethod
 	def _validate_response(data: Dict) -> Dict:
