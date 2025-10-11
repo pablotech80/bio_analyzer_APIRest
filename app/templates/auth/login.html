@@ -4,62 +4,113 @@
 {% block title %}Iniciar Sesión - CoachBodyFit360{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="auth-container">
-        <h2 class="text-center mb-4">
-            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-        </h2>
-
-        <form method="POST" action="{{ url_for('auth.login') }}">
-            {{ form.hidden_tag() }}
-
-            <!-- Email -->
-            <div class="mb-3">
-                {{ form.email.label(class="form-label") }}
-                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""),
-                             type="email",
-                             placeholder="tu@email.com") }}
-                {% if form.email.errors %}
-                    <div class="invalid-feedback">
-                        {{ form.email.errors[0] }}
+<div class="min-vh-100 d-flex align-items-center" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem 0;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <!-- Card -->
+                <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+                    <!-- Header con gradiente -->
+                    <div class="card-header text-white text-center py-4" style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); border: none;">
+                        <h2 class="mb-0 fw-bold">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-box-arrow-in-right me-2" viewBox="0 0 16 16" style="vertical-align: middle;">
+                                <path fill-rule="evenodd" d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0z"/>
+                                <path fill-rule="evenodd" d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/>
+                            </svg>
+                            Iniciar Sesión
+                        </h2>
+                        <p class="mb-0 mt-2" style="opacity: 0.9;">Accede a tu cuenta CoachBodyFit360</p>
                     </div>
-                {% endif %}
-            </div>
 
-            <!-- Password -->
-            <div class="mb-3">
-                {{ form.password.label(class="form-label") }}
-                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""),
-                                placeholder="••••••••") }}
-                {% if form.password.errors %}
-                    <div class="invalid-feedback">
-                        {{ form.password.errors[0] }}
+                    <!-- Body -->
+                    <div class="card-body p-4 p-md-5">
+                        <form method="POST" action="{{ url_for('auth.login') }}">
+                            {{ form.hidden_tag() }}
+
+                            <!-- Email -->
+                            <div class="mb-4">
+                                <label for="email" class="form-label fw-semibold">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope me-1" viewBox="0 0 16 16">
+                                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                                    </svg>
+                                    Email
+                                </label>
+                                {{ form.email(class="form-control form-control-lg" + (" is-invalid" if form.email.errors else ""),
+                                             type="email",
+                                             placeholder="tu@email.com",
+                                             style="border-radius: 12px;") }}
+                                {% if form.email.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.email.errors[0] }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Password -->
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-semibold">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock me-1" viewBox="0 0 16 16">
+                                        <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2M5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1"/>
+                                    </svg>
+                                    Contraseña
+                                </label>
+                                {{ form.password(class="form-control form-control-lg" + (" is-invalid" if form.password.errors else ""),
+                                                placeholder="••••••••",
+                                                style="border-radius: 12px;") }}
+                                {% if form.password.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ form.password.errors[0] }}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Remember Me & Forgot Password -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div class="form-check">
+                                    {{ form.remember_me(class="form-check-input") }}
+                                    {{ form.remember_me.label(class="form-check-label") }}
+                                </div>
+                                <a href="{{ url_for('auth.forgot_password') }}" class="text-decoration-none" style="color: #E67E22;">
+                                    ¿Olvidaste tu contraseña?
+                                </a>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid gap-2 mb-3">
+                                <button type="submit" class="btn btn-lg text-white fw-bold" style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); border: none; border-radius: 12px; padding: 14px;">
+                                    Iniciar Sesión
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Divider -->
+                        <div class="text-center my-4">
+                            <span class="text-muted">o</span>
+                        </div>
+
+                        <!-- Register Link -->
+                        <div class="text-center">
+                            <p class="mb-0 text-muted">
+                                ¿No tienes cuenta?
+                                <a href="{{ url_for('auth.register') }}" class="fw-bold text-decoration-none" style="color: #E67E22;">
+                                    Regístrate gratis
+                                </a>
+                            </p>
+                        </div>
                     </div>
-                {% endif %}
-            </div>
+                </div>
 
-            <!-- Remember Me -->
-            <div class="mb-3 form-check">
-                {{ form.remember_me(class="form-check-input") }}
-                {{ form.remember_me.label(class="form-check-label") }}
+                <!-- Back to Home -->
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('main.landing') }}" class="text-white text-decoration-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left me-1" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8"/>
+                        </svg>
+                        Volver al inicio
+                    </a>
+                </div>
             </div>
-
-            <!-- Submit Button -->
-            <div class="d-grid gap-2">
-                {{ form.submit(class="btn btn-primary btn-lg") }}
-            </div>
-        </form>
-
-        <div class="mt-3 text-center">
-            <a href="{{ url_for('auth.forgot_password') }}">¿Olvidaste tu contraseña?</a>
         </div>
-
-        <hr class="my-4">
-
-        <p class="text-center mb-0">
-            ¿No tienes cuenta?
-            <a href="{{ url_for('auth.register') }}">Regístrate aquí</a>
-        </p>
     </div>
 </div>
 {% endblock %}

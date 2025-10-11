@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% block title %}Avisos Legales - CoachBodyFit360{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="mb-4">Avisos Legales</h1>
+
+            <div class="alert alert-warning" role="alert">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <strong>IMPORTANTE:</strong> Lee atentamente esta información antes de usar la plataforma.
+            </div>
+
+            <!-- Naturaleza de la Plataforma -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">1. Naturaleza de la Plataforma</h2>
+                <p>
+                    <strong>CoachBodyFit360</strong> es una plataforma educativa e informativa sobre fitness y bienestar
+                    basada en 20 años de experiencia práctica de Pablo Techera en el campo del entrenamiento personal
+                    y la transformación física.
+                </p>
+                <p>
+                    Esta plataforma <strong>NO es un servicio médico, nutricional ni de diagnóstico clínico</strong>.
+                    Los análisis, planes y recomendaciones proporcionados se basan en metodología aplicada y resultados
+                    empíricos, no en certificaciones académicas reguladas ni titulaciones sanitarias homologadas.
+                </p>
+            </section>
+
+            <!-- Limitaciones y Exclusiones -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">2. Limitaciones y Exclusiones de Responsabilidad</h2>
+                <ul>
+                    <li><strong>No sustituye asesoramiento médico:</strong> La información proporcionada no reemplaza
+                    la consulta con profesionales sanitarios titulados (médicos, nutricionistas, fisioterapeutas).</li>
+
+                    <li><strong>No es diagnóstico médico:</strong> Los análisis biométricos son informativos y educativos,
+                    no constituyen diagnóstico clínico de ninguna condición médica.</li>
+
+                    <li><strong>Consulta profesional obligatoria:</strong> Antes de iniciar cualquier programa de ejercicio
+                    o cambio nutricional, debes consultar con un médico, especialmente si tienes condiciones preexistentes,
+                    lesiones, enfermedades crónicas o estás embarazada.</li>
+
+                    <li><strong>Uso bajo tu responsabilidad:</strong> Al usar esta plataforma, aceptas hacerlo bajo tu
+                    propia responsabilidad y liberas a CoachBodyFit360 y Pablo Techera de cualquier responsabilidad
+                    derivada del uso de la información proporcionada.</li>
+                </ul>
+            </section>
+
+            <!-- Sobre Pablo Techera -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">3. Sobre Pablo Techera</h2>
+                <p>
+                    Pablo Techera cuenta con <strong>20 años de experiencia práctica</strong> trabajando con más de
+                    500 personas en transformación física, desde personas que buscan mejorar su salud básica hasta
+                    atletas que compiten.
+                </p>
+                <p>
+                    <strong>Importante:</strong> Pablo Techera NO es médico, nutricionista titulado ni profesional
+                    sanitario homologado. Su experiencia se basa en la práctica aplicada y resultados verificables
+                    (4.9★ en Google Reviews con 127+ reseñas), no en titulación académica regulada.
+                </p>
+            </section>
+
+            <!-- FitMaster IA -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">4. Sobre FitMaster IA</h2>
+                <p>
+                    <strong>FitMaster IA</strong> es un sistema de inteligencia artificial que aplica la metodología
+                    desarrollada durante 20 años, personalizándola con tus datos específicos (medidas, objetivos,
+                    nivel de actividad).
+                </p>
+                <p>
+                    <strong>NO es IA médica ni diagnóstica</strong>. Es educativa: toma protocolos probados y los
+                    adapta a tu caso particular automáticamente. Las recomendaciones generadas deben ser validadas
+                    por profesionales sanitarios antes de su aplicación.
+                </p>
+            </section>
+
+            <!-- Datos y Privacidad -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">5. Datos y Privacidad</h2>
+                <p>
+                    Tus datos personales y métricas biométricas son privados y están protegidos según el GDPR
+                    (Reglamento Europeo de Protección de Datos). Nunca vendemos ni compartimos tus datos con terceros.
+                </p>
+                <p>
+                    Para más información, consulta nuestra
+                    <a href="{{ url_for('main.privacy_policy') }}">Política de Privacidad</a>.
+                </p>
+            </section>
+
+            <!-- Fase BETA -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">6. Fase BETA</h2>
+                <p>
+                    La plataforma está actualmente en <strong>fase BETA</strong>. Esto significa:
+                </p>
+                <ul>
+                    <li>Acceso completamente gratuito durante 2025</li>
+                    <li>Funcionalidades en desarrollo y mejora continua</li>
+                    <li>Posibles errores o interrupciones del servicio</li>
+                    <li>Cambios en características sin previo aviso</li>
+                </ul>
+            </section>
+
+            <!-- Propiedad Intelectual -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">7. Propiedad Intelectual</h2>
+                <p>
+                    Todo el contenido de la plataforma (metodología, algoritmos, diseño, textos, imágenes) es
+                    propiedad de CoachBodyFit360 y Pablo Techera. Está prohibida su reproducción, distribución
+                    o uso comercial sin autorización expresa.
+                </p>
+            </section>
+
+            <!-- Modificaciones -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">8. Modificaciones</h2>
+                <p>
+                    Nos reservamos el derecho de modificar estos avisos legales en cualquier momento. Los cambios
+                    serán efectivos inmediatamente tras su publicación en esta página.
+                </p>
+            </section>
+
+            <!-- Contacto -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">9. Contacto</h2>
+                <p>
+                    Para cualquier consulta sobre estos avisos legales, puedes contactarnos en:
+                </p>
+                <p>
+                    <i class="bi bi-envelope me-2"></i>
+                    <a href="mailto:coachbodyfit@gmail.com">coachbodyfit@gmail.com</a>
+                </p>
+            </section>
+
+            <hr class="my-5">
+
+            <div class="text-center">
+                <p class="text-muted mb-3">Última actualización: Enero 2025</p>
+                <a href="{{ url_for('main.landing') }}" class="btn btn-lg" style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); color: white; border: none; font-weight: 600;">
+                    <i class="bi bi-arrow-left me-2"></i>Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

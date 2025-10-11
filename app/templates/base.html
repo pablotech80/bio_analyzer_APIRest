@@ -9,9 +9,6 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     {% block extra_css %}{% endblock %}
 
     <style>
@@ -25,9 +22,79 @@
             flex: 1;
         }
 
+        /* ============================================================================
+           NAVBAR - Red-Orange Branding
+           ============================================================================ */
+        .navbar {
+            background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%) !important;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.5rem 0;
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
         .navbar-brand {
-            font-weight: bold;
+            font-weight: 700;
             font-size: 1.5rem;
+            color: white !important;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.5px;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.02);
+            letter-spacing: 0px;
+        }
+
+        /* Navbar Links */
+        .navbar-nav .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem !important;
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .navbar-nav .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white !important;
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link i,
+        .navbar-nav .nav-link svg {
+            margin-right: 6px;
+            vertical-align: middle;
+        }
+
+        /* Navbar Toggler */
+        .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 0.75rem;
+        }
+
+        .navbar-toggler:focus {
+            box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25);
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .navbar-collapse {
+                background: rgba(0, 0, 0, 0.1);
+                padding: 1rem;
+                border-radius: 8px;
+                margin-top: 1rem;
+            }
         }
 
         .auth-container {
@@ -36,12 +103,6 @@
             padding: 30px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             border-radius: 10px;
-        }
-
-        footer {
-            background-color: #f8f9fa;
-            padding: 20px 0;
-            margin-top: 50px;
         }
 
         /* Botones globales estilo píldora */
@@ -105,34 +166,13 @@
         .navbar-nav .nav-link:hover::after {
             width: 70%;
         }
-
-        .navbar-brand {
-            transition: transform 0.3s ease;
-        }
-
-        .navbar-brand:hover {
-            transform: scale(1.05);
-        }
-
-        .navbar-brand svg {
-            vertical-align: middle;
-            margin-right: 8px;
-            transition: transform 0.3s ease;
-        }
-
-        .navbar-brand:hover svg {
-            transform: rotate(15deg);
-        }
     </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#ffffff" viewBox="0 0 256 256" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
-                    <path d="M248 120h-8V88a16 16 0 0 0-16-16H208V64a16 16 0 0 0-16-16H168a16 16 0 0 0-16 16v56H104V64A16 16 0 0 0 88 48H64A16 16 0 0 0 48 64v8H32A16 16 0 0 0 16 88v32H8a8 8 0 0 0 0 16h8v32a16 16 0 0 0 16 16H48v8a16 16 0 0 0 16 16H88a16 16 0 0 0 16-16V136h48v56a16 16 0 0 0 16 16h24a16 16 0 0 0 16-16v-8h16a16 16 0 0 0 16-16V136h8a8 8 0 0 0 0-16ZM32 168V88h16v80Zm56 24H64V64h24V192Zm104 0H168V64h24V175.82c0 .06 0 .12 0 .18s0 .12 0 .18V192Zm32-24H208V88h16Z"></path>
-                </svg>
+            <a class="navbar-brand" href="{{ url_for('main.landing') }}">
                 CoachBodyFit360
             </a>
 
@@ -145,25 +185,25 @@
 					{% if current_user.is_authenticated %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('bioanalyze.new_analysis') }}">
-								<i class="fas fa-calculator"></i> Analizador
+								<i class="bi bi-calculator"></i> Analizador
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('bioanalyze.history') }}">
-								<i class="fas fa-history"></i> Historial
+								<i class="bi bi-clock-history"></i> Historial
 							</a>
 						</li>
                         {% if current_user.is_admin or current_user.has_role('trainer') %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('admin.users') }}">
-                                <i class="fas fa-users"></i> Usuarios
+                                <i class="bi bi-people"></i> Usuarios
                             </a>
                         </li>
                         {% endif %}
 						{% if current_user.is_admin %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('contact.admin_messages') }}">
-								<i class="fas fa-user-shield"></i> Panel Admin
+								<i class="bi bi-shield-lock"></i> Panel Admin
 							</a>
 						</li>
 						{% endif %}
@@ -177,18 +217,18 @@
 						</li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.logout') }}">
-                                <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
                             </a>
                         </li>
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.login') }}">
-                                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.register') }}">
-                                <i class="fas fa-user-plus"></i> Registrarse
+                                <i class="bi bi-person-plus"></i> Registrarse
                             </a>
                         </li>
                     {% endif %}
@@ -215,12 +255,114 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container text-center">
-            <p class="mb-0">&copy; 2025 CoachBodyFit360. Todos los derechos reservados.</p>
+    <!-- Footer (solo visible para usuarios NO autenticados) -->
+    {% if not current_user.is_authenticated %}
+    <footer style="background: #1A1A1A; color: #BDC3C7; padding: 4rem 0 2rem;">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <!-- Columna 1: Sobre CoachBodyFit360 -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="mb-3" style="color: #E67E22; font-weight: 600;">CoachBodyFit360</h5>
+                    <p class="text-white-50 mb-3" style="line-height: 1.6;">
+                        Plataforma de análisis biométrico y fitness con IA, basada en 20 años de experiencia práctica.
+                    </p>
+                    <div class="d-flex gap-3">
+                        <a href="https://www.facebook.com/Coachbodyfit" target="_blank" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" fill="#1877F2"/>
+                            </svg>
+                        </a>
+                        <a href="https://www.instagram.com/Coachbodyfit" target="_blank" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <defs>
+                                    <radialGradient id="instagramGradient" cx="0.3" cy="1" r="1.5">
+                                        <stop offset="0%" style="stop-color:#FFDD55"/>
+                                        <stop offset="25%" style="stop-color:#FF543E"/>
+                                        <stop offset="50%" style="stop-color:#C837AB"/>
+                                        <stop offset="100%" style="stop-color:#405DE6"/>
+                                    </radialGradient>
+                                </defs>
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" fill="url(#instagramGradient)"/>
+                            </svg>
+                        </a>
+                        <a href="https://g.page/r/CRBaShip1YPEEBA/review" target="_blank" style="transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+                            <svg width="32" height="32" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Columna 2: Enlaces Rápidos -->
+                <div class="col-lg-2 col-md-6">
+                    <h5 class="mb-3" style="color: #E67E22; font-weight: 600;">Plataforma</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('auth.register') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Registrarse</a></li>
+                        <li class="mb-2"><a href="{{ url_for('auth.login') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Iniciar Sesión</a></li>
+                        <li class="mb-2"><a href="{{ url_for('contact.send_message') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Contacto</a></li>
+                        {% if current_user.is_authenticated %}
+                        <li class="mb-2"><a href="{{ url_for('bioanalyze.new_analysis') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Analizador</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Columna 3: Información -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3" style="color: #E67E22; font-weight: 600;">Información</h5>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><a href="{{ url_for('main.legal_notices') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Avisos Legales</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.privacy_policy') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Política de Privacidad</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.terms_of_service') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Términos de Servicio</a></li>
+                        <li class="mb-2"><a href="{{ url_for('main.landing') }}#faq" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <!-- Columna 4: Contacto -->
+                <div class="col-lg-3 col-md-6">
+                    <h5 class="mb-3" style="color: #E67E22; font-weight: 600;">Contacto</h5>
+                    <ul class="list-unstyled text-white-50">
+                        <li class="mb-2">
+                            <i class="bi bi-envelope me-2"></i>
+                            <a href="mailto:coachbodyfit@gmail.com" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">coachbodyfit@gmail.com</a>
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-geo-alt me-2"></i>
+                            España
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-star-fill text-warning me-2"></i>
+                            5.0 en Google
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Separador -->
+            <hr style="border-color: rgba(255, 255, 255, 0.1); margin: 3rem 0 2rem;">
+
+            <!-- Copyright y disclaimer breve -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <p class="mb-2 text-white-50 small">
+                        &copy; 2025 CoachBodyFit360. Todos los derechos reservados.
+                    </p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <p class="mb-2 text-white-50 small">
+                        <span class="badge" style="background: #E67E22;">BETA 2025</span>
+                        Plataforma en desarrollo
+                    </p>
+                    <p class="mb-0 text-white-50 small">
+                        Desarrollado por <a href="https://ptechsolution.net" target="_blank" rel="noopener noreferrer" class="text-white" style="text-decoration: none; font-weight: 500;">PTech Solutions</a>
+                    </p>
+                </div>
+            </div>
         </div>
     </footer>
+    {% endif %}
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -259,6 +401,7 @@
                 input.type = 'password';
                 // SVG Eye Open (mostrar)
                 icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M247.31,124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57,61.26,162.88,48,128,48S61.43,61.26,36.34,86.35C17.51,105.18,9,124,8.69,124.76a8,8,0,0,0,0,6.5c.35.79,8.82,19.57,27.65,38.4C61.43,194.74,93.12,208,128,208s66.57-13.26,91.66-38.34c18.83-18.83,27.3-37.61,27.65-38.4A8,8,0,0,0,247.31,124.76ZM128,192c-30.78,0-57.67-11.19-79.93-33.25A133.47,133.47,0,0,1,25,128,133.33,133.33,0,0,1,48.07,97.25C70.33,75.19,97.22,64,128,64s57.67,11.19,79.93,33.25A133.46,133.46,0,0,1,231.05,128C223.84,141.46,192.43,192,128,192Zm0-112a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160Z"></path></svg>';
+
             }
         }
 

@@ -22,8 +22,8 @@
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <!-- Card: Datos personales -->
-                <div class="card shadow-sm mb-4 rounded-4">
-                    <div class="card-header bg-light">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
                         <h2 class="h5 mb-0">Datos personales</h2>
                     </div>
                     <div class="card-body">
@@ -67,8 +67,8 @@
                 </div>
 
                 <!-- Card: Medidas corporales -->
-                <div class="card shadow-sm mb-4 rounded-4">
-                    <div class="card-header bg-light">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
                         <h2 class="h5 mb-0">Medidas corporales</h2>
                     </div>
                     <div class="card-body">
@@ -119,8 +119,8 @@
                 </div>
 
                 <!-- Card: Objetivo y macros -->
-                <div class="card shadow-sm mb-4 rounded-4">
-                    <div class="card-header bg-light">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
                         <h2 class="h5 mb-0">Objetivo y macros</h2>
                     </div>
                     <div class="card-body">
@@ -164,7 +164,7 @@
                 </div>
 
                 <div class="text-end">
-                    <button type="submit" class="btn btn-primary btn-lg rounded-pill">
+                    <button type="submit" class="btn rounded-pill text-white px-4 py-2" style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); border: none; font-weight: 600; box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);">
                         <i class="fas fa-calculator me-2"></i>Generar informe
                     </button>
                 </div>
@@ -197,6 +197,17 @@
             border-radius: 1.2rem;
             min-width: 90px;
         }
+    }
+
+    /* Gender button styles - orange theme */
+    .btn-check:checked + label {
+        background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%) !important;
+        color: white !important;
+        border-color: transparent !important;
+    }
+
+    .btn-check:not(:checked) + label:hover {
+        background-color: rgba(230, 126, 34, 0.1);
     }
 </style>
 {% endblock %}
