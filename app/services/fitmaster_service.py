@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 from typing import Dict, Optional
 
 from openai import OpenAI
@@ -73,9 +74,12 @@ class FitMasterService:
 			logger.info("Respuesta recibida de OpenAI")
 			logger.info(f"Respuesta cruda de OpenAI: {message[:200]}...")
 
+			# Limpiar respuesta de OpenAI
+			cleaned_message = FitMasterService._clean_json_response(message)
+
 			# Intentar parsear JSON
 			try:
-				data = json.loads(message)
+				data = json.loads(cleaned_message)
 				logger.info("Respuesta JSON parseada correctamente")
 				return FitMasterService._validate_response(data)
 			except json.JSONDecodeError as e:
@@ -104,6 +108,39 @@ class FitMasterService:
 			logger.error(f"No se pudo leer el prompt externo: {e}")
 			prompt_template = "Eres FitMaster AI. Analiza los datos: {bio_payload}"
 		return prompt_template.replace("{bio_payload}", json.dumps(bio_payload, ensure_ascii=False, indent=2))
+
+	@staticmethod
+	def _clean_json_response(message: str) -> str:
+		"""
+		Limpia la respuesta de OpenAI eliminando bloques de código markdown.
+		
+		Args:
+			message: Respuesta cruda de OpenAI
+			
+		Returns:
+			str: JSON limpio sin bloques de código markdown
+		"""
+		if not message:
+			return message
+		
+		# Eliminar bloques de código markdown (```json ... ``` o ``` ... ```)
+		import re
+		
+		# Patrón para capturar JSON dentro de bloques de código
+		patterns = [
+			r'```json\s*(.*?)\s*```',  # ```json { ... } ```
+			r'```\s*(.*?)\s*```',       # ``` { ... } ```
+		]
+		
+		for pattern in patterns:
+			match = re.search(pattern, message, re.DOTALL)
+			if match:
+				cleaned = match.group(1).strip()
+				logger.info("JSON extraído de bloque markdown")
+				return cleaned
+		
+		# Si no hay bloques markdown, devolver el mensaje tal cual
+		return message.strip()
 
 	@staticmethod
 	def _validate_response(data: Dict) -> Dict:

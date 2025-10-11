@@ -54,6 +54,9 @@ def new_analysis():
 
 		# 🔥 Mapear datos del formulario español → inglés para el servicio
 		biometric_data = {
+			# Datos del usuario
+			'name': current_user.first_name or current_user.username,
+
 			# Datos básicos (obligatorios)
 			'weight': payload.inputs['peso'],
 			'height': payload.inputs['altura'],
@@ -251,6 +254,9 @@ def request_ai_analysis(analysis_id: int):
 
 	# Preparar datos biométricos del análisis existente
 	biometric_data = analysis.to_dict(include_fitmaster = False)
+	
+	# Agregar nombre del usuario para personalización
+	biometric_data['name'] = analysis.user.first_name or analysis.user.username
 
 	# Solicitar análisis FitMaster
 	error = add_fitmaster_analysis(analysis_id, biometric_data)
