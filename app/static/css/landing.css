@@ -1,0 +1,219 @@
+/**
+ * ============================================================================
+ * CoachBodyFit360 - Landing Page Styles
+ * ============================================================================
+ * Descripción: Estilos específicos para la landing page
+ * Versión: 2.0 - Octubre 2025
+ * Principios aplicados: SoC, Performance, Responsive Design
+ * ============================================================================
+ */
+
+/* ============================================================================
+   HERO SECTION
+   ============================================================================ */
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animación sutil del gradiente */
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================================================
+   FEATURE CARDS
+   ============================================================================ */
+.feature-card {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.02);
+}
+
+/* Animación de entrada para las cards */
+@media (prefers-reduced-motion: no-preference) {
+    .feature-card {
+        opacity: 0;
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .feature-card:nth-child(1) { animation-delay: 0.1s; }
+    .feature-card:nth-child(2) { animation-delay: 0.2s; }
+    .feature-card:nth-child(3) { animation-delay: 0.3s; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   BUTTONS
+   ============================================================================ */
+.btn-primary,
+.btn-secondary {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary:active,
+.btn-secondary:active {
+    transform: translateY(0);
+}
+
+/* Efecto ripple en botones (opcional) */
+.btn-primary,
+.btn-secondary {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary::after,
+.btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-primary:active::after,
+.btn-secondary:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* ============================================================================
+   SMOOTH SCROLL
+   ============================================================================ */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Para navegadores que no soportan scroll-behavior */
+@media screen and (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+
+/* ============================================================================
+   RESPONSIVE TWEAKS
+   ============================================================================ */
+
+/* Tablets */
+@media (max-width: 768px) {
+    .hero-section {
+        padding-top: 3rem;
+        padding-bottom: 3rem;
+    }
+
+    .feature-card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+        line-height: 1.2;
+    }
+
+    .hero-section p {
+        font-size: 1.125rem;
+    }
+}
+
+/* ============================================================================
+   ACCESSIBILITY
+   ============================================================================ */
+
+/* Focus visible para navegación por teclado */
+a:focus-visible,
+button:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 3px;
+}
+
+/* Mejorar contraste en modo alto contraste */
+@media (prefers-contrast: high) {
+    .hero-section {
+        background: linear-gradient(135deg, #4c63d2 0%, #5a3c8f 100%);
+    }
+
+    .feature-card {
+        border: 2px solid #333;
+    }
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+@media print {
+    .hero-section,
+    footer,
+    .btn-primary,
+    .btn-secondary {
+        display: none;
+    }
+
+    body {
+        font-size: 12pt;
+        color: #000;
+        background: #fff;
+    }
+}
+
+/* ============================================================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================================================ */
+
+/* Usar will-change para animaciones */
+.feature-card:hover {
+    will-change: transform, box-shadow;
+}
+
+/* Resetear will-change después de la animación */
+.feature-card {
+    will-change: auto;
+}
+
+/* Hardware acceleration para transformaciones */
+.feature-card,
+.btn-primary,
+.btn-secondary {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+}

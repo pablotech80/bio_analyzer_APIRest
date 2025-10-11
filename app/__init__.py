@@ -74,18 +74,14 @@ def create_app(config_name = 'development'):
 	from app.blueprints.api import api_bp
 	from app.blueprints.contact import contact_bp
 	from app.blueprints.admin.routes import admin_bp
+	from app.blueprints.main import main_bp
 
+	app.register_blueprint(main_bp)  
 	app.register_blueprint(auth_bp, url_prefix = '/auth')
 	app.register_blueprint(bioanalyze_bp)
 	app.register_blueprint(api_bp, url_prefix='/api/v1')
 	app.register_blueprint(contact_bp)
 	app.register_blueprint(admin_bp)
-
-	# Ruta principal temporal
-	@app.route('/')
-	def index():
-		from flask import render_template
-		return render_template('index.html')
 
 	# Registrar error handlers
 	from app.middleware.error_handlers import register_error_handlers

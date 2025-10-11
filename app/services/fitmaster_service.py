@@ -1,7 +1,6 @@
 import json
 import logging
 import os
-import re
 from typing import Dict, Optional
 
 from openai import OpenAI
@@ -122,9 +121,6 @@ class FitMasterService:
 		"""
 		if not message:
 			return message
-		
-		# Eliminar bloques de código markdown (```json ... ``` o ``` ... ```)
-		import re
 		
 		# Patrón para capturar JSON dentro de bloques de código
 		patterns = [
