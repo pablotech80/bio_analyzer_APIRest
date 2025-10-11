@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Términos de Servicio - CoachBodyFit360{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="mb-4">Términos de Servicio</h1>
+
+            <div class="alert alert-primary" role="alert">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Al usar CoachBodyFit360, aceptas estos términos.</strong> Lee atentamente antes de continuar.
+            </div>
+
+            <!-- Aceptación de Términos -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">1. Aceptación de Términos</h2>
+                <p>
+                    Al acceder y usar <strong>CoachBodyFit360</strong>, aceptas estar legalmente vinculado por estos
+                    Términos de Servicio. Si no estás de acuerdo, no uses la plataforma.
+                </p>
+            </section>
+
+            <!-- Descripción del Servicio -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">2. Descripción del Servicio</h2>
+                <p>
+                    CoachBodyFit360 es una plataforma educativa que ofrece:
+                </p>
+                <ul>
+                    <li>Análisis biométrico basado en medidas corporales</li>
+                    <li>Planes de nutrición y entrenamiento generados por IA (FitMaster)</li>
+                    <li>Seguimiento de progreso personal</li>
+                    <li>Información educativa sobre fitness y bienestar</li>
+                </ul>
+                <p>
+                    <strong>Importante:</strong> Este servicio NO es asesoramiento médico, nutricional profesional
+                    ni diagnóstico clínico. Consulta los <a href="{{ url_for('main.legal_notices') }}">Avisos Legales</a>
+                    para más información.
+                </p>
+            </section>
+
+            <!-- Fase BETA -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">3. Fase BETA</h2>
+                <p>
+                    La plataforma está en <strong>fase BETA</strong> durante 2025. Esto implica:
+                </p>
+                <ul>
+                    <li><strong>Acceso gratuito:</strong> Todo el contenido es gratis durante la fase BETA</li>
+                    <li><strong>Funcionalidades en desarrollo:</strong> Pueden existir errores o cambios sin previo aviso</li>
+                    <li><strong>Sin garantías de disponibilidad:</strong> El servicio puede interrumpirse temporalmente</li>
+                    <li><strong>Cambios futuros:</strong> En 2026 se introducirán planes de pago (FREE, Básico, Premium)</li>
+                </ul>
+                <p>
+                    Los usuarios registrados en BETA obtendrán beneficios especiales cuando se lancen los planes de pago.
+                </p>
+            </section>
+
+            <!-- Registro y Cuenta -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">4. Registro y Cuenta de Usuario</h2>
+                <h4 class="h5 mb-2">4.1. Requisitos</h4>
+                <ul>
+                    <li>Debes ser mayor de 18 años (o tener consentimiento parental)</li>
+                    <li>Proporcionar información veraz y actualizada</li>
+                    <li>Mantener la seguridad de tu contraseña</li>
+                    <li>No compartir tu cuenta con terceros</li>
+                </ul>
+
+                <h4 class="h5 mb-2 mt-3">4.2. Responsabilidad de la Cuenta</h4>
+                <p>
+                    Eres responsable de todas las actividades realizadas desde tu cuenta.
+                    Notifícanos inmediatamente si detectas acceso no autorizado.
+                </p>
+            </section>
+
+            <!-- Uso Aceptable -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">5. Uso Aceptable</h2>
+                <p><strong>Está prohibido:</strong></p>
+                <ul>
+                    <li>Usar la plataforma para fines ilegales o no autorizados</li>
+                    <li>Intentar acceder a cuentas de otros usuarios</li>
+                    <li>Realizar ingeniería inversa del código o algoritmos</li>
+                    <li>Sobrecargar o interferir con el funcionamiento del servicio</li>
+                    <li>Extraer datos mediante scraping o bots automatizados</li>
+                    <li>Distribuir malware, virus o código malicioso</li>
+                    <li>Usar la información para entrenar modelos de IA competidores</li>
+                    <li>Revender o comercializar el acceso al servicio</li>
+                </ul>
+            </section>
+
+            <!-- Propiedad Intelectual -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">6. Propiedad Intelectual</h2>
+                <p>
+                    Todo el contenido de CoachBodyFit360 (metodología, algoritmos, diseño, textos, código, marca)
+                    es propiedad de Pablo Techera / CoachBodyFit360 y está protegido por leyes de propiedad intelectual.
+                </p>
+                <p>
+                    <strong>Tus datos:</strong> Conservas la propiedad de tus datos personales y biométricos.
+                    Nos otorgas una licencia limitada para procesarlos y proporcionarte el servicio.
+                </p>
+            </section>
+
+            <!-- Limitación de Responsabilidad -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">7. Limitación de Responsabilidad</h2>
+                <p>
+                    <strong>CoachBodyFit360 se proporciona "tal cual" sin garantías de ningún tipo.</strong>
+                </p>
+                <ul>
+                    <li><strong>No garantizamos resultados:</strong> Los resultados de fitness dependen de múltiples factores personales</li>
+                    <li><strong>No somos responsables de:</strong> Lesiones, problemas de salud o daños derivados del uso de la plataforma</li>
+                    <li><strong>Consulta médica obligatoria:</strong> Debes consultar con profesionales sanitarios antes de seguir cualquier plan</li>
+                    <li><strong>Uso bajo tu responsabilidad:</strong> Aceptas todos los riesgos asociados al uso del servicio</li>
+                </ul>
+            </section>
+
+            <!-- Modificaciones del Servicio -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">8. Modificaciones del Servicio</h2>
+                <p>
+                    Nos reservamos el derecho de:
+                </p>
+                <ul>
+                    <li>Modificar, suspender o discontinuar el servicio en cualquier momento</li>
+                    <li>Cambiar precios o características (con aviso previo razonable)</li>
+                    <li>Actualizar estos términos (te notificaremos cambios significativos)</li>
+                </ul>
+            </section>
+
+            <!-- Cancelación y Terminación -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">9. Cancelación y Terminación</h2>
+                <h4 class="h5 mb-2">9.1. Por tu parte</h4>
+                <p>
+                    Puedes cancelar tu cuenta en cualquier momento desde tu perfil.
+                    Tus datos serán eliminados según nuestra
+                    <a href="{{ url_for('main.privacy_policy') }}">Política de Privacidad</a>.
+                </p>
+
+                <h4 class="h5 mb-2 mt-3">9.2. Por nuestra parte</h4>
+                <p>
+                    Podemos suspender o terminar tu cuenta si:
+                </p>
+                <ul>
+                    <li>Violas estos Términos de Servicio</li>
+                    <li>Realizas actividades fraudulentas o ilegales</li>
+                    <li>Abusas del servicio o afectas a otros usuarios</li>
+                </ul>
+            </section>
+
+            <!-- Indemnización -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">10. Indemnización</h2>
+                <p>
+                    Aceptas indemnizar y eximir de responsabilidad a CoachBodyFit360 y Pablo Techera
+                    de cualquier reclamación, pérdida o daño derivado de:
+                </p>
+                <ul>
+                    <li>Tu uso del servicio</li>
+                    <li>Violación de estos términos</li>
+                    <li>Violación de derechos de terceros</li>
+                </ul>
+            </section>
+
+            <!-- Ley Aplicable -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">11. Ley Aplicable y Jurisdicción</h2>
+                <p>
+                    Estos términos se rigen por las leyes de España.
+                    Cualquier disputa se resolverá en los tribunales de España.
+                </p>
+            </section>
+
+            <!-- Contacto -->
+            <section class="mb-5">
+                <h2 class="h3 mb-3">12. Contacto</h2>
+                <p>
+                    Para consultas sobre estos términos:
+                </p>
+                <p>
+                    <i class="bi bi-envelope me-2"></i>
+                    <a href="mailto:coachbodyfit@gmail.com">coachbodyfit@gmail.com</a>
+                </p>
+            </section>
+
+            <hr class="my-5">
+
+            <div class="text-center">
+                <p class="text-muted mb-3">Última actualización: Enero 2025</p>
+                <div class="d-flex gap-3 justify-content-center">
+                    <a href="{{ url_for('main.landing') }}" class="btn btn-lg" style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); color: white; border: none; font-weight: 600;">
+                        <i class="bi bi-arrow-left me-2"></i>Volver al Inicio
+                    </a>
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-lg" style="background: linear-gradient(135deg, #27AE60 0%, #2ECC71 100%); color: white; border: none; font-weight: 600;">
+                        <i class="bi bi-check-circle me-2"></i>Acepto los Términos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
