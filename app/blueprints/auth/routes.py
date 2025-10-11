@@ -16,7 +16,7 @@ def register():
 
 	# Si ya está autenticado, redirigir al dashboard
 	if current_user.is_authenticated:
-		return redirect(url_for('index'))
+		return redirect(url_for('main.landing'))
 
 	form = RegistrationForm()
 
@@ -45,9 +45,9 @@ def register():
 			# Auto-login después del registro
 			login_user(user)
 
-			# Redirigir a donde intentaba ir o al index
+			# Redirigir a donde intentaba ir o al historial de análisis
 			next_page = request.args.get('next')
-			return redirect(next_page) if next_page else redirect(url_for('index'))
+			return redirect(next_page) if next_page else redirect(url_for('bioanalyze.history'))
 
 		except ValueError as e:
 			flash(str(e), 'danger')
@@ -63,7 +63,7 @@ def login():
 
 	# Si ya está autenticado, redirigir al dashboard
 	if current_user.is_authenticated:
-		return redirect(url_for('index'))
+		return redirect(url_for('main.landing'))
 
 	form = LoginForm()
 
@@ -80,9 +80,9 @@ def login():
 
 			flash(f'¡Bienvenido de vuelta, {user.username}!', 'success')
 
-			# Redirigir a donde intentaba ir o al index
+			# Redirigir a donde intentaba ir o al historial de análisis
 			next_page = request.args.get('next')
-			return redirect(next_page) if next_page else redirect(url_for('index'))
+			return redirect(next_page) if next_page else redirect(url_for('bioanalyze.history'))
 		else:
 			flash('Email o contraseña incorrectos. Por favor intenta nuevamente.', 'danger')
 
@@ -172,7 +172,7 @@ def forgot_password():
 	"""Solicitar reseteo de contraseña."""
 
 	if current_user.is_authenticated:
-		return redirect(url_for('index'))
+		return redirect(url_for('main.landing'))
 
 	form = RequestPasswordResetForm()
 
@@ -206,7 +206,7 @@ def reset_password(token):
 	"""Resetear contraseña con token."""
 
 	if current_user.is_authenticated:
-		return redirect(url_for('index'))
+		return redirect(url_for('main.landing'))
 
 	form = ResetPasswordForm()
 

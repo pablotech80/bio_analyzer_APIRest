@@ -1011,11 +1011,11 @@
                 <div class="stat-label">Clientes Reales</div>
             </div>
             <div class="col-6 col-md-3 stat-item">
-                <span class="stat-number">5.0★</span>
+                <span class="stat-number">5.0</span>
                 <div class="stat-label">Google Reviews</div>
             </div>
             <div class="col-6 col-md-3 stat-item">
-                <span class="stat-number">48</span>
+                <span class="stat-number">50</span>
                 <div class="stat-label">Reseñas Verificadas</div>
             </div>
         </div>
@@ -1874,11 +1874,14 @@ const statsObserver = new IntersectionObserver((entries) => {
             statNumbers.forEach(stat => {
                 const target = stat.textContent.trim();
                 if (target.includes('+')) {
-                    animateNumber(stat, parseInt(target), '+');
+                    animateNumber(stat, parseInt(target), '+', false);
                 } else if (target.includes('★')) {
                     stat.textContent = target; // No animar estrellas
+                } else if (target.includes('.')) {
+                    // Es un decimal (como 5.0)
+                    animateNumber(stat, parseFloat(target), '', true);
                 } else {
-                    animateNumber(stat, parseInt(target), '');
+                    animateNumber(stat, parseInt(target), '', false);
                 }
             });
             statsObserver.unobserve(entry.target);
@@ -1891,16 +1894,16 @@ if (statsSection) {
     statsObserver.observe(statsSection);
 }
 
-function animateNumber(element, target, suffix) {
+function animateNumber(element, target, suffix, isDecimal) {
     let current = 0;
     const increment = target / 50;
     const timer = setInterval(() => {
         current += increment;
         if (current >= target) {
-            element.textContent = target + suffix;
+            element.textContent = (isDecimal ? target.toFixed(1) : target) + suffix;
             clearInterval(timer);
         } else {
-            element.textContent = Math.floor(current) + suffix;
+            element.textContent = (isDecimal ? current.toFixed(1) : Math.floor(current)) + suffix;
         }
     }, 30);
 }
