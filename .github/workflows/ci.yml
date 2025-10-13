@@ -55,6 +55,7 @@ jobs:
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         run: |
-          railway whoami || echo "🔑 Logging in with token..."
+          echo "🚀 Starting deploy to Railway..."
+          railway whoami || echo "🔑 Authenticating with token..."
           railway up --yes
-
+          echo "✅ Deployment complete!"
