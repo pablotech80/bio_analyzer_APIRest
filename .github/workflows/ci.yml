@@ -38,7 +38,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: pytest -v
 
-  deploy:
+    deploy:
     name: CD - Deploy to Railway
     runs-on: ubuntu-latest
     needs: build
@@ -51,9 +51,12 @@ jobs:
       - name: Install Railway CLI
         run: npm i -g @railway/cli
 
-      - name: Authenticate with Railway
-        run: railway login --token ${{ secrets.RAILWAY_TOKEN }}
-
       - name: Deploy to Railway
-        run: railway up --yes
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          echo "🚀 Starting deploy to Railway..."
+          railway whoami || echo "🔑 Authenticating with token..."
+          railway up --yes
+          echo "✅ Deployment complete!"
 
