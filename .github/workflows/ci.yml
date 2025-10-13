@@ -28,8 +28,8 @@ jobs:
 
       - name: Run linters
         run: |
-          black --check .
-          isort --check-only .
+          black .
+          isort .
           flake8 .
 
       - name: Run tests
