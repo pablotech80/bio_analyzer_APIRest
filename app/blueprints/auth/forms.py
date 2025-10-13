@@ -1,10 +1,15 @@
 # app/blueprints/auth/forms.py
 from flask_wtf import FlaskForm
-from wtforms import (BooleanField, PasswordField, SelectField, StringField,
-                     SubmitField)
+from wtforms import BooleanField, PasswordField, SelectField, StringField, SubmitField
 from wtforms.fields import DateField
-from wtforms.validators import (DataRequired, Email, EqualTo, Length, Optional,
-                                ValidationError)
+from wtforms.validators import (
+    DataRequired,
+    Email,
+    EqualTo,
+    Length,
+    Optional,
+    ValidationError,
+)
 
 from app.models.user import User
 

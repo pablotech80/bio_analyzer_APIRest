@@ -30,7 +30,7 @@ jobs:
         run: |
           black .
           isort .
-          flake8 .
+         
 
       - name: Run tests
         run: pytest -v

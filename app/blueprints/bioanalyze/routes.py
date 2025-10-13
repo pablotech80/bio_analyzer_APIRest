@@ -14,15 +14,16 @@ from flask_login import current_user, login_required
 
 from app.blueprints.bioanalyze import bioanalyze_bp
 from app.blueprints.bioanalyze.services import (
-    AnalysisPayload, AnalysisValidationError, build_interpretations_for_record,
-    run_biometric_analysis)
+    AnalysisPayload,
+    AnalysisValidationError,
+    build_interpretations_for_record,
+    run_biometric_analysis,
+)
+
 # Nuevo servicio centralizado
-from app.services.biometric_service import (add_fitmaster_analysis,
-                                            create_analysis)
-from app.services.biometric_service import \
-    delete_analysis as delete_analysis_service
-from app.services.biometric_service import (get_analysis_by_id,
-                                            get_user_analyses)
+from app.services.biometric_service import add_fitmaster_analysis, create_analysis
+from app.services.biometric_service import delete_analysis as delete_analysis_service
+from app.services.biometric_service import get_analysis_by_id, get_user_analyses
 
 logger = logging.getLogger(__name__)
 
@@ -342,7 +343,7 @@ def debug_analysis(analysis_id: int):
         <textarea readonly>{fitmaster_content or "No hay datos de FitMaster"}</textarea>
 
         <p>
-            <a href="{url_for('bioanalyze.result', analysis_id = analysis.id)}">← Volver al análisis</a> |
+            <a href="{url_for('bioanalyze.result', analysis_id=analysis.id)}">← Volver al análisis</a> |
             <a href="{url_for('bioanalyze.history')}">Ver historial</a> |
             <a href="{url_for('bioanalyze.new_analysis')}">Nuevo análisis</a>
         </p>

@@ -8,21 +8,29 @@ from typing import Any, Dict, Optional
 from werkzeug.datastructures import MultiDict
 
 from app import db
-from app.body_analysis.calculos import (calcular_agua_total,
-                                        calcular_calorias_diarias,
-                                        calcular_edad_metabolica_avanzada,
-                                        calcular_ffmi, calcular_imc,
-                                        calcular_macronutrientes,
-                                        calcular_macronutrientes_porcentajes,
-                                        calcular_peso_saludable,
-                                        calcular_porcentaje_grasa,
-                                        calcular_ratio_cintura_altura,
-                                        calcular_rcc, calcular_sobrepeso,
-                                        calcular_tmb)
+from app.body_analysis.calculos import (
+    calcular_agua_total,
+    calcular_calorias_diarias,
+    calcular_edad_metabolica_avanzada,
+    calcular_ffmi,
+    calcular_imc,
+    calcular_macronutrientes,
+    calcular_macronutrientes_porcentajes,
+    calcular_peso_saludable,
+    calcular_porcentaje_grasa,
+    calcular_ratio_cintura_altura,
+    calcular_rcc,
+    calcular_sobrepeso,
+    calcular_tmb,
+)
 from app.body_analysis.interpretaciones import (
-    interpretar_edad_metabolica_avanzada, interpretar_ffmi, interpretar_imc,
-    interpretar_porcentaje_grasa, interpretar_ratio_cintura_altura,
-    interpretar_rcc)
+    interpretar_edad_metabolica_avanzada,
+    interpretar_ffmi,
+    interpretar_imc,
+    interpretar_porcentaje_grasa,
+    interpretar_ratio_cintura_altura,
+    interpretar_rcc,
+)
 from app.body_analysis.model import ObjetivoNutricional, Sexo
 from app.body_analysis.utils import convertir_genero, convertir_objetivo
 from app.models import BiometricAnalysis

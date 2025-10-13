@@ -2,8 +2,10 @@ import unittest
 
 from werkzeug.datastructures import MultiDict
 
-from app.blueprints.bioanalyze.services import (AnalysisValidationError,
-                                                run_biometric_analysis)
+from app.blueprints.bioanalyze.services import (
+    AnalysisValidationError,
+    run_biometric_analysis,
+)
 
 
 class TestRunBiometricAnalysis(unittest.TestCase):

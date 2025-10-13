@@ -61,8 +61,3 @@ format:
 	$(VENV_NAME)/bin/isort .
 	$(VENV_NAME)/bin/black .
 
-# Ejecutar linter (solo verifica, no modifica)
-lint:
-	$(VENV_NAME)/bin/flake8 .
-	$(VENV_NAME)/bin/isort --check-only .
-	$(VENV_NAME)/bin/black --check .

@@ -4,13 +4,15 @@ Revises: d8a613f94370
 Create Date: 2025-10-05
 """
 
+import sqlalchemy as sa
+
 # Alembic identifiers
+from alembic import op
+
 revision = "add_profile_picture_to_user"
 down_revision = None
 branch_labels = None
 depends_on = None
-import sqlalchemy as sa
-from alembic import op
 
 
 def upgrade():

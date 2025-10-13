@@ -1,10 +1,13 @@
 import unittest
 
-from app.body_analysis.constantes import (FFMI, RCC, GrasaCorporal,
-                                          RatioCinturaAltura)
+from app.body_analysis.constantes import FFMI, RCC, GrasaCorporal, RatioCinturaAltura
 from app.body_analysis.interpretaciones import (
-    interpretar_ffmi, interpretar_imc, interpretar_porcentaje_grasa,
-    interpretar_ratio_cintura_altura, interpretar_rcc)
+    interpretar_ffmi,
+    interpretar_imc,
+    interpretar_porcentaje_grasa,
+    interpretar_ratio_cintura_altura,
+    interpretar_rcc,
+)
 from app.body_analysis.model import Sexo
 
 
