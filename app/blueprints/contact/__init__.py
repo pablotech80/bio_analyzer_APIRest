@@ -5,6 +5,6 @@ Sistema de mensajes cliente-entrenador
 """
 from flask import Blueprint
 
-from app.blueprints.contact import routes
-
 contact_bp = Blueprint("contact", __name__, url_prefix="/contacto")
+
+from app.blueprints.contact import routes  # noqa: E402, F401

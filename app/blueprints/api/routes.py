@@ -7,7 +7,7 @@ from flask import jsonify, request
 from flask_login import current_user, login_required
 
 from app import db
-from app.blueprints.api import api_bp
+from . import api_bp
 from app.models.biometric_analysis import BiometricAnalysis
 from app.models.contact_message import ContactMessage
 

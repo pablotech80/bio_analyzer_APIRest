@@ -7,7 +7,7 @@ from flask_login import current_user, login_required
 from flask_wtf.csrf import CSRFProtect
 
 from app import csrf, db
-from app.blueprints.contact import contact_bp
+from . import contact_bp
 from app.blueprints.contact.forms import ContactForm
 from app.models.biometric_analysis import BiometricAnalysis
 from app.models.contact_message import ContactMessage
