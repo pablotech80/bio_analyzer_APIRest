@@ -1,9 +1,7 @@
 import unittest
 
-from app.body_analysis.calculos import (
-    calcular_macronutrientes,
-    calcular_porcentaje_grasa,
-)
+from app.body_analysis.calculos import (calcular_macronutrientes,
+                                        calcular_porcentaje_grasa)
 from app.body_analysis.model import ObjetivoNutricional, Sexo
 
 

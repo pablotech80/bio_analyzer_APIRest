@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 
 # Cargar .env desde la raíz del proyecto, siempre, incluso en subprocesos
