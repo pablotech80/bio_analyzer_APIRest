@@ -32,10 +32,6 @@ coverage/
 htmlcov/
 test-results/
 
-# Ignorar archivos de configuración de CI/CD, si son específicos y no necesarios para todos los usuarios
-.github/
-.gitlab-ci.yml
-
 # Ignorar archivos de compilación
 build/
 dist/
@@ -57,8 +53,5 @@ $RECYCLE.BIN/
 setup.py
 test_api.py
 
-# Ignorar archivos con extensiones de configuración
-*.yml
-*.yaml
-*.toml
+# Ignorar archivos específicos de configuración (pero permitir .github/)
 .firebase/

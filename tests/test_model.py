@@ -1,6 +1,6 @@
 import unittest
 
-from app.body_analysis.model import Sexo, ObjetivoNutricional
+from app.body_analysis.model import ObjetivoNutricional, Sexo
 
 
 class TestEnums(unittest.TestCase):

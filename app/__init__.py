@@ -1,12 +1,12 @@
 # app/__init__.py
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager
-from flask_wtf.csrf import CSRFProtect
 from flask_cors import CORS
+from flask_jwt_extended import JWTManager
+from flask_login import LoginManager
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
 # Inicializar extensiones (sin app todavía)
 db = SQLAlchemy()
@@ -17,88 +17,92 @@ jwt = JWTManager()
 csrf = CSRFProtect()
 cors = CORS()
 
-def create_app(config_name = 'development'):
-	"""
-	Application Factory Pattern.
 
-	Args:
-		config_name: 'development', 'production', o 'testing'
+def create_app(config_name="development"):
+    """
+    Application Factory Pattern.
 
-	Returns:
-		Flask app configurada
-	"""
-	app = Flask(
-		__name__,
-		template_folder = 'templates',
-		static_folder = 'static'
-		)
+    Args:
+            config_name: 'development', 'production', o 'testing'
 
-	# Cargar configuración
-	from app.config import config_by_name
-	app.config.from_object(config_by_name[config_name])
+    Returns:
+            Flask app configurada
+    """
+    app = Flask(__name__, template_folder="templates", static_folder="static")
 
-	# Inicializar extensiones con la app
-	db.init_app(app)
-	migrate.init_app(app, db)
-	login_manager.init_app(app)
-	bcrypt.init_app(app)
-	jwt.init_app(app)
-	csrf.init_app(app)
-	cors.init_app(app)
+    # Cargar configuración
+    from app.config import config_by_name
 
-	# Configure CORS for API endpoints
-	cors.init_app(app, resources={
-		r"/api/*": {
-			"origins": ["http://localhost:3000", "http://localhost:5173", "https://*.vercel.app"],
-			"methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-			"allow_headers": ["Content-Type", "Authorization"],
-			"supports_credentials": True
-		}
-	})
+    app.config.from_object(config_by_name[config_name])
 
-	# Configurar Flask-Login
-	login_manager.login_view = 'auth.login'
-	login_manager.login_message = 'Por favor inicia sesión para acceder a esta página.'
-	login_manager.login_message_category = 'info'
+    # Inicializar extensiones con la app
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
+    csrf.init_app(app)
+    cors.init_app(app)
 
-	# User loader para Flask-Login
-	@login_manager.user_loader
-	def load_user(user_id):
-		from app.models.user import User
-		return User.query.get(int(user_id))
+    # Configure CORS for API endpoints
+    cors.init_app(
+        app,
+        resources={
+            r"/api/*": {
+                "origins": [
+                    "http://localhost:3000",
+                    "http://localhost:5173",
+                    "https://*.vercel.app",
+                ],
+                "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "supports_credentials": True,
+            }
+        },
+    )
 
-	# Registrar Blueprints
-	# Auth blueprint
-	from app.blueprints.auth import auth_bp
-	from app.blueprints.bioanalyze import bioanalyze_bp
-	from app.blueprints.api import api_bp
-	from app.blueprints.contact import contact_bp
-	from app.blueprints.admin.routes import admin_bp
-	from app.blueprints.main import main_bp
+    # Configurar Flask-Login
+    login_manager.login_view = "auth.login"
+    login_manager.login_message = "Por favor inicia sesión para acceder a esta página."
+    login_manager.login_message_category = "info"
 
-	app.register_blueprint(main_bp)  
-	app.register_blueprint(auth_bp, url_prefix = '/auth')
-	app.register_blueprint(bioanalyze_bp)
-	app.register_blueprint(api_bp, url_prefix='/api/v1')
-	app.register_blueprint(contact_bp)
-	app.register_blueprint(admin_bp)
+    # User loader para Flask-Login
+    @login_manager.user_loader
+    def load_user(user_id):
+        from app.models.user import User
 
-	# Registrar error handlers
-	from app.middleware.error_handlers import register_error_handlers
-	register_error_handlers(app)
+        return User.query.get(int(user_id))
 
-	from datetime import datetime
-	app.jinja_env.globals.update(now = datetime.now)
+    # Registrar Blueprints
+    # Auth blueprint
+    from app.blueprints.admin.routes import admin_bp
+    from app.blueprints.api import api_bp
+    from app.blueprints.auth import auth_bp
+    from app.blueprints.bioanalyze import bioanalyze_bp
+    from app.blueprints.contact import contact_bp
+    from app.blueprints.main import main_bp
 
-	# Shell context para flask shell (útil para debugging)
-	@app.shell_context_processor
-	def make_shell_context():
-		from app.models.user import User, Role, Permission
-		return {
-			'db': db,
-			'User': User,
-			'Role': Role,
-			'Permission': Permission
-			}
+    app.register_blueprint(main_bp)
+    app.register_blueprint(auth_bp, url_prefix="/auth")
+    app.register_blueprint(bioanalyze_bp)
+    app.register_blueprint(api_bp, url_prefix="/api/v1")
+    app.register_blueprint(contact_bp)
+    app.register_blueprint(admin_bp)
 
-	return app
+    # Registrar error handlers
+    from app.middleware.error_handlers import register_error_handlers
+
+    register_error_handlers(app)
+
+    from datetime import datetime
+
+    app.jinja_env.globals.update(now=datetime.now)
+
+    # Shell context para flask shell (útil para debugging)
+    @app.shell_context_processor
+    def make_shell_context():
+        from app.models.user import Permission, Role, User
+
+        return {"db": db, "User": User, "Role": Role, "Permission": Permission}
+
+    return app

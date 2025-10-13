@@ -1,6 +1,6 @@
 import unittest
 
-from app.body_analysis.constantes import GrasaCorporal, RCC, RatioCinturaAltura, FFMI
+from app.body_analysis.constantes import FFMI, RCC, GrasaCorporal, RatioCinturaAltura
 from app.body_analysis.interpretaciones import (
     interpretar_ffmi,
     interpretar_imc,
@@ -32,11 +32,15 @@ class TestInterpretaciones(unittest.TestCase):
         self.assertEqual(resultado, "El IMC está dentro del rango normal.")
 
     def test_interpretar_porcentaje_grasa_alto(self):
-        resultado = interpretar_porcentaje_grasa(GrasaCorporal.ALTA_HOMBRES + 1, Sexo.HOMBRE)
+        resultado = interpretar_porcentaje_grasa(
+            GrasaCorporal.ALTA_HOMBRES + 1, Sexo.HOMBRE
+        )
         self.assertEqual(resultado, "Alto")
 
     def test_interpretar_porcentaje_grasa_bajo(self):
-        resultado = interpretar_porcentaje_grasa(GrasaCorporal.BAJA_MUJERES - 1, Sexo.MUJER)
+        resultado = interpretar_porcentaje_grasa(
+            GrasaCorporal.BAJA_MUJERES - 1, Sexo.MUJER
+        )
         self.assertEqual(resultado, "Bajo")
 
     def test_interpretar_ffmi(self):
@@ -52,11 +56,15 @@ class TestInterpretaciones(unittest.TestCase):
         self.assertEqual(resultado, "Moderado riesgo")
 
     def test_interpretar_ratio_cintura_altura_alto_riesgo(self):
-        resultado = interpretar_ratio_cintura_altura(RatioCinturaAltura.ALTO_RIESGO + 0.01)
+        resultado = interpretar_ratio_cintura_altura(
+            RatioCinturaAltura.ALTO_RIESGO + 0.01
+        )
         self.assertEqual(resultado, "Alto riesgo")
 
     def test_interpretar_ratio_cintura_altura_bajo_riesgo(self):
-        resultado = interpretar_ratio_cintura_altura(RatioCinturaAltura.MODERADO_RIESGO - 0.01)
+        resultado = interpretar_ratio_cintura_altura(
+            RatioCinturaAltura.MODERADO_RIESGO - 0.01
+        )
         self.assertEqual(resultado, "Bajo riesgo")
 
     def test_interpretar_ratio_cintura_altura_invalid(self):

@@ -1,4 +1,4 @@
-from .constantes import GrasaCorporal, RCC, RatioCinturaAltura, FFMI
+from .constantes import FFMI, RCC, GrasaCorporal, RatioCinturaAltura
 from .model import Sexo
 
 
@@ -177,19 +177,26 @@ def interpretar_ratio_cintura_altura(ratio: float) -> str:
         return "Bajo riesgo"
 
 
-def interpretar_edad_metabolica_avanzada(edad_cronologica, edad_metabolica, imc, porcentaje_grasa, ratio_cintura_altura, genero):
+def interpretar_edad_metabolica_avanzada(
+    edad_cronologica,
+    edad_metabolica,
+    imc,
+    porcentaje_grasa,
+    ratio_cintura_altura,
+    genero,
+):
     """
-        Interpretación clínica de la edad metabólica, considerando también obesidad, grasa corporal y obesidad abdominal.
-        """
+    Interpretación clínica de la edad metabólica, considerando también obesidad, grasa corporal y obesidad abdominal.
+    """
 
     genero_texto = _normalizar_genero_texto(genero)
 
     # Detectar si existe obesidad o problemas serios de composición corporal
     obesidad_detectada = (
-            imc >= 30 or
-            (genero_texto == "hombre" and porcentaje_grasa >= 25) or
-            (genero_texto == "mujer" and porcentaje_grasa >= 32) or
-            ratio_cintura_altura > 0.5
+        imc >= 30
+        or (genero_texto == "hombre" and porcentaje_grasa >= 25)
+        or (genero_texto == "mujer" and porcentaje_grasa >= 32)
+        or ratio_cintura_altura > 0.5
     )
 
     diferencia = edad_metabolica - edad_cronologica
