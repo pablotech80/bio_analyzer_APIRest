@@ -26,11 +26,6 @@ jobs:
           pip install -r requirements.txt
           pip install black isort flake8 pytest
 
-      - name: Run linters
-        run: |
-          black .
-          isort .
-         
 
       - name: Run tests
         run: pytest -v
