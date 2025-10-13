@@ -5,13 +5,17 @@ Revises: add_muscle_measurements, create_contact_msgs, merge_heads_profile_pictu
 Create Date: 2025-10-07 22:46:56.601991
 
 """
-from alembic import op
-import sqlalchemy as sa
 
+import sqlalchemy as sa
+from alembic import op
 
 # revision identifiers, used by Alembic.
-revision = 'b5aba5737320'
-down_revision = ('add_muscle_measurements', 'create_contact_msgs', 'merge_heads_profile_picture')
+revision = "b5aba5737320"
+down_revision = (
+    "add_muscle_measurements",
+    "create_contact_msgs",
+    "merge_heads_profile_picture",
+)
 branch_labels = None
 depends_on = None
 

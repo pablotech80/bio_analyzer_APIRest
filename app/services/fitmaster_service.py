@@ -9,6 +9,7 @@ from openai import OpenAI
 # Configurar logging
 logger = logging.getLogger(__name__)
 
+
 # Inicializar cliente OpenAI con validación
 def _get_openai_client() -> Optional[OpenAI]:
     """Inicializar cliente OpenAI con validación de API key."""
@@ -18,7 +19,9 @@ def _get_openai_client() -> Optional[OpenAI]:
         return None
 
     # Log parcial de la API key (por seguridad)
-    logger.info(f"OPENAI_API_KEY detectada, comienza por: {api_key[:8]}... (longitud: {len(api_key)})")
+    logger.info(
+        f"OPENAI_API_KEY detectada, comienza por: {api_key[:8]}... (longitud: {len(api_key)})"
+    )
 
     try:
         logger.info("Inicializando cliente OpenAI...")
@@ -27,7 +30,9 @@ def _get_openai_client() -> Optional[OpenAI]:
         logger.error(f"Error al inicializar cliente OpenAI: {e}")
         return None
 
+
 client = _get_openai_client()
+
 
 class FitMasterService:
     """
@@ -45,11 +50,15 @@ class FitMasterService:
         """
         if not client:
             logger.error("Cliente OpenAI no está disponible")
-            return FitMasterService._get_fallback_response("Cliente OpenAI no configurado")
+            return FitMasterService._get_fallback_response(
+                "Cliente OpenAI no configurado"
+            )
 
         if not bio_payload:
             logger.error("bio_payload está vacío")
-            return FitMasterService._get_fallback_response("Datos biométricos no válidos")
+            return FitMasterService._get_fallback_response(
+                "Datos biométricos no válidos"
+            )
         prompt = FitMasterService._build_prompt(bio_payload)
 
         try:
@@ -58,7 +67,10 @@ class FitMasterService:
             response = client.chat.completions.create(
                 model=modelo_usado,
                 messages=[
-                    {"role": "system", "content": "Eres FitMaster, IA experta en fitness y nutrición."},
+                    {
+                        "role": "system",
+                        "content": "Eres FitMaster, IA experta en fitness y nutrición.",
+                    },
                     {"role": "user", "content": prompt},
                 ],
                 temperature=0.7,
@@ -82,14 +94,18 @@ class FitMasterService:
                 logger.warning(f"Error al parsear JSON de OpenAI: {e}")
                 logger.warning(f"Respuesta que causó el error: {message[:500]}")
                 return {
-                    "interpretation": message if message else "No se recibió respuesta de OpenAI",
+                    "interpretation": (
+                        message if message else "No se recibió respuesta de OpenAI"
+                    ),
                     "nutrition_plan": None,
                     "training_plan": None,
                 }
         except Exception as exc:
             logger.error(f"Error en la conexión con OpenAI: {exc}")
             logger.error(f"Tipo de excepción: {type(exc)}")
-            return FitMasterService._get_fallback_response(f"Error de conexión: {str(exc)}")
+            return FitMasterService._get_fallback_response(
+                f"Error de conexión: {str(exc)}"
+            )
 
     @staticmethod
     def _build_prompt(bio_payload: Dict) -> str:
@@ -103,7 +119,9 @@ class FitMasterService:
         except Exception as e:
             logger.error(f"No se pudo leer el prompt externo: {e}")
             prompt_template = "Eres FitMaster AI. Analiza los datos: {bio_payload}"
-        return prompt_template.replace("{bio_payload}", json.dumps(bio_payload, ensure_ascii=False, indent=2))
+        return prompt_template.replace(
+            "{bio_payload}", json.dumps(bio_payload, ensure_ascii=False, indent=2)
+        )
 
     @staticmethod
     def _clean_json_response(message: str) -> str:
@@ -121,8 +139,8 @@ class FitMasterService:
 
         # Patrón para capturar JSON dentro de bloques de código
         patterns = [
-            r'```json\s*(.*?)\s*```',  # ```json { ... } ```
-            r'```\s*(.*?)\s*```',       # ``` { ... } ```
+            r"```json\s*(.*?)\s*```",  # ```json { ... } ```
+            r"```\s*(.*?)\s*```",  # ``` { ... } ```
         ]
 
         for pattern in patterns:

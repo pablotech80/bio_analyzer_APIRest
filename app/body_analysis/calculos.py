@@ -412,8 +412,11 @@ def calcular_peso_grasa_corporal(peso: float, porcentaje_grasa: float) -> float:
 
 
 def calcular_macronutrientes_porcentajes(
-        calorias: float, porcentaje_proteinas: float, porcentaje_carbohidratos: float, porcentaje_grasas: float
-        ):
+    calorias: float,
+    porcentaje_proteinas: float,
+    porcentaje_carbohidratos: float,
+    porcentaje_grasas: float,
+):
     """
     Calcula los gramos diarios de proteínas, carbohidratos y grasas a partir del reparto porcentual de calorías.
 
@@ -439,22 +442,41 @@ def calcular_macronutrientes_porcentajes(
 
     return proteinas, carbohidratos, grasas
 
-def calcular_edad_metabolica_avanzada(tmb, genero, edad_cronologica, imc, porcentaje_grasa, ratio_cintura_altura):
+
+def calcular_edad_metabolica_avanzada(
+    tmb, genero, edad_cronologica, imc, porcentaje_grasa, ratio_cintura_altura
+):
     """
-        Calcula la edad metabólica ajustada clínicamente con un límite de penalización para evitar interpretaciones médicas incorrectas.
-        """
+    Calcula la edad metabólica ajustada clínicamente con un límite de penalización para evitar interpretaciones médicas incorrectas.
+    """
     # Tabla de TMB promedio
     tmb_por_edad_hombre = {
-        18: 1660, 25: 1600, 30: 1550, 35: 1500, 40: 1450, 45: 1400, 50: 1350, 55: 1300, 60: 1250
-        }
+        18: 1660,
+        25: 1600,
+        30: 1550,
+        35: 1500,
+        40: 1450,
+        45: 1400,
+        50: 1350,
+        55: 1300,
+        60: 1250,
+    }
     tmb_por_edad_mujer = {
-        18: 1450, 25: 1400, 30: 1350, 35: 1300, 40: 1250, 45: 1200, 50: 1150, 55: 1100, 60: 1050
-        }
+        18: 1450,
+        25: 1400,
+        30: 1350,
+        35: 1300,
+        40: 1250,
+        45: 1200,
+        50: 1150,
+        55: 1100,
+        60: 1050,
+    }
 
     genero_texto = _normalizar_genero_texto(genero)
 
     tabla = tmb_por_edad_hombre if genero_texto == "hombre" else tmb_por_edad_mujer
-    edad_metabolica_base = min(tabla.keys(), key = lambda edad: abs(tmb - tabla[edad]))
+    edad_metabolica_base = min(tabla.keys(), key=lambda edad: abs(tmb - tabla[edad]))
 
     penalizacion = 0
 
@@ -467,7 +489,9 @@ def calcular_edad_metabolica_avanzada(tmb, genero, edad_cronologica, imc, porcen
     elif imc >= 40:
         penalizacion += 15
 
-    if (genero_texto == "hombre" and porcentaje_grasa >= 25) or (genero_texto == "mujer" and porcentaje_grasa >= 32):
+    if (genero_texto == "hombre" and porcentaje_grasa >= 25) or (
+        genero_texto == "mujer" and porcentaje_grasa >= 32
+    ):
         penalizacion += 5
 
     if ratio_cintura_altura > 0.5:

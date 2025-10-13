@@ -1,10 +1,10 @@
-# Define el nombre de tu entorno virtual
-VENV_NAME = .venv
+# Nombre del entorno virtual
+VENV_NAME = venv1
 
-# Rutas de activación de entorno virtual y Python
+# Ruta del ejecutable de Python del sistema
 PYTHON_PATH = $(shell which python3)
 
-# Añadir el directorio bin del entorno virtual a PATH
+# Añadir el directorio bin del entorno virtual al PATH
 export PATH := /app/.local/bin:$(PATH)
 
 # Crear entorno virtual
@@ -55,3 +55,14 @@ run:
 # Ejecutar pruebas
 test:
 	$(VENV_NAME)/bin/pytest
+
+# Formatear código (repara estilo automáticamente)
+format:
+	$(VENV_NAME)/bin/isort .
+	$(VENV_NAME)/bin/black .
+
+# Ejecutar linter (solo verifica, no modifica)
+lint:
+	$(VENV_NAME)/bin/flake8 .
+	$(VENV_NAME)/bin/isort --check-only .
+	$(VENV_NAME)/bin/black --check .

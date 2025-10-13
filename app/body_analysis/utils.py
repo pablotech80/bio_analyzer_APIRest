@@ -1,4 +1,5 @@
-from .model import Sexo, ObjetivoNutricional
+from .model import ObjetivoNutricional, Sexo
+
 
 def convertir_genero(genero_str):
     if genero_str == "h":
@@ -8,8 +9,11 @@ def convertir_genero(genero_str):
     else:
         raise ValueError("Género no válido. Usa 'h' para hombre o 'm' para mujer.")
 
+
 def convertir_objetivo(objetivo_str):
     try:
         return ObjetivoNutricional(objetivo_str.strip().lower())
     except ValueError:
-        raise ValueError("El objetivo debe ser 'mantener peso', 'perder grasa' o 'ganar masa muscular'.")
+        raise ValueError(
+            "El objetivo debe ser 'mantener peso', 'perder grasa' o 'ganar masa muscular'."
+        )
