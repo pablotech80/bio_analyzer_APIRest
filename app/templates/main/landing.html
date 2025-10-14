@@ -3,1941 +3,2364 @@
 {% block title %}CoachBodyFit360 - 20 Años de Experiencia en Fitness + IA{% endblock %}
 
 {% block extra_css %}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-
-<style>
-    /* ============================================================================
-       VARIABLES Y COLORES
-       ============================================================================ */
-    :root {
-        /* Colores primarios del logo */
-        --primary-red: #E74C3C;
-        --primary-orange: #E67E22;
-        --primary-black: #1A1A1A;
-
-        /* Secundarios */
-        --secondary-gray: #BDC3C7;
-        --secondary-dark: #2C3E50;
-
-        /* Acentos */
-        --accent-success: #27AE60;
-        --accent-warning: #F39C12;
-        --accent-info: #3498DB;
-
-        /* Neutrales */
-        --white: #FFFFFF;
-        --light-gray: #ECF0F1;
-        --dark-gray: #34495E;
-
-        /* Gradientes */
-        --gradient-hero: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%);
-        --gradient-dark: linear-gradient(135deg, #1A1A1A 0%, #2C3E50 100%);
-        --gradient-cta: linear-gradient(135deg, #E67E22 0%, #F39C12 100%);
-    }
-
-    /* ============================================================================
-       TIPOGRAFÍA
-       ============================================================================ */
-    body {
-        font-family: 'Inter', sans-serif;
-        font-size: 1.125rem;
-        line-height: 1.7;
-        color: #2C3E50;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
-    }
-
-    .display-1, .display-2, .display-3, .display-4, .display-5 {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 800;
-    }
-
-    .stat-number {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 3.5rem;
-        line-height: 1;
-    }
-
-    /* ============================================================================
-       HERO SECTION
-       ============================================================================ */
-    .hero-section {
-        background: var(--primary-black);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .hero-section::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(231, 76, 60, 0.1) 0%, transparent 70%);
-        animation: rotate 30s linear infinite;
-    }
-
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .hero-content {
-        position: relative;
-        z-index: 10;
-    }
-
-    .hero-logo {
-        max-height: 300px;
-        width: auto;
-        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-    }
-
-    .hero-badge {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        color: var(--white);
-        padding: 0.75rem 1.5rem;
-        border-radius: 50px;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.9rem;
-        margin-bottom: 2rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .hero-title {
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        color: var(--white);
-        margin-bottom: 1.5rem;
-        line-height: 1.2;
-    }
-
-    .hero-title .highlight {
-        background: var(--gradient-hero);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-
-    .hero-subtitle {
-        font-size: clamp(1.1rem, 2vw, 1.3rem);
-        color: var(--secondary-gray);
-        margin-bottom: 2.5rem;
-        line-height: 1.6;
-    }
-
-    .btn-hero-primary {
-        background: var(--gradient-cta);
-        color: var(--white);
-        border: none;
-        padding: 1.2rem 3rem;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(230, 126, 34, 0.4);
-        transition: all 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .btn-hero-primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(230, 126, 34, 0.6);
-        color: var(--white);
-    }
-
-    .btn-hero-secondary {
-        background: transparent;
-        border: 2px solid var(--primary-red);
-        color: var(--primary-red);
-        padding: 1.2rem 3rem;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .btn-hero-secondary:hover {
-        background: var(--primary-red);
-        color: var(--white);
-        transform: translateY(-3px);
-    }
-
-    .trust-badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 2rem;
-        margin-top: 2rem;
-        color: var(--secondary-gray);
-        font-size: 0.95rem;
-    }
-
-    .trust-badge-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .trust-badge-item i {
-        color: var(--accent-success);
-        font-size: 1.3rem;
-    }
-
-    .disclaimer-hero {
-        background: rgba(241, 196, 15, 0.1);
-        border-left: 4px solid var(--accent-warning);
-        padding: 1rem 1.5rem;
-        margin-top: 2rem;
-        border-radius: 8px;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
-    }
-
-    /* ============================================================================
-       STATS BAR
-       ============================================================================ */
-    .stats-section {
-        background: var(--gradient-hero);
-        padding: 3rem 0;
-        color: var(--white);
-    }
-
-    .stat-item {
-        text-align: center;
-        padding: 1rem;
-    }
-
-    .stat-item .stat-number {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--white);
-    }
-
-    .stat-item .stat-label {
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        opacity: 0.9;
-    }
-
-    .stat-divider {
-        width: 1px;
-        height: 60px;
-        background: rgba(255, 255, 255, 0.3);
-        margin: 0 auto;
-    }
-
-    /* ============================================================================
-       LOS 4 PILARES
-       ============================================================================ */
-    .pillars-section {
-        background: var(--primary-black);
-        padding: 5rem 0;
-    }
-
-    .pillar-card {
-        text-align: center;
-        padding: 2.5rem 1.5rem;
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: all 0.3s ease;
-        height: 100%;
-    }
-
-    .pillar-card:hover {
-        transform: translateY(-10px);
-        background: rgba(255, 255, 255, 0.05);
-        box-shadow: 0 20px 60px rgba(231, 76, 60, 0.2);
-    }
-
-    .pillar-icon {
-        font-size: 3rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .pillar-card h3 {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: 2rem;
-        letter-spacing: 2px;
-        margin-bottom: 1rem;
-    }
-
-    .pillar-card p {
-        color: rgba(255, 255, 255, 0.7);
-        line-height: 1.7;
-    }
-
-    /* ============================================================================
-       EXPERIENCIA SECTION
-       ============================================================================ */
-    .experience-section {
-        padding: 5rem 0;
-        background: var(--white);
-    }
-
-    .experience-icon-box {
-        width: 200px;
-        height: 200px;
-        background: var(--gradient-hero);
-        border-radius: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 5rem;
-        color: var(--white);
-        box-shadow: 0 20px 60px rgba(231, 76, 60, 0.3);
-        margin: 0 auto;
-    }
-
-    .experience-content h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
-        margin-bottom: 2rem;
-        color: var(--primary-black);
-    }
-
-    .experience-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .experience-list li {
-        display: flex;
-        align-items: start;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-        font-size: 1.1rem;
-    }
-
-    .experience-list li i {
-        color: var(--primary-red);
-        font-size: 1.5rem;
-        flex-shrink: 0;
-        margin-top: 0.2rem;
-    }
-
-    .experience-quote {
-        background: var(--light-gray);
-        border-left: 4px solid var(--primary-red);
-        padding: 2rem;
-        margin: 2rem 0;
-        font-style: italic;
-        border-radius: 8px;
-    }
-
-    .experience-disclaimer {
-        background: rgba(241, 196, 15, 0.1);
-        border: 1px solid var(--accent-warning);
-        padding: 1.5rem;
-        border-radius: 8px;
-        margin-top: 2rem;
-        font-size: 0.95rem;
-        color: var(--dark-gray);
-    }
-
-    /* ============================================================================
-       COMPARACIÓN
-       ============================================================================ */
-    .comparison-section {
-        background: var(--light-gray);
-        padding: 5rem 0;
-    }
-
-    .comparison-table {
-        background: var(--white);
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    .comparison-header {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        background: var(--primary-black);
-        color: var(--white);
-        padding: 2rem;
-        font-weight: 600;
-        font-size: 1.3rem;
-    }
-
-    .comparison-header .highlight {
-        color: var(--primary-orange);
-    }
-
-    .comparison-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        padding: 1.5rem 2rem;
-        border-bottom: 1px solid var(--light-gray);
-    }
-
-    .comparison-row:last-child {
-        border-bottom: none;
-    }
-
-    .comparison-row:nth-child(even) {
-        background: rgba(231, 76, 60, 0.02);
-    }
-
-    .comparison-cell {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .comparison-cell i {
-        font-size: 1.3rem;
-        flex-shrink: 0;
-    }
-
-    .comparison-cell.traditional i {
-        color: var(--secondary-gray);
-    }
-
-    .comparison-cell.cbf i {
-        color: var(--accent-success);
-    }
-
-    /* ============================================================================
-       REVIEWS SECTION
-       ============================================================================ */
-    .reviews-section {
-        padding: 5rem 0;
-        background: var(--white);
-    }
-
-    .review-card {
-        background: var(--white);
-        border-radius: 16px;
-        padding: 2rem;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        height: 100%;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-    }
-
-    .review-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
-        border-color: var(--primary-red);
-    }
-
-    .review-stars {
-        color: var(--accent-warning);
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
-    }
-
-    .review-text {
-        font-size: 1.05rem;
-        line-height: 1.7;
-        margin-bottom: 1.5rem;
-        color: var(--dark-gray);
-    }
-
-    .review-author {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-
-    .review-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: var(--gradient-hero);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--white);
-        font-weight: 700;
-        font-size: 1.1rem;
-        flex-shrink: 0;
-    }
-
-    .review-author-info strong {
-        display: block;
-        color: var(--primary-black);
-        margin-bottom: 0.25rem;
-    }
-
-    .review-author-info small {
-        color: var(--secondary-gray);
-        font-size: 0.9rem;
-    }
-
-    .review-badge {
-        background: rgba(39, 174, 96, 0.1);
-        color: var(--accent-success);
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        margin-top: 1rem;
-        display: inline-block;
-    }
-
-    .verified-badge {
-        color: var(--accent-info);
-        font-size: 0.85rem;
-        display: flex;
-        align-items: center;
-        gap: 0.3rem;
-        margin-top: 0.5rem;
-    }
-
-    /* ============================================================================
-       PROCESO
-       ============================================================================ */
-    .process-section {
-        background: var(--primary-black);
-        padding: 5rem 0;
-    }
-
-    .process-timeline {
-        position: relative;
-        padding: 2rem 0;
-    }
-
-    .process-step {
-        display: flex;
-        gap: 2rem;
-        margin-bottom: 3rem;
-        align-items: center;
-        position: relative;
-    }
-
-    .process-step:last-child {
-        margin-bottom: 0;
-    }
-
-    .process-step:last-child .process-line {
-        display: none;
-    }
-
-    .process-number {
-        width: 80px;
-        height: 80px;
-        background: var(--gradient-hero);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2.5rem;
-        font-weight: 700;
-        color: var(--white);
-        box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
-        flex-shrink: 0;
-        position: relative;
-        z-index: 2;
-    }
-
-    .process-line {
-        position: absolute;
-        left: 39px;
-        top: 80px;
-        width: 2px;
-        height: calc(100% + 3rem);
-        background: linear-gradient(180deg, var(--primary-red) 0%, transparent 100%);
-        z-index: 1;
-    }
-
-    .process-content {
-        flex: 1;
-        color: var(--white);
-    }
-
-    .process-content h3 {
-        font-size: 1.8rem;
-        margin-bottom: 0.75rem;
-        color: var(--white);
-    }
-
-    .process-content p {
-        color: var(--secondary-gray);
-        font-size: 1.1rem;
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    .process-time {
-        display: inline-block;
-        background: rgba(230, 126, 34, 0.2);
-        color: var(--primary-orange);
-        padding: 0.4rem 1rem;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        margin-top: 0.5rem;
-        font-weight: 600;
-    }
-
-    /* ============================================================================
-       FEATURES DETALLADOS
-       ============================================================================ */
-    .features-section {
-        padding: 5rem 0;
-        background: var(--white);
-    }
-
-    .feature-detail-card {
-        background: var(--white);
-        border: 2px solid var(--light-gray);
-        border-radius: 16px;
-        padding: 2.5rem;
-        height: 100%;
-        transition: all 0.3s ease;
-    }
-
-    .feature-detail-card:hover {
-        border-color: var(--primary-red);
-        box-shadow: 0 15px 40px rgba(231, 76, 60, 0.15);
-        transform: translateY(-5px);
-    }
-
-    .feature-detail-icon {
-        width: 70px;
-        height: 70px;
-        background: var(--gradient-hero);
-        border-radius: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        color: var(--white);
-        margin-bottom: 1.5rem;
-    }
-
-    .feature-detail-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        color: var(--primary-black);
-    }
-
-    .feature-detail-list {
-        list-style: none;
-        padding: 0;
-    }
-
-    .feature-detail-list li {
-        padding: 0.5rem 0;
-        color: var(--dark-gray);
-        display: flex;
-        align-items: start;
-        gap: 0.75rem;
-    }
-
-    .feature-detail-list li::before {
-        content: "•";
-        color: var(--primary-red);
-        font-size: 1.5rem;
-        line-height: 1.2;
-    }
-
-    /* ============================================================================
-       PRECIOS BETA 2025
-       ============================================================================ */
-    .pricing-section {
-        padding: 5rem 0;
-        background: var(--white);
-    }
-
-    .pricing-section .section-badge {
-        background: var(--gradient-hero);
-        color: var(--white);
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        display: inline-block;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-
-    .pricing-section h2 {
-        font-size: clamp(2rem, 4vw, 3rem);
-        margin-bottom: 2rem;
-        color: var(--primary-black);
-    }
-
-    .pricing-section .alert {
-        background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
-        border: 2px solid var(--primary-orange);
-        border-radius: 15px;
-        padding: 1.5rem;
-        margin-bottom: 2rem;
-    }
-
-    .pricing-section .alert h5 {
-        color: var(--primary-black);
-        margin-bottom: 1rem;
-    }
-
-    .pricing-section .alert ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .pricing-section .alert li {
-        padding: 0.5rem 0;
-        color: var(--dark-gray);
-        display: flex;
-        align-items: start;
-        gap: 0.75rem;
-    }
-
-    .pricing-section .alert li::before {
-        content: "•";
-        color: var(--primary-red);
-        font-size: 1.5rem;
-        line-height: 1.2;
-    }
-
-    .pricing-section .alert.roadmap {
-        background: var(--primary-black);
-        border: 2px solid var(--primary-orange);
-        color: var(--white);
-    }
-
-    .pricing-section .alert.roadmap h5 {
-        color: var(--primary-orange);
-    }
-
-    .pricing-section .btn {
-        background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-orange) 100%);
-        color: var(--white);
-        border: none;
-        padding: 1.2rem 3rem;
-        font-size: 1.2rem;
-        font-weight: 600;
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .pricing-section .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 15px 40px rgba(230, 126, 34, 0.6);
-        color: var(--white);
-    }
-
-    /* ============================================================================
-       FAQ
-       ============================================================================ */
-    .faq-section {
-        background: var(--light-gray);
-        padding: 5rem 0;
-    }
-
-    .accordion-item {
-        border: none;
-        margin-bottom: 1rem;
-        border-radius: 12px !important;
-        overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-    }
-
-    .accordion-button {
-        font-weight: 600;
-        font-size: 1.1rem;
-        padding: 1.5rem;
-        background: var(--white);
-        color: var(--primary-black);
-    }
-
-    .accordion-button:not(.collapsed) {
-        background: var(--gradient-hero);
-        color: var(--white);
-        box-shadow: none;
-    }
-
-    .accordion-button:focus {
-        box-shadow: none;
-        border-color: transparent;
-    }
-
-    .accordion-body {
-        padding: 1.5rem;
-        font-size: 1.05rem;
-        line-height: 1.7;
-        background: var(--white);
-    }
-
-    /* ============================================================================
-       CTA FINAL
-       ============================================================================ */
-    .cta-final-section {
-        background: var(--gradient-hero);
-        padding: 5rem 0;
-        text-align: center;
-        color: var(--white);
-    }
-
-    .cta-final-section h2 {
-        font-size: clamp(2rem, 4vw, 3.5rem);
-        margin-bottom: 1.5rem;
-        line-height: 1.2;
-    }
-
-    .cta-final-section p {
-        font-size: 1.3rem;
-        margin-bottom: 2.5rem;
-        opacity: 0.95;
-    }
-
-    .btn-cta-final {
-        background: var(--white);
-        color: var(--primary-red);
-        border: none;
-        padding: 1.5rem 4rem;
-        font-size: 1.4rem;
-        font-weight: 700;
-        border-radius: 12px;
-        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
-        transition: all 0.3s ease;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .btn-cta-final:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-        color: var(--primary-red);
-    }
-
-    .cta-trust-items {
-        display: flex;
-        justify-content: center;
-        gap: 3rem;
-        margin-top: 2rem;
-        flex-wrap: wrap;
-    }
-
-    .cta-trust-item {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 1rem;
-        opacity: 0.9;
-    }
-
-    .disclaimer-cta {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-top: 3rem;
-        font-size: 0.95rem;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    /* ============================================================================
-       RESPONSIVE
-       ============================================================================ */
-    @media (max-width: 991px) {
-        .hero-title {
-            font-size: 2.5rem;
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&family=Inter:wght@400;500;600&family=Bebas+Neue&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        /* ============================================================================
+           VARIABLES Y COLORES
+           ============================================================================ */
+        :root {
+            /* Colores primarios del logo */
+            --primary-red: #E74C3C;
+            --primary-orange: #E67E22;
+            --primary-black: #1A1A1A;
+
+            /* Secundarios */
+            --secondary-gray: #BDC3C7;
+            --secondary-dark: #2C3E50;
+
+            /* Acentos */
+            --accent-success: #27AE60;
+            --accent-warning: #F39C12;
+            --accent-info: #3498DB;
+
+            /* Neutrales */
+            --white: #FFFFFF;
+            --light-gray: #ECF0F1;
+            --dark-gray: #34495E;
+
+            /* Gradientes */
+            --gradient-hero: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%);
+            --gradient-dark: linear-gradient(135deg, #1A1A1A 0%, #2C3E50 100%);
+            --gradient-cta: linear-gradient(135deg, #E67E22 0%, #F39C12 100%);
         }
 
-        .stat-divider {
-            display: none;
+        /* ============================================================================
+           TIPOGRAFÍA
+           ============================================================================ */
+        body {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.125rem;
+            line-height: 1.7;
+            color: #2C3E50;
         }
 
-        .comparison-header,
-        .comparison-row {
-            grid-template-columns: 1fr;
-            gap: 1rem;
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
         }
 
-        .comparison-row {
-            padding: 1rem;
-        }
-
-        .experience-icon-box {
-            margin-bottom: 2rem;
-        }
-    }
-
-    @media (max-width: 576px) {
-        .hero-section {
-            min-height: auto;
-            padding: 4rem 0;
-        }
-
-        .btn-hero-primary,
-        .btn-hero-secondary {
-            width: 100%;
-            margin-bottom: 1rem;
-        }
-
-        .trust-badges {
-            flex-direction: column;
-            gap: 1rem;
+        .display-1, .display-2, .display-3, .display-4, .display-5 {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 800;
         }
 
         .stat-number {
-            font-size: 2.5rem;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 3.5rem;
+            line-height: 1;
         }
-    }
 
-    /* ============================================================================
-       UTILIDADES
-       ============================================================================ */
-    .section-badge {
-        background: var(--gradient-hero);
-        color: var(--white);
-        padding: 0.5rem 1.5rem;
-        border-radius: 50px;
-        display: inline-block;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
+        /* ============================================================================
+           HERO SECTION
+           ============================================================================ */
+        .hero-section {
+            background: var(--primary-black);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
 
-    .text-gradient {
-        background: var(--gradient-hero);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-</style>
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(231, 76, 60, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero-logo {
+            max-height: 300px;
+            width: auto;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .hero-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            color: var(--white);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero-title .highlight {
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            color: var(--secondary-gray);
+            margin-bottom: 2.5rem;
+            line-height: 1.6;
+        }
+
+        .btn-hero-primary {
+            background: var(--gradient-cta);
+            color: var(--white);
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(230, 126, 34, 0.4);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(230, 126, 34, 0.6);
+            color: var(--white);
+        }
+
+        .btn-hero-secondary {
+            background: transparent;
+            border: 2px solid var(--primary-red);
+            color: var(--primary-red);
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-hero-secondary:hover {
+            background: var(--primary-red);
+            color: var(--white);
+            transform: translateY(-3px);
+        }
+
+        .trust-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-top: 2rem;
+            color: var(--secondary-gray);
+            font-size: 0.95rem;
+        }
+
+        .trust-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .trust-badge-item i {
+            color: var(--accent-success);
+            font-size: 1.3rem;
+        }
+
+        .disclaimer-hero {
+            background: rgba(241, 196, 15, 0.1);
+            border-left: 4px solid var(--accent-warning);
+            padding: 1rem 1.5rem;
+            margin-top: 2rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ============================================================================
+           STATS BAR
+           ============================================================================ */
+        .stats-section {
+            background: var(--gradient-hero);
+            padding: 3rem 0;
+            color: var(--white);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-item .stat-number {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--white);
+        }
+
+        .stat-item .stat-label {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .stat-divider {
+            width: 1px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.3);
+            margin: 0 auto;
+        }
+
+        /* ============================================================================
+           LOS 4 PILARES - 3D CAROUSEL FUNCIONAL
+           ============================================================================ */
+        .pillars-section {
+            background: var(--primary-black);
+            padding: 5rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .pillars-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(231, 76, 60, 0.1) 0%, transparent 70%);
+            animation: pulseBackground 4s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes pulseBackground {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.6; }
+        }
+
+        /* ============================================
+           TÍTULO CON GRADIENTE ANIMADO
+           ============================================ */
+        .pillars-section .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(
+                90deg,
+                var(--primary-red) 0%,
+                var(--primary-orange) 50%,
+                var(--primary-red) 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 4s ease infinite;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* ============================================
+           CAROUSEL 3D - CONTENEDOR PRINCIPAL
+           ============================================ */
+        .carousel-3d-wrapper {
+            display: block;
+            position: relative;
+            width: 100%;
+            min-height: 360px;
+            margin: 2rem 0;
+        }
+
+        .carousel-3d-scene {
+            width: 100%;
+            height: 360px;
+            perspective: 900px;
+            perspective-origin: 50% 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .carousel-3d {
+            width: 200px;
+            height: 270px;
+            position: relative;
+            transform-style: preserve-3d !important;
+            animation: autoRotate 20s linear infinite;
+            transform-origin: center center;
+            /* Forzar contexto 3D */
+            -webkit-transform-style: preserve-3d !important;
+        }
+
+        @keyframes autoRotate {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+
+        .carousel-3d:hover {
+            animation-play-state: paused;
+        }
+
+        /* ============================================
+           TARJETAS 3D - POSICIONAMIENTO CRÍTICO
+           ============================================ */
+        .carousel-3d .pillar-card {
+            position: absolute !important;
+            width: 200px;
+            height: 270px;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 1.3rem 1rem;
+            
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            
+            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            backface-visibility: hidden !important;
+            -webkit-backface-visibility: hidden !important;
+            transform-style: preserve-3d !important;
+        }
+
+        /* POSICIONAMIENTO EN CÍRCULO - CRÍTICO - NO MODIFICAR */
+        .carousel-3d .pillar-card:nth-child(1) {
+            transform: rotateY(0deg) translateZ(250px) !important;
+        }
+
+        .carousel-3d .pillar-card:nth-child(2) {
+            transform: rotateY(90deg) translateZ(250px) !important;
+        }
+
+        .carousel-3d .pillar-card:nth-child(3) {
+            transform: rotateY(180deg) translateZ(250px) !important;
+        }
+
+        .carousel-3d .pillar-card:nth-child(4) {
+            transform: rotateY(270deg) translateZ(250px) !important;
+        }
+
+        /* HOVER */
+        .carousel-3d .pillar-card:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: var(--primary-red);
+            box-shadow: 
+                0 20px 60px rgba(231, 76, 60, 0.6),
+                0 0 40px rgba(230, 126, 34, 0.4);
+        }
+
+        /* ============================================
+           ICONOS Y TEXTO
+           ============================================ */
+        .pillar-icon {
+            font-size: 2.2rem;
+            margin-bottom: 0.6rem;
+            filter: drop-shadow(0 0 20px currentColor);
+            animation: floatIcon 3s ease-in-out infinite;
+        }
+
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .pillar-card h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .pillar-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
+            font-size: 0.8rem;
+        }
+
+        /* ============================================
+           CONTROLES
+           ============================================ */
+        .carousel-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .carousel-control-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--primary-red);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-control-btn:hover {
+            background: var(--primary-red);
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
+        }
+
+        /* ============================================
+           VERSION MÓVIL (Grid)
+           ============================================ */
+        .pillars-grid-mobile {
+            display: none;
+        }
+
+        .pillar-card-mobile {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 2rem 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            height: 100%;
+            min-height: 280px;
+        }
+
+        .pillar-card-mobile .pillar-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 15px currentColor);
+        }
+
+        .pillar-card-mobile h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+        }
+
+        .pillar-card-mobile p {
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .pillar-card-mobile:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-red);
+            box-shadow: 0 20px 60px rgba(231, 76, 60, 0.4);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 991px) {
+            .carousel-3d-wrapper {
+                display: none !important;
+            }
+            
+            .pillars-grid-mobile {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .pillars-section .section-title {
+                font-size: 2rem;
+            }
+
+            .pillar-card-mobile {
+                padding: 1.5rem 1rem;
+                min-height: 250px;
+            }
+
+            .pillar-card-mobile .pillar-icon {
+                font-size: 2.5rem;
+            }
+
+            .pillar-card-mobile h3 {
+                font-size: 1.5rem;
+            }
+
+            .pillar-card-mobile p {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* ============================================================================
+           EXPERIENCIA SECTION
+           ============================================================================ */
+        .experience-section {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+
+        .experience-icon-box {
+            width: 200px;
+            height: 200px;
+            background: var(--gradient-hero);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            color: var(--white);
+            box-shadow: 0 20px 60px rgba(231, 76, 60, 0.3);
+            margin: 0 auto;
+        }
+
+        .experience-content h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            color: var(--primary-black);
+        }
+
+        .experience-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .experience-list li {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .experience-list li i {
+            color: var(--primary-red);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+            margin-top: 0.2rem;
+        }
+
+        .experience-quote {
+            background: var(--light-gray);
+            border-left: 4px solid var(--primary-red);
+            padding: 2rem;
+            margin: 2rem 0;
+            font-style: italic;
+            border-radius: 8px;
+        }
+
+        .experience-disclaimer {
+            background: rgba(241, 196, 15, 0.1);
+            border: 1px solid var(--accent-warning);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            font-size: 0.95rem;
+            color: var(--dark-gray);
+        }
+
+        /* ============================================================================
+           COMPARACIÓN
+           ============================================================================ */
+        .comparison-section {
+            background: var(--light-gray);
+            padding: 5rem 0;
+        }
+
+        .comparison-table {
+            background: var(--white);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: var(--primary-black);
+            color: var(--white);
+            padding: 2rem;
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .comparison-header .highlight {
+            color: var(--primary-orange);
+        }
+
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .comparison-row:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-row:nth-child(even) {
+            background: rgba(231, 76, 60, 0.02);
+        }
+
+        .comparison-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .comparison-cell i {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .comparison-cell.traditional i {
+            color: var(--secondary-gray);
+        }
+
+        .comparison-cell.cbf i {
+            color: var(--accent-success);
+        }
+
+        /* ============================================================================
+           REVIEWS SECTION
+           ============================================================================ */
+        .reviews-section {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+
+        .review-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            border-color: var(--primary-red);
+        }
+
+        .review-stars {
+            color: var(--accent-warning);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .review-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            color: var(--dark-gray);
+        }
+
+        .review-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .review-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-hero);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .review-author-info strong {
+            display: block;
+            color: var(--primary-black);
+            margin-bottom: 0.25rem;
+        }
+
+        .review-author-info small {
+            color: var(--secondary-gray);
+            font-size: 0.9rem;
+        }
+
+        .review-badge {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--accent-success);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            display: inline-block;
+        }
+
+        .verified-badge {
+            color: var(--accent-info);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        /* ============================================================================
+           PROCESO
+           ============================================================================ */
+        .process-section {
+            background: var(--primary-black);
+            padding: 5rem 0;
+        }
+
+        .process-timeline {
+            position: relative;
+            padding: 2rem 0;
+        }
+
+        .process-step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            align-items: center;
+            position: relative;
+        }
+
+        .process-step:last-child {
+            margin-bottom: 0;
+        }
+
+        .process-step:last-child .process-line {
+            display: none;
+        }
+
+        .process-number {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-hero);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--white);
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .process-line {
+            position: absolute;
+            left: 39px;
+            top: 80px;
+            width: 2px;
+            height: calc(100% + 3rem);
+            background: linear-gradient(180deg, var(--primary-red) 0%, transparent 100%);
+            z-index: 1;
+        }
+
+        .process-content {
+            flex: 1;
+            color: var(--white);
+        }
+
+        .process-content h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .process-content p {
+            color: var(--secondary-gray);
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .process-time {
+            display: inline-block;
+            background: rgba(230, 126, 34, 0.2);
+            color: var(--primary-orange);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* ============================================================================
+           FEATURES DETALLADOS
+           ============================================================================ */
+        .features-section {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+
+        .feature-detail-card {
+            background: var(--white);
+            border: 2px solid var(--light-gray);
+            border-radius: 16px;
+            padding: 2.5rem;
+            height: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .feature-detail-card:hover {
+            border-color: var(--primary-red);
+            box-shadow: 0 15px 40px rgba(231, 76, 60, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .feature-detail-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient-hero);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--white);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-detail-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--primary-black);
+        }
+
+        .feature-detail-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-detail-list li {
+            padding: 0.5rem 0;
+            color: var(--dark-gray);
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+        }
+
+        .feature-detail-list li::before {
+            content: "•";
+            color: var(--primary-red);
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        /* ============================================================================
+           PRECIOS BETA 2025
+           ============================================================================ */
+        .pricing-section {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+
+        .pricing-section .section-badge {
+            background: var(--gradient-hero);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pricing-section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            color: var(--primary-black);
+        }
+
+        .pricing-section .alert {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%);
+            border: 2px solid var(--primary-orange);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .pricing-section .alert h5 {
+            color: var(--primary-black);
+            margin-bottom: 1rem;
+        }
+
+        .pricing-section .alert ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .pricing-section .alert li {
+            padding: 0.5rem 0;
+            color: var(--dark-gray);
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+        }
+
+        .pricing-section .alert li::before {
+            content: "•";
+            color: var(--primary-red);
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .pricing-section .alert.roadmap {
+            background: var(--primary-black);
+            border: 2px solid var(--primary-orange);
+            color: var(--white);
+        }
+
+        .pricing-section .alert.roadmap h5 {
+            color: var(--primary-orange);
+        }
+
+        .pricing-section .btn {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-orange) 100%);
+            color: var(--white);
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .pricing-section .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(230, 126, 34, 0.6);
+            color: var(--white);
+        }
+
+        /* ============================================================================
+           FAQ
+           ============================================================================ */
+        .faq-section {
+            background: var(--light-gray);
+            padding: 5rem 0;
+        }
+
+        .accordion-item {
+            border: none;
+            margin-bottom: 1rem;
+            border-radius: 12px !important;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .accordion-button {
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 1.5rem;
+            background: var(--white);
+            color: var(--primary-black);
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: var(--gradient-hero);
+            color: var(--white);
+            box-shadow: none;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: transparent;
+        }
+
+        .accordion-body {
+            padding: 1.5rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            background: var(--white);
+        }
+
+        /* ============================================================================
+           CTA FINAL
+           ============================================================================ */
+        .cta-final-section {
+            background: var(--gradient-hero);
+            padding: 5rem 0;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .cta-final-section h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .cta-final-section p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+        }
+
+        .btn-cta-final {
+            background: var(--white);
+            color: var(--primary-red);
+            border: none;
+            padding: 1.5rem 4rem;
+            font-size: 1.4rem;
+            font-weight: 700;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .btn-cta-final:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            color: var(--primary-red);
+        }
+
+        .cta-trust-items {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-trust-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .disclaimer-cta {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-top: 3rem;
+            font-size: 0.95rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* ============================================================================
+           RESPONSIVE
+           ============================================================================ */
+        @media (max-width: 991px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .stat-divider {
+                display: none;
+            }
+
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .comparison-row {
+                padding: 1rem;
+            }
+
+            .experience-icon-box {
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-section {
+                min-height: auto;
+                padding: 4rem 0;
+            }
+
+            .btn-hero-primary,
+            .btn-hero-secondary {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+
+            .trust-badges {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2.5rem;
+            }
+        }
+
+        /* ============================================================================
+           UTILIDADES
+           ============================================================================ */
+        .section-badge {
+            background: var(--gradient-hero);
+            color: var(--white);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .text-gradient {
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- ============================================================================
-     HERO SECTION
-     ============================================================================ -->
-<section class="hero-section">
-    <div class="container hero-content">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center">
-                <!-- Logo (usa tu logo real si lo tienes en static/images/) -->
-                <div class="mb-4">
-                    <img src="{{ url_for('static', filename='images/logo-coachbodyfit360.png') }}" alt="CoachBodyFit360 Logo" class="hero-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                    <h2 class="text-white mb-0" style="font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; display: none;">
-                        COACHBODYFIT360
-                    </h2>
-                </div>
+    <!-- ============================================================================
+         HERO SECTION
+         ============================================================================ -->
+    <section class="hero-section">
+        <div class="container hero-content">
+            <div class="row justify-content-center">
+                <div class="col-lg-10 text-center">
+                    <!-- Logo (usa tu logo real si lo tienes en static/images/) -->
+                    <div class="mb-4">
+                        <img src="{{ url_for('static', filename='images/logo-coachbodyfit360.png') }}"
+                             alt="CoachBodyFit360 Logo" class="hero-logo"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <h2 class="text-white mb-0"
+                            style="font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; display: none;">
+                            COACHBODYFIT360
+                        </h2>
+                    </div>
 
-                <!-- Badge superior -->
-                <div class="hero-badge">
-                    <i class="bi bi-star-fill text-warning"></i>
-                    <span>5.0 estrellas · 50 reseñas verificadas · 20 años de experiencia</span>
-                </div>
+                    <!-- Badge superior -->
+                    <div class="hero-badge">
+                        <i class="bi bi-star-fill text-warning"></i>
+                        <span>5.0 estrellas · 50 reseñas verificadas · 20 años de experiencia</span>
+                    </div>
 
-                <div class="mb-3">
+                    <div class="mb-3">
                     <span class="badge bg-warning text-dark fs-6 px-4 py-2">
                         <i class="bi bi-lightning-charge-fill"></i> BETA - Acceso Anticipado
                     </span>
+                    </div>
+
+                    <!-- Título principal -->
+                    <h1 class="hero-title">
+                        TU METODOLOGÍA FITNESS<br>
+                        CON <span class="highlight">20 AÑOS DE EXPERIENCIA</span>
+                    </h1>
+
+                    <!-- Subtítulo -->
+                    <p class="hero-subtitle">
+                        <strong>GRATIS en BETA:</strong> Análisis completo de composición corporal con 15+ métricas
+                        profesionales.<br>
+                        <strong>Opcional:</strong> Seguimiento personalizado con atención humana directa.
+                    </p>
+
+                    <!-- CTAs -->
+                    <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mb-4">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-hero-primary">
+                            <i class="bi bi-fire"></i> Probar Análisis GRATIS (BETA)
+                        </a>
+                        <a href="{{ url_for('contact.send_message') }}" class="btn btn-hero-secondary">
+                            <i class="bi bi-person-check"></i> Solicitar Seguimiento Personalizado
+                        </a>
+                    </div>
+
+                    <!-- Trust badges -->
+                    <div class="trust-badges justify-content-center">
+                        <div class="trust-badge-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Análisis gratis siempre</span>
+                        </div>
+                        <div class="trust-badge-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Sin tarjeta de crédito</span>
+                        </div>
+                        <div class="trust-badge-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Fase BETA - Acceso anticipado</span>
+                        </div>
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <div class="mt-3">
+                        <small class="text-white-50">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Plataforma en BETA. <a href="{{ url_for('main.legal_notices') }}"
+                                                   class="text-white text-decoration-underline">Ver avisos legales</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         STATS BAR
+         ============================================================================ -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-6 col-md-3 stat-item">
+                    <span class="stat-number">20+</span>
+                    <div class="stat-label">Años Experiencia</div>
+                </div>
+                <div class="col-6 col-md-3 stat-item">
+                    <span class="stat-number">500+</span>
+                    <div class="stat-label">Clientes Reales</div>
+                </div>
+                <div class="col-6 col-md-3 stat-item">
+                    <span class="stat-number">5.0</span>
+                    <div class="stat-label">Google Reviews</div>
+                </div>
+                <div class="col-6 col-md-3 stat-item">
+                    <span class="stat-number">50</span>
+                    <div class="stat-label">Reseñas Verificadas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         LOS 4 PILARES - 3D CAROUSEL CORREGIDO
+         ============================================================================ -->
+    <section class="pillars-section" id="pilares">
+        <div class="container">
+            <!-- TÍTULO -->
+            <div class="text-center mb-5">
+                <span class="section-badge">Metodología Probada</span>
+                <h2 class="section-title display-5 text-white mb-3">Los 4 Pilares de CoachBodyFit360</h2>
+                <p class="text-secondary" style="font-size: 1.2rem;">Basado en 20 años de experiencia práctica</p>
+            </div>
+
+            <!-- CAROUSEL 3D (Desktop) -->
+            <div class="carousel-3d-wrapper">
+                <div class="carousel-3d-scene">
+                    <div class="carousel-3d" id="pillarsCarousel">
+                        <!-- PILAR 1: STRONG -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                            </div>
+                            <h3 class="text-danger">STRONG</h3>
+                            <p>Rutinas personalizadas según tu composición corporal y objetivos específicos.</p>
+                        </div>
+
+                        <!-- PILAR 2: NOURISH -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon text-success">
+                                <i class="bi bi-apple"></i>
+                            </div>
+                            <h3 class="text-success">NOURISH</h3>
+                            <p>Planes nutricionales con 5 comidas diarias y macros adaptados a tu metabolismo.</p>
+                        </div>
+
+                        <!-- PILAR 3: LIVE -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <h3 class="text-danger">LIVE</h3>
+                            <p>Seguimiento continuo con métricas biométricas profesionales (IMC, FFMI, % grasa).</p>
+                        </div>
+
+                        <!-- PILAR 4: THRIVE -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon" style="color: var(--primary-orange);">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <h3 style="color: var(--primary-orange);">THRIVE</h3>
+                            <p>Prospera con IA que aprende de tu progreso y optimiza tu plan continuamente.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Título principal -->
-                <h1 class="hero-title">
-                    TU METODOLOGÍA FITNESS<br>
-                    CON <span class="highlight">20 AÑOS DE EXPERIENCIA</span>
-                </h1>
+                <!-- CONTROLES -->
+                <div class="carousel-controls">
+                    <button class="carousel-control-btn" onclick="rotateCarousel('prev')" aria-label="Anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="carousel-control-btn" onclick="rotateCarousel('next')" aria-label="Siguiente">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
 
-                <!-- Subtítulo -->
-                <p class="hero-subtitle">
-                    <strong>GRATIS en BETA:</strong> Análisis completo de composición corporal con 15+ métricas profesionales.<br>
-                    <strong>Opcional:</strong> Seguimiento personalizado con atención humana directa.
+            <!-- FALLBACK GRID (Móviles < 992px) -->
+            <div class="pillars-grid-mobile">
+                <div class="row g-4">
+                    <!-- STRONG -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                            </div>
+                            <h3 class="text-danger">STRONG</h3>
+                            <p>Rutinas personalizadas según tu composición corporal y objetivos específicos.</p>
+                        </div>
+                    </div>
+
+                    <!-- NOURISH -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon text-success">
+                                <i class="bi bi-apple"></i>
+                            </div>
+                            <h3 class="text-success">NOURISH</h3>
+                            <p>Planes nutricionales con 5 comidas diarias y macros adaptados a tu metabolismo.</p>
+                        </div>
+                    </div>
+
+                    <!-- LIVE -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <h3 class="text-danger">LIVE</h3>
+                            <p>Seguimiento continuo con métricas biométricas profesionales (IMC, FFMI, % grasa).</p>
+                        </div>
+                    </div>
+
+                    <!-- THRIVE -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon" style="color: var(--primary-orange);">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <h3 style="color: var(--primary-orange);">THRIVE</h3>
+                            <p>Prospera con IA que aprende de tu progreso y optimiza tu plan continuamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Control del carousel 3D
+        let currentRotation = 0;
+        const carousel = document.getElementById('pillarsCarousel');
+
+        function rotateCarousel(direction) {
+            if (!carousel) return;
+            
+            // Pausar animación automática
+            carousel.style.animation = 'none';
+            
+            // Rotar 90 grados (360/4 pilares)
+            if (direction === 'next') {
+                currentRotation -= 90;
+            } else {
+                currentRotation += 90;
+            }
+            
+            // Aplicar rotación
+            carousel.style.transform = `rotateY(${currentRotation}deg)`;
+            carousel.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Reanudar animación después de 3 segundos
+            setTimeout(() => {
+                carousel.style.transition = '';
+                carousel.style.animation = 'autoRotate 20s linear infinite';
+                // Ajustar punto de inicio de la animación
+                carousel.style.animationDelay = `-${(currentRotation % 360) / 360 * 20}s`;
+            }, 3000);
+        }
+
+        // Pausar/reanudar al hacer hover
+        if (carousel) {
+            carousel.addEventListener('mouseenter', () => {
+                carousel.style.animationPlayState = 'paused';
+            });
+            
+            carousel.addEventListener('mouseleave', () => {
+                carousel.style.animationPlayState = 'running';
+            });
+        }
+    </script>
+
+    <!-- ============================================================================
+         EXPERIENCIA Y METODOLOGÍA
+         ============================================================================ -->
+    <section class="experience-section" id="experiencia">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-5 mb-lg-0">
+                    <!-- Foto de Pablo (coloca tu foto en static/images/pablo-techera.jpg) -->
+                    <img src="{{ url_for('static', filename='images/pablo-techera.jpg') }}"
+                         alt="Pablo Techera - Coach Fitness"
+                         class="img-fluid rounded-3 shadow-lg"
+                         style="max-width: 100%; height: auto;"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="experience-icon-box" style="display: none;">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="experience-content">
+                        <span class="section-badge">Mi Historia</span>
+                        <h2>Mi Experiencia, Tu Transformación</h2>
+
+                        <p class="lead mb-4">
+                            Soy <strong>Pablo Techera</strong>, y durante 20 años he trabajado con más de 500 personas
+                            ayudándolas a alcanzar sus múltiples objetivos de transformación física.
+                        </p>
+
+                        <ul class="experience-list">
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                <div>
+                                    <strong>Desde personas que buscan mejorar su salud básica</strong> y perder peso
+                                    de forma sostenible y saludable
+                                </div>
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                <div>
+                                    <strong>Hasta atletas que compiten</strong> y necesitan optimización de
+                                    rendimiento y composición corporal
+                                </div>
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                <div>
+                                    <strong>Cada cuerpo es diferente, cada objetivo es único.</strong>
+                                    Esa es la base de mi metodología
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="experience-quote">
+                            <p class="mb-0">
+                                <i class="bi bi-quote text-danger fs-3"></i><br>
+                                <strong>CoachBodyFit360 es la evolución natural:</strong> mi experiencia práctica
+                                validada por resultados reales + tecnología IA que personaliza TODO
+                                específicamente para ti.
+                            </p>
+                        </div>
+
+                        <blockquote class="border-start border-4 border-danger ps-4 mb-4">
+                            <p class="mb-0 fst-italic">
+                                "No soy médico ni nutricionista titulado. Soy un experto en fitness con 20 años
+                                aplicando y perfeccionando una metodología que funciona. Los resultados de mis
+                                clientes hablan por sí mismos."
+                            </p>
+                        </blockquote>
+
+                        <div class="experience-disclaimer">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Esta metodología está basada en experiencia práctica, no en titulación médica.
+                            Consulta con profesionales sanitarios antes de iniciar cualquier programa.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         COMPARACIÓN
+         ============================================================================ -->
+    <section class="comparison-section" id="comparacion">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Mi Evolución</span>
+                <h2 class="display-5 mb-3">De Entrenador Personal a Plataforma Digital</h2>
+                <p class="lead text-muted">Cómo la tecnología me permitió democratizar mi metodología</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="comparison-table">
+                        <div class="comparison-header">
+                            <div>Mi Trabajo como Entrenador Personal</div>
+                            <div class="highlight">CoachBodyFit360 Hoy</div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-people"></i>
+                                <span>Limitado a 15-20 clientes simultáneos</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Miles de personas</strong> accediendo a la metodología</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Solo clientes de mi zona geográfica</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Accesible desde cualquier lugar</strong> del mundo</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-clock-history"></i>
+                                <span>Repetir lo mismo con cada cliente</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>IA personaliza automáticamente</strong> según cada caso</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-currency-euro"></i>
+                                <span>Inversión significativa por sesión</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Gratis para todos</strong> (modelo freemium)</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-journal-text"></i>
+                                <span>Planes escritos a mano</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Generación instantánea</strong> con 20 años de experiencia</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-hourglass"></i>
+                                <span>Tiempo limitado para cada cliente</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Disponible 24/7</strong> sin límites</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <div class="alert alert-info d-inline-block" style="max-width: 800px; text-align: left;">
+                            <i class="bi bi-lightbulb-fill me-2"></i>
+                            <strong>Mi Visión:</strong> Durante años trabajé como entrenador personal presencial
+                            y amé cada momento. Pero me di cuenta de que estaba limitado: solo podía ayudar a
+                            15-20 personas a la vez. CoachBodyFit360 me permite escalar mi metodología probada
+                            y hacerla accesible para miles de personas que no pueden permitirse o acceder a
+                            entrenamiento personalizado tradicional. No es mejor ni peor, es diferente:
+                            <strong>es democratizar el conocimiento</strong>.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         REVIEWS SECTION
+         ============================================================================ -->
+    <section class="reviews-section" id="reviews">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Testimonios Reales</span>
+                <h2 class="display-5 mb-3">Transformaciones Verificadas</h2>
+                <p class="lead text-muted">
+                    Lo que dicen quienes aplicaron esta metodología
                 </p>
 
-                <!-- CTAs -->
-                <div class="d-flex flex-column flex-md-row gap-3 justify-content-center mb-4">
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-hero-primary">
-                        <i class="bi bi-fire"></i> Probar Análisis GRATIS (BETA)
-                    </a>
-                    <a href="{{ url_for('contact.send_message') }}" class="btn btn-hero-secondary">
-                        <i class="bi bi-person-check"></i> Solicitar Seguimiento Personalizado
-                    </a>
-                </div>
-
-                <!-- Trust badges -->
-                <div class="trust-badges justify-content-center">
-                    <div class="trust-badge-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Análisis gratis siempre</span>
-                    </div>
-                    <div class="trust-badge-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Sin tarjeta de crédito</span>
-                    </div>
-                    <div class="trust-badge-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Fase BETA - Acceso anticipado</span>
-                    </div>
-                </div>
-
-                <!-- Disclaimer -->
-                <div class="mt-3">
-                    <small class="text-white-50">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Plataforma en BETA. <a href="{{ url_for('main.legal_notices') }}" class="text-white text-decoration-underline">Ver avisos legales</a>
-                    </small>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     STATS BAR
-     ============================================================================ -->
-<section class="stats-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-6 col-md-3 stat-item">
-                <span class="stat-number">20+</span>
-                <div class="stat-label">Años Experiencia</div>
-            </div>
-            <div class="col-6 col-md-3 stat-item">
-                <span class="stat-number">500+</span>
-                <div class="stat-label">Clientes Reales</div>
-            </div>
-            <div class="col-6 col-md-3 stat-item">
-                <span class="stat-number">5.0</span>
-                <div class="stat-label">Google Reviews</div>
-            </div>
-            <div class="col-6 col-md-3 stat-item">
-                <span class="stat-number">50</span>
-                <div class="stat-label">Reseñas Verificadas</div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     LOS 4 PILARES
-     ============================================================================ -->
-<section class="pillars-section" id="pilares">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Metodología Probada</span>
-            <h2 class="display-5 text-white mb-3">Los 4 Pilares de CoachBodyFit360</h2>
-            <p class="text-secondary" style="font-size: 1.2rem;">Basado en 20 años de experiencia práctica</p>
-        </div>
-
-        <div class="row g-4">
-            <!-- STRONG -->
-            <div class="col-lg-3 col-md-6">
-                <div class="pillar-card">
-                    <div class="pillar-icon text-danger">
-                        <i class="bi bi-heart-pulse-fill"></i>
-                    </div>
-                    <h3 class="text-danger">STRONG</h3>
-                    <p>
-                        Rutinas personalizadas según tu composición corporal y objetivos específicos.
-                    </p>
-                </div>
-            </div>
-
-            <!-- NOURISH -->
-            <div class="col-lg-3 col-md-6">
-                <div class="pillar-card">
-                    <div class="pillar-icon text-success">
-                        <i class="bi bi-apple"></i>
-                    </div>
-                    <h3 class="text-success">NOURISH</h3>
-                    <p>
-                        Planes nutricionales con 5 comidas diarias y macros adaptados a tu metabolismo.
-                    </p>
-                </div>
-            </div>
-
-            <!-- LIVE -->
-            <div class="col-lg-3 col-md-6">
-                <div class="pillar-card">
-                    <div class="pillar-icon text-danger">
-                        <i class="bi bi-activity"></i>
-                    </div>
-                    <h3 class="text-danger">LIVE</h3>
-                    <p>
-                        Seguimiento continuo con métricas biométricas profesionales (IMC, FFMI, % grasa).
-                    </p>
-                </div>
-            </div>
-
-            <!-- THRIVE -->
-            <div class="col-lg-3 col-md-6">
-                <div class="pillar-card">
-                    <div class="pillar-icon" style="color: var(--primary-orange);">
-                        <i class="bi bi-graph-up-arrow"></i>
-                    </div>
-                    <h3 style="color: var(--primary-orange);">THRIVE</h3>
-                    <p>
-                        Prospera con IA que aprende de tu progreso y optimiza tu plan continuamente.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     EXPERIENCIA Y METODOLOGÍA
-     ============================================================================ -->
-<section class="experience-section" id="experiencia">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-5 mb-5 mb-lg-0">
-                <!-- Foto de Pablo (coloca tu foto en static/images/pablo-techera.jpg) -->
-                <img src="{{ url_for('static', filename='images/pablo-techera.jpg') }}"
-                     alt="Pablo Techera - Coach Fitness"
-                     class="img-fluid rounded-3 shadow-lg"
-                     style="max-width: 100%; height: auto;"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="experience-icon-box" style="display: none;">
-                    <i class="bi bi-award-fill"></i>
-                </div>
-            </div>
-
-            <div class="col-lg-7">
-                <div class="experience-content">
-                    <span class="section-badge">Mi Historia</span>
-                    <h2>Mi Experiencia, Tu Transformación</h2>
-
-                    <p class="lead mb-4">
-                        Soy <strong>Pablo Techera</strong>, y durante 20 años he trabajado con más de 500 personas
-                        ayudándolas a alcanzar sus múltiples objetivos de transformación física.
-                    </p>
-
-                    <ul class="experience-list">
-                        <li>
-                            <i class="bi bi-check-circle-fill"></i>
-                            <div>
-                                <strong>Desde personas que buscan mejorar su salud básica</strong> y perder peso
-                                de forma sostenible y saludable
-                            </div>
-                        </li>
-                        <li>
-                            <i class="bi bi-check-circle-fill"></i>
-                            <div>
-                                <strong>Hasta atletas que compiten</strong> y necesitan optimización de
-                                rendimiento y composición corporal
-                            </div>
-                        </li>
-                        <li>
-                            <i class="bi bi-check-circle-fill"></i>
-                            <div>
-                                <strong>Cada cuerpo es diferente, cada objetivo es único.</strong>
-                                Esa es la base de mi metodología
-                            </div>
-                        </li>
-                    </ul>
-
-                    <div class="experience-quote">
-                        <p class="mb-0">
-                            <i class="bi bi-quote text-danger fs-3"></i><br>
-                            <strong>CoachBodyFit360 es la evolución natural:</strong> mi experiencia práctica
-                            validada por resultados reales + tecnología IA que personaliza TODO
-                            específicamente para ti.
-                        </p>
-                    </div>
-
-                    <blockquote class="border-start border-4 border-danger ps-4 mb-4">
-                        <p class="mb-0 fst-italic">
-                            "No soy médico ni nutricionista titulado. Soy un experto en fitness con 20 años
-                            aplicando y perfeccionando una metodología que funciona. Los resultados de mis
-                            clientes hablan por sí mismos."
-                        </p>
-                    </blockquote>
-
-                    <div class="experience-disclaimer">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        Esta metodología está basada en experiencia práctica, no en titulación médica.
-                        Consulta con profesionales sanitarios antes de iniciar cualquier programa.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     COMPARACIÓN
-     ============================================================================ -->
-<section class="comparison-section" id="comparacion">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Mi Evolución</span>
-            <h2 class="display-5 mb-3">De Entrenador Personal a Plataforma Digital</h2>
-            <p class="lead text-muted">Cómo la tecnología me permitió democratizar mi metodología</p>
-        </div>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="comparison-table">
-                    <div class="comparison-header">
-                        <div>Mi Trabajo como Entrenador Personal</div>
-                        <div class="highlight">CoachBodyFit360 Hoy</div>
-                    </div>
-
-                    <div class="comparison-row">
-                        <div class="comparison-cell traditional">
-                            <i class="bi bi-people"></i>
-                            <span>Limitado a 15-20 clientes simultáneos</span>
-                        </div>
-                        <div class="comparison-cell cbf">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span><strong>Miles de personas</strong> accediendo a la metodología</span>
-                        </div>
-                    </div>
-
-                    <div class="comparison-row">
-                        <div class="comparison-cell traditional">
-                            <i class="bi bi-geo-alt"></i>
-                            <span>Solo clientes de mi zona geográfica</span>
-                        </div>
-                        <div class="comparison-cell cbf">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span><strong>Accesible desde cualquier lugar</strong> del mundo</span>
-                        </div>
-                    </div>
-
-                    <div class="comparison-row">
-                        <div class="comparison-cell traditional">
-                            <i class="bi bi-clock-history"></i>
-                            <span>Repetir lo mismo con cada cliente</span>
-                        </div>
-                        <div class="comparison-cell cbf">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span><strong>IA personaliza automáticamente</strong> según cada caso</span>
-                        </div>
-                    </div>
-
-                    <div class="comparison-row">
-                        <div class="comparison-cell traditional">
-                            <i class="bi bi-currency-euro"></i>
-                            <span>Inversión significativa por sesión</span>
-                        </div>
-                        <div class="comparison-cell cbf">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span><strong>Gratis para todos</strong> (modelo freemium)</span>
-                        </div>
-                    </div>
-
-                    <div class="comparison-row">
-                        <div class="comparison-cell traditional">
-                            <i class="bi bi-journal-text"></i>
-                            <span>Planes escritos a mano</span>
-                        </div>
-                        <div class="comparison-cell cbf">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span><strong>Generación instantánea</strong> con 20 años de experiencia</span>
-                        </div>
-                    </div>
-
-                    <div class="comparison-row">
-                        <div class="comparison-cell traditional">
-                            <i class="bi bi-hourglass"></i>
-                            <span>Tiempo limitado para cada cliente</span>
-                        </div>
-                        <div class="comparison-cell cbf">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span><strong>Disponible 24/7</strong> sin límites</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="text-center mt-5">
-                    <div class="alert alert-info d-inline-block" style="max-width: 800px; text-align: left;">
-                        <i class="bi bi-lightbulb-fill me-2"></i>
-                        <strong>Mi Visión:</strong> Durante años trabajé como entrenador personal presencial
-                        y amé cada momento. Pero me di cuenta de que estaba limitado: solo podía ayudar a
-                        15-20 personas a la vez. CoachBodyFit360 me permite escalar mi metodología probada
-                        y hacerla accesible para miles de personas que no pueden permitirse o acceder a
-                        entrenamiento personalizado tradicional. No es mejor ni peor, es diferente:
-                        <strong>es democratizar el conocimiento</strong>.
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     REVIEWS SECTION
-     ============================================================================ -->
-<section class="reviews-section" id="reviews">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Testimonios Reales</span>
-            <h2 class="display-5 mb-3">Transformaciones Verificadas</h2>
-            <p class="lead text-muted">
-                Lo que dicen quienes aplicaron esta metodología
-            </p>
-
-            <!-- Google Rating Badge -->
-            <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
-                <div class="d-flex" style="background: white; border: 1px solid #e0e0e0; padding: 1rem; border-radius: 12px;">
-                    <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                    </svg>
-                    <div class="text-start">
-                        <div class="fw-bold" style="color: #202124; font-size: 0.9rem;">Google</div>
-                        <div class="d-flex align-items-center gap-1">
-                            <span class="fw-bold" style="color: #202124; font-size: 1.1rem;">5.0</span>
-                            <div class="d-flex" style="color: #FBBC04; font-size: 0.9rem;">
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                                <i class="bi bi-star-fill"></i>
-                            </div>
-                        </div>
-                        <div style="color: #5f6368; font-size: 0.8rem;">48 reseñas</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row g-4 mb-5">
-            <!-- Review 1 -->
-            <div class="col-lg-4">
-                <div class="review-card" style="background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem;">
-                    <!-- Google Logo pequeño -->
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                <!-- Google Rating Badge -->
+                <div class="d-flex justify-content-center align-items-center gap-3 mt-4 mb-4">
+                    <div class="d-flex"
+                         style="background: white; border: 1px solid #e0e0e0; padding: 1rem; border-radius: 12px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                  fill="#4285F4"/>
+                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                  fill="#34A853"/>
+                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                  fill="#FBBC05"/>
+                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                  fill="#EA4335"/>
                         </svg>
-                        <span style="color: #5f6368; font-size: 0.75rem; font-weight: 500;">Publicado en Google</span>
-                    </div>
-
-                    <!-- Author info -->
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="review-avatar" style="width: 40px; height: 40px; background: #E74C3C; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.9rem;">ES</div>
-                        <div>
-                            <div style="font-weight: 500; color: #202124; font-size: 0.95rem;">Estibaliz Santano</div>
-                            <div style="color: #5f6368; font-size: 0.75rem;">Hace 9 meses</div>
+                        <div class="text-start">
+                            <div class="fw-bold" style="color: #202124; font-size: 0.9rem;">Google</div>
+                            <div class="d-flex align-items-center gap-1">
+                                <span class="fw-bold" style="color: #202124; font-size: 1.1rem;">5.0</span>
+                                <div class="d-flex" style="color: #FBBC04; font-size: 0.9rem;">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                </div>
+                            </div>
+                            <div style="color: #5f6368; font-size: 0.8rem;">48 reseñas</div>
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <!-- Stars -->
-                    <div class="d-flex mb-3" style="color: #FBBC04; font-size: 1rem;">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                    </div>
+            <div class="row g-4 mb-5">
+                <!-- Review 1 -->
+                <div class="col-lg-4">
+                    <div class="review-card"
+                         style="background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem;">
+                        <!-- Google Logo pequeño -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                      fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                      fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                      fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                      fill="#EA4335"/>
+                            </svg>
+                            <span style="color: #5f6368; font-size: 0.75rem; font-weight: 500;">Publicado en Google</span>
+                        </div>
 
-                    <!-- Review text -->
-                    <p style="color: #202124; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-                        "Trabajar con Pablo cada día para conseguir mi objetivo es la mejor decisión que pude
-                        tomar hace casi un año. Esfuerzo y sacrificio es fundamental y su apoyo incondicional.
-                        Excelente profesional y persona."
-                    </p>
+                        <!-- Author info -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="review-avatar"
+                                 style="width: 40px; height: 40px; background: #E74C3C; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.9rem;">
+                                ES
+                            </div>
+                            <div>
+                                <div style="font-weight: 500; color: #202124; font-size: 0.95rem;">Estibaliz Santano
+                                </div>
+                                <div style="color: #5f6368; font-size: 0.75rem;">Hace 9 meses</div>
+                            </div>
+                        </div>
 
-                    <!-- Badge -->
-                    <span class="badge" style="background: #E8F5E9; color: #2E7D32; font-weight: 500; font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+                        <!-- Stars -->
+                        <div class="d-flex mb-3" style="color: #FBBC04; font-size: 1rem;">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
+
+                        <!-- Review text -->
+                        <p style="color: #202124; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+                            "Trabajar con Pablo cada día para conseguir mi objetivo es la mejor decisión que pude
+                            tomar hace casi un año. Esfuerzo y sacrificio es fundamental y su apoyo incondicional.
+                            Excelente profesional y persona."
+                        </p>
+
+                        <!-- Badge -->
+                        <span class="badge"
+                              style="background: #E8F5E9; color: #2E7D32; font-weight: 500; font-size: 0.75rem; padding: 0.4rem 0.8rem;">
                         Transformación completa en 1 año
                     </span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Review 2 -->
-            <div class="col-lg-4">
-                <div class="review-card" style="background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem;">
-                    <!-- Google Logo pequeño -->
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                        </svg>
-                        <span style="color: #5f6368; font-size: 0.75rem; font-weight: 500;">Publicado en Google</span>
-                    </div>
-
-                    <!-- Author info -->
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="review-avatar" style="width: 40px; height: 40px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.9rem;">JI</div>
-                        <div>
-                            <div style="font-weight: 500; color: #202124; font-size: 0.95rem;">Javier Iglesias</div>
-                            <div style="color: #5f6368; font-size: 0.75rem;">Hace 3 años</div>
+                <!-- Review 2 -->
+                <div class="col-lg-4">
+                    <div class="review-card"
+                         style="background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem;">
+                        <!-- Google Logo pequeño -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                      fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                      fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                      fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                      fill="#EA4335"/>
+                            </svg>
+                            <span style="color: #5f6368; font-size: 0.75rem; font-weight: 500;">Publicado en Google</span>
                         </div>
-                    </div>
 
-                    <!-- Stars -->
-                    <div class="d-flex mb-3" style="color: #FBBC04; font-size: 1rem;">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                    </div>
+                        <!-- Author info -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="review-avatar"
+                                 style="width: 40px; height: 40px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.9rem;">
+                                JI
+                            </div>
+                            <div>
+                                <div style="font-weight: 500; color: #202124; font-size: 0.95rem;">Javier Iglesias</div>
+                                <div style="color: #5f6368; font-size: 0.75rem;">Hace 3 años</div>
+                            </div>
+                        </div>
 
-                    <!-- Review text -->
-                    <p style="color: #202124; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-                        "Comencé con distensión abdominal, diverticulitis, colesterol alto y transaminásas
-                        elevadas. En año y medio, con un plan personalizado, todo es cosa del pasado.
-                        El cambio físico es brutal. Profesional al 101%, el mejor!"
-                    </p>
+                        <!-- Stars -->
+                        <div class="d-flex mb-3" style="color: #FBBC04; font-size: 1rem;">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
 
-                    <!-- Badge -->
-                    <span class="badge" style="background: #E3F2FD; color: #1565C0; font-weight: 500; font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+                        <!-- Review text -->
+                        <p style="color: #202124; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+                            "Comencé con distensión abdominal, diverticulitis, colesterol alto y transaminásas
+                            elevadas. En año y medio, con un plan personalizado, todo es cosa del pasado.
+                            El cambio físico es brutal. Profesional al 101%, el mejor!"
+                        </p>
+
+                        <!-- Badge -->
+                        <span class="badge"
+                              style="background: #E3F2FD; color: #1565C0; font-weight: 500; font-size: 0.75rem; padding: 0.4rem 0.8rem;">
                         Recuperó salud completa en 18 meses
                     </span>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Review 3 -->
-            <div class="col-lg-4">
-                <div class="review-card" style="background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem;">
-                    <!-- Google Logo pequeño -->
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                            <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                        </svg>
-                        <span style="color: #5f6368; font-size: 0.75rem; font-weight: 500;">Publicado en Google</span>
-                    </div>
-
-                    <!-- Author info -->
-                    <div class="d-flex align-items-center gap-2 mb-3">
-                        <div class="review-avatar" style="width: 40px; height: 40px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.9rem;">RS</div>
-                        <div>
-                            <div style="font-weight: 500; color: #202124; font-size: 0.95rem;">Romina Sánchez</div>
-                            <div style="color: #5f6368; font-size: 0.75rem;">Hace 3 años</div>
+                <!-- Review 3 -->
+                <div class="col-lg-4">
+                    <div class="review-card"
+                         style="background: white; border: 1px solid #e0e0e0; border-radius: 12px; padding: 1.5rem;">
+                        <!-- Google Logo pequeño -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                      fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                      fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                                      fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                                      fill="#EA4335"/>
+                            </svg>
+                            <span style="color: #5f6368; font-size: 0.75rem; font-weight: 500;">Publicado en Google</span>
                         </div>
-                    </div>
 
-                    <!-- Stars -->
-                    <div class="d-flex mb-3" style="color: #FBBC04; font-size: 1rem;">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                    </div>
+                        <!-- Author info -->
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="review-avatar"
+                                 style="width: 40px; height: 40px; background: #2196F3; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.9rem;">
+                                RS
+                            </div>
+                            <div>
+                                <div style="font-weight: 500; color: #202124; font-size: 0.95rem;">Romina Sánchez</div>
+                                <div style="color: #5f6368; font-size: 0.75rem;">Hace 3 años</div>
+                            </div>
+                        </div>
 
-                    <!-- Review text -->
-                    <p style="color: #202124; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
-                        "Es un profesional excelente que combina formación técnica con calidad humana.
-                        Llevo dos meses trabajando con él y estoy viendo un cambio grandísimo en mi cuerpo.
-                        Cuando voy a entrenar salgo con una energía que hace que continúe mi día mucho más positiva."
-                    </p>
+                        <!-- Stars -->
+                        <div class="d-flex mb-3" style="color: #FBBC04; font-size: 1rem;">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                        </div>
 
-                    <!-- Badge -->
-                    <span class="badge" style="background: #FFF3E0; color: #E65100; font-weight: 500; font-size: 0.75rem; padding: 0.4rem 0.8rem;">
+                        <!-- Review text -->
+                        <p style="color: #202124; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">
+                            "Es un profesional excelente que combina formación técnica con calidad humana.
+                            Llevo dos meses trabajando con él y estoy viendo un cambio grandísimo en mi cuerpo.
+                            Cuando voy a entrenar salgo con una energía que hace que continúe mi día mucho más
+                            positiva."
+                        </p>
+
+                        <!-- Badge -->
+                        <span class="badge"
+                              style="background: #FFF3E0; color: #E65100; font-weight: 500; font-size: 0.75rem; padding: 0.4rem 0.8rem;">
                         Cambio visible en 2 meses
                     </span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Link a Google Reviews -->
-        <div class="text-center">
-            <a href="https://g.page/r/CRBaShip1YPEEBA/review"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="btn btn-outline-danger btn-lg">
-                <i class="bi bi-google"></i> Ver Reseñas en Google
-            </a>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     PROCESO
-     ============================================================================ -->
-<section class="process-section" id="como-funciona">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Simple y Rápido</span>
-            <h2 class="display-5 text-white mb-3">Cómo Funciona</h2>
-            <p class="text-secondary" style="font-size: 1.2rem;">
-                Solo 3 pasos te separan de tu transformación
-            </p>
-        </div>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <div class="process-timeline">
-                    <!-- Paso 1 -->
-                    <div class="process-step">
-                        <div class="process-number">1</div>
-                        <div class="process-line"></div>
-                        <div class="process-content">
-                            <h3>Regístrate Gratis</h3>
-                            <p>
-                                Crea tu cuenta en menos de 30 segundos. Sin tarjeta de crédito, sin compromisos.
-                            </p>
-                            <span class="process-time">⏱️ 30 segundos</span>
-                        </div>
-                    </div>
-
-                    <!-- Paso 2 -->
-                    <div class="process-step">
-                        <div class="process-number">2</div>
-                        <div class="process-line"></div>
-                        <div class="process-content">
-                            <h3>Análisis Biométrico</h3>
-                            <p>
-                                Introduce tus medidas corporales (peso, altura, edad, cintura, cuello, cadera).
-                                Obtendrás 15+ métricas profesionales al instante.
-                            </p>
-                            <span class="process-time">⏱️ 60 segundos</span>
-                        </div>
-                    </div>
-
-                    <!-- Paso 3 -->
-                    <div class="process-step">
-                        <div class="process-number">3</div>
-                        <div class="process-content">
-                            <h3>Recibe tu Plan Personalizado</h3>
-                            <p>
-                                FitMaster IA analiza tus datos y aplica mi metodología de 20 años para
-                                generar tu plan completo: nutrición + entrenamiento.
-                            </p>
-                            <span class="process-time">⏱️ 1 segundo</span>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
 
-<!-- ============================================================================
-     FEATURES DETALLADOS
-     ============================================================================ -->
-<section class="features-section" id="features">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Qué Obtienes</span>
-            <h2 class="display-5 mb-3">Todo lo Necesario para Tu Transformación</h2>
-        </div>
-
-        <div class="row g-4">
-            <!-- Feature 1 -->
-            <div class="col-lg-4">
-                <div class="feature-detail-card">
-                    <div class="feature-detail-icon">
-                        <i class="bi bi-clipboard-data"></i>
-                    </div>
-                    <h3>Análisis Biométrico Completo</h3>
-                    <ul class="feature-detail-list">
-                        <li>IMC y clasificación WHO</li>
-                        <li>% Grasa corporal (Método Navy)</li>
-                        <li>Masa magra total</li>
-                        <li>FFMI (Índice músculo-grasa)</li>
-                        <li>Edad metabólica estimada</li>
-                        <li>Peso ideal según objetivos</li>
-                        <li>Requerimientos calóricos (TMB/TDEE)</li>
-                        <li>Distribución de macros óptima</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Feature 2 -->
-            <div class="col-lg-4">
-                <div class="feature-detail-card">
-                    <div class="feature-detail-icon">
-                        <i class="bi bi-egg-fried"></i>
-                    </div>
-                    <h3>Plan Nutricional Detallado</h3>
-                    <ul class="feature-detail-list">
-                        <li>5 comidas diarias personalizadas</li>
-                        <li>Macronutrientes calculados</li>
-                        <li>Opciones intercambiables</li>
-                        <li>Adaptado a tus preferencias</li>
-                        <li>Actualización automática</li>
-                        <li>Lista de compras incluida</li>
-                        <li>Recetas paso a paso</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Feature 3 -->
-            <div class="col-lg-4">
-                <div class="feature-detail-card">
-                    <div class="feature-detail-icon">
-                        <i class="bi bi-heart-pulse"></i>
-                    </div>
-                    <h3>Rutina de Entrenamiento</h3>
-                    <ul class="feature-detail-list">
-                        <li>Ejercicios específicos para ti</li>
-                        <li>Series y repeticiones óptimas</li>
-                        <li>Descansos calculados</li>
-                        <li>Progresión semanal</li>
-                        <li>Adaptado a tu nivel</li>
-                        <li>Videos explicativos</li>
-                        <li>Alternativas si no tienes equipo</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     PRECIOS BETA 2025
-     ============================================================================ -->
-<section class="pricing-section" id="precios">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Precios Transparentes</span>
-            <h2 class="display-5 mb-3">Planes Diseñados para Ti</h2>
-            <p class="lead text-muted">
-                Acceso completo a mi metodología profesional con tecnología de última generación
-            </p>
-        </div>
-
-        <div class="row g-4 justify-content-center">
-            <!-- Nota sobre BETA -->
-            <div class="text-center mt-5">
-                <!-- Alert BETA Gratis -->
-                <div class="d-inline-block" style="max-width: 900px; text-align: left; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%); border: 2px solid var(--primary-orange); border-radius: 15px; padding: 1.5rem;">
-                    <div class="d-flex align-items-start">
-                        <div class="bg-danger rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                            <i class="bi bi-rocket-takeoff-fill fs-4 text-white"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-2" style="color: var(--primary-black);"><strong>BETA 2025 - TODO GRATIS</strong></h5>
-                            <p class="mb-2" style="color: var(--dark-gray);">
-                                Durante toda la fase BETA, <strong style="color: var(--primary-orange);">acceso completo sin costo</strong>:
-                            </p>
-                            <ul class="mb-2" style="color: var(--dark-gray);">
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Análisis biométrico profesional (15+ métricas)</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Planes de nutrición generados por FitMaster IA</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Rutinas de entrenamiento personalizadas con IA</li>
-                                <li><i class="bi bi-check-circle-fill text-success me-2"></i>Historial completo de análisis</li>
-                            </ul>
-                            <p class="mb-0" style="color: var(--dark-gray);">
-                                <strong style="color: var(--primary-black);">¿Necesitas personalización avanzada?</strong>
-                                <a href="{{ url_for('contact.send_message') }}" style="color: var(--primary-orange); font-weight: 600; text-decoration: underline;">
-                                    Contáctame directamente
-                                </a>
-                                para seguimiento personalizado con atención humana.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Alert Roadmap 2026 -->
-                <div class="d-inline-block mt-3" style="max-width: 900px; text-align: left; background: var(--primary-black); border: 2px solid var(--primary-orange); border-radius: 15px; color: var(--white); padding: 1.5rem;">
-                    <div class="d-flex align-items-start">
-                        <div class="rounded-circle p-3 me-3" style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: var(--primary-orange);">
-                            <i class="bi bi-stars fs-4 text-white"></i>
-                        </div>
-                        <div>
-                            <h5 class="mb-2" style="color: var(--primary-orange);"><strong>Roadmap 2026 - Lo que viene</strong></h5>
-                            <p class="mb-2" style="color: var(--secondary-gray);">
-                                Estamos desarrollando funcionalidades avanzadas que se lanzarán en 2026:
-                            </p>
-                            <ul class="mb-2" style="color: var(--secondary-gray);">
-                                <li><i class="bi bi-cpu-fill text-danger me-2"></i><strong>IA Completa Mejorada</strong> - Modelos más precisos y personalizados</li>
-                                <li><i class="bi bi-camera-fill text-danger me-2"></i><strong>Visión Computacional</strong> - Análisis de fotos para seguimiento visual</li>
-                                <li><i class="bi bi-heart-pulse-fill text-danger me-2"></i><strong>Análisis de Analíticas Médicas</strong> - Integración con tus análisis de sangre</li>
-                                <li><i class="bi bi-graph-up-arrow text-danger me-2"></i><strong>Dashboard Avanzado</strong> - Métricas y gráficos de progreso</li>
-                                <li><i class="bi bi-people-fill text-danger me-2"></i><strong>Equipo Multidisciplinar</strong> - Médicos, nutricionistas, psicólogos, entrenadores</li>
-                                <li><i class="bi bi-credit-card-fill text-danger me-2"></i><strong>Planes de Pago</strong> - FREE, Básico (19€/mes), Premium (49€/mes)</li>
-                            </ul>
-                            <p class="mb-0" style="color: var(--white);">
-                                <i class="bi bi-gift-fill me-2" style="color: var(--primary-orange);"></i>
-                                <strong style="color: var(--primary-orange);">Beneficio Beta Tester:</strong> Los usuarios registrados en 2025 obtendrán
-                                <strong style="color: var(--primary-orange);">descuentos permanentes</strong> cuando lancemos los planes de pago.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- CTA Button -->
-                <div class="mt-4">
-                    <a href="{{ url_for('auth.register') }}" class="btn btn-lg px-5 py-3" style="background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-orange) 100%); color: white; border: none; font-weight: 600; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);">
-                        <i class="bi bi-rocket-takeoff-fill me-2"></i>
-                        Registrarme GRATIS en la BETA
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     FAQ
-     ============================================================================ -->
-<section class="faq-section" id="faq">
-    <div class="container">
-        <div class="text-center mb-5">
-            <span class="section-badge">Preguntas Frecuentes</span>
-            <h2 class="display-5 mb-3">Resolvemos Tus Dudas</h2>
-        </div>
-
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="accordion" id="faqAccordion">
-                    <!-- FAQ 1 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                                ¿Es esto un sustituto de un médico o nutricionista?
-                            </button>
-                        </h2>
-                        <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <strong>No.</strong> CoachBodyFit360 es una herramienta educativa basada en 20 años
-                                de experiencia práctica en fitness. Siempre debes consultar con profesionales
-                                sanitarios antes de iniciar cualquier programa de ejercicio o dieta. Esta plataforma
-                                ofrece información y metodología, no diagnóstico médico.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ 2 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                                ¿Pablo Techera es un profesional certificado?
-                            </button>
-                        </h2>
-                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                Pablo tiene <strong>20 años de experiencia práctica</strong> trabajando con más de
-                                500 personas en transformación física. La plataforma ofrece metodología basada en
-                                esa experiencia real y resultados verificables (4.9★ en Google Reviews), no en
-                                titulación académica homologada. Tú decides si aplicar esta información bajo tu
-                                propia responsabilidad.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ 3 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                                ¿Cómo funciona la IA?
-                            </button>
-                        </h2>
-                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <strong>FitMaster IA</strong> aplica la metodología desarrollada durante 20 años,
-                                personalizándola con tus datos específicos (medidas, objetivos, nivel de actividad).
-                                No es IA médica ni diagnóstica, es educativa: toma protocolos probados y los adapta
-                                a tu caso particular automáticamente.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ 4 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                                ¿Es realmente gratis?
-                            </button>
-                        </h2>
-                        <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <strong>Sí, 100% gratis.</strong> El análisis biométrico completo (15+ métricas)
-                                y el plan básico personalizado son completamente gratuitos. En el futuro habrá
-                                funciones premium opcionales, pero el core siempre será gratis.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ 5 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
-                                ¿Mis datos están seguros?
-                            </button>
-                        </h2>
-                        <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <strong>Absolutamente.</strong> Usamos encriptación de última generación y cumplimos
-                                con GDPR (Reglamento Europeo de Protección de Datos). Nunca vendemos ni compartimos
-                                tus datos personales con terceros. Tus métricas son privadas y solo tuyas.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- FAQ 6 -->
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq6">
-                                ¿Puedo cancelar cuando quiera?
-                            </button>
-                        </h2>
-                        <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                            <div class="accordion-body">
-                                <strong>Sí, sin preguntas.</strong> No hay permanencia, contratos ni letra pequeña.
-                                Tus datos permanecen disponibles mientras quieras mantener tu cuenta activa.
-                                Puedes pausar o eliminar tu cuenta en cualquier momento desde tu perfil.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- ============================================================================
-     CTA FINAL
-     ============================================================================ -->
-<section class="cta-final-section">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <h2 class="mb-4">
-                    ¿Listo Para Aplicar 20 Años de Experiencia<br>
-                    a Tu Transformación?
-                </h2>
-                <p class="mb-5">
-                    Únete a las <strong>500+ personas</strong> que ya han transformado su cuerpo
-                    aplicando esta metodología probada.
-                </p>
-
-                <a href="{{ url_for('auth.register') }}" class="btn btn-cta-final mb-4">
-                     Comenzar Mi Análisis Gratis
+            <!-- Link a Google Reviews -->
+            <div class="text-center">
+                <a href="https://g.page/r/CRBaShip1YPEEBA/review"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   class="btn btn-outline-danger btn-lg">
+                    <i class="bi bi-google"></i> Ver Reseñas en Google
                 </a>
+            </div>
+        </div>
+    </section>
 
-                <div class="cta-trust-items mb-4">
-                    <div class="cta-trust-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Sin tarjeta de crédito</span>
+    <!-- ============================================================================
+         PROCESO
+         ============================================================================ -->
+    <section class="process-section" id="como-funciona">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Simple y Rápido</span>
+                <h2 class="display-5 text-white mb-3">Cómo Funciona</h2>
+                <p class="text-secondary" style="font-size: 1.2rem;">
+                    Solo 3 pasos te separan de tu transformación
+                </p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="process-timeline">
+                        <!-- Paso 1 -->
+                        <div class="process-step">
+                            <div class="process-number">1</div>
+                            <div class="process-line"></div>
+                            <div class="process-content">
+                                <h3>Regístrate Gratis</h3>
+                                <p>
+                                    Crea tu cuenta en menos de 30 segundos. Sin tarjeta de crédito, sin compromisos.
+                                </p>
+                                <span class="process-time">⏱️ 30 segundos</span>
+                            </div>
+                        </div>
+
+                        <!-- Paso 2 -->
+                        <div class="process-step">
+                            <div class="process-number">2</div>
+                            <div class="process-line"></div>
+                            <div class="process-content">
+                                <h3>Análisis Biométrico</h3>
+                                <p>
+                                    Introduce tus medidas corporales (peso, altura, edad, cintura, cuello, cadera).
+                                    Obtendrás 15+ métricas profesionales al instante.
+                                </p>
+                                <span class="process-time">⏱️ 60 segundos</span>
+                            </div>
+                        </div>
+
+                        <!-- Paso 3 -->
+                        <div class="process-step">
+                            <div class="process-number">3</div>
+                            <div class="process-content">
+                                <h3>Recibe tu Plan Personalizado</h3>
+                                <p>
+                                    FitMaster IA analiza tus datos y aplica mi metodología de 20 años para
+                                    generar tu plan completo: nutrición + entrenamiento.
+                                </p>
+                                <span class="process-time">⏱️ 1 segundo</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="cta-trust-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>Resultados en 90 segundos</span>
-                    </div>
-                    <div class="cta-trust-item">
-                        <i class="bi bi-check-circle-fill"></i>
-                        <span>100% Gratis siempre</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         FEATURES DETALLADOS
+         ============================================================================ -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Qué Obtienes</span>
+                <h2 class="display-5 mb-3">Todo lo Necesario para Tu Transformación</h2>
+            </div>
+
+            <div class="row g-4">
+                <!-- Feature 1 -->
+                <div class="col-lg-4">
+                    <div class="feature-detail-card">
+                        <div class="feature-detail-icon">
+                            <i class="bi bi-clipboard-data"></i>
+                        </div>
+                        <h3>Análisis Biométrico Completo</h3>
+                        <ul class="feature-detail-list">
+                            <li>IMC y clasificación WHO</li>
+                            <li>% Grasa corporal (Método Navy)</li>
+                            <li>Masa magra total</li>
+                            <li>FFMI (Índice músculo-grasa)</li>
+                            <li>Edad metabólica estimada</li>
+                            <li>Peso ideal según objetivos</li>
+                            <li>Requerimientos calóricos (TMB/TDEE)</li>
+                            <li>Distribución de macros óptima</li>
+                        </ul>
                     </div>
                 </div>
 
-                <p class="mb-0">
-                    ¿Ya tienes cuenta?
-                    <a href="{{ url_for('auth.login') }}" class="text-white fw-bold text-decoration-underline">
-                        Inicia Sesión
-                    </a>
-                </p>
+                <!-- Feature 2 -->
+                <div class="col-lg-4">
+                    <div class="feature-detail-card">
+                        <div class="feature-detail-icon">
+                            <i class="bi bi-egg-fried"></i>
+                        </div>
+                        <h3>Plan Nutricional Detallado</h3>
+                        <ul class="feature-detail-list">
+                            <li>5 comidas diarias personalizadas</li>
+                            <li>Macronutrientes calculados</li>
+                            <li>Opciones intercambiables</li>
+                            <li>Adaptado a tus preferencias</li>
+                            <li>Actualización automática</li>
+                            <li>Lista de compras incluida</li>
+                            <li>Recetas paso a paso</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="col-lg-4">
+                    <div class="feature-detail-card">
+                        <div class="feature-detail-icon">
+                            <i class="bi bi-heart-pulse"></i>
+                        </div>
+                        <h3>Rutina de Entrenamiento</h3>
+                        <ul class="feature-detail-list">
+                            <li>Ejercicios específicos para ti</li>
+                            <li>Series y repeticiones óptimas</li>
+                            <li>Descansos calculados</li>
+                            <li>Progresión semanal</li>
+                            <li>Adaptado a tu nivel</li>
+                            <li>Videos explicativos</li>
+                            <li>Alternativas si no tienes equipo</li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+    <!-- ============================================================================
+         PRECIOS BETA 2025
+         ============================================================================ -->
+    <section class="pricing-section" id="precios">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Precios Transparentes</span>
+                <h2 class="display-5 mb-3">Planes Diseñados para Ti</h2>
+                <p class="lead text-muted">
+                    Acceso completo a mi metodología profesional con tecnología de última generación
+                </p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Nota sobre BETA -->
+                <div class="text-center mt-5">
+                    <!-- Alert BETA Gratis -->
+                    <div class="d-inline-block"
+                         style="max-width: 900px; text-align: left; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%); border: 2px solid var(--primary-orange); border-radius: 15px; padding: 1.5rem;">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-danger rounded-circle p-3 me-3"
+                                 style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-rocket-takeoff-fill fs-4 text-white"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-2" style="color: var(--primary-black);"><strong>BETA 2025 - TODO
+                                    GRATIS</strong></h5>
+                                <p class="mb-2" style="color: var(--dark-gray);">
+                                    Durante toda la fase BETA, <strong style="color: var(--primary-orange);">acceso
+                                    completo sin costo</strong>:
+                                </p>
+                                <ul class="mb-2" style="color: var(--dark-gray);">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Análisis biométrico
+                                        profesional (15+ métricas)
+                                    </li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Planes de nutrición
+                                        generados por FitMaster IA
+                                    </li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Rutinas de
+                                        entrenamiento personalizadas con IA
+                                    </li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Historial completo de
+                                        análisis
+                                    </li>
+                                </ul>
+                                <p class="mb-0" style="color: var(--dark-gray);">
+                                    <strong style="color: var(--primary-black);">¿Necesitas personalización
+                                        avanzada?</strong>
+                                    <a href="{{ url_for('contact.send_message') }}"
+                                       style="color: var(--primary-orange); font-weight: 600; text-decoration: underline;">
+                                        Contáctame directamente
+                                    </a>
+                                    para seguimiento personalizado con atención humana.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alert Roadmap 2026 -->
+                    <div class="d-inline-block mt-3"
+                         style="max-width: 900px; text-align: left; background: var(--primary-black); border: 2px solid var(--primary-orange); border-radius: 15px; color: var(--white); padding: 1.5rem;">
+                        <div class="d-flex align-items-start">
+                            <div class="rounded-circle p-3 me-3"
+                                 style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: var(--primary-orange);">
+                                <i class="bi bi-stars fs-4 text-white"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-2" style="color: var(--primary-orange);"><strong>Roadmap 2026 - Lo que
+                                    viene</strong></h5>
+                                <p class="mb-2" style="color: var(--secondary-gray);">
+                                    Estamos desarrollando funcionalidades avanzadas que se lanzarán en 2026:
+                                </p>
+                                <ul class="mb-2" style="color: var(--secondary-gray);">
+                                    <li><i class="bi bi-cpu-fill text-danger me-2"></i><strong>IA Completa
+                                        Mejorada</strong> - Modelos más precisos y personalizados
+                                    </li>
+                                    <li><i class="bi bi-camera-fill text-danger me-2"></i><strong>Visión
+                                        Computacional</strong> - Análisis de fotos para seguimiento visual
+                                    </li>
+                                    <li><i class="bi bi-heart-pulse-fill text-danger me-2"></i><strong>Análisis de
+                                        Analíticas Médicas</strong> - Integración con tus análisis de sangre
+                                    </li>
+                                    <li><i class="bi bi-graph-up-arrow text-danger me-2"></i><strong>Dashboard
+                                        Avanzado</strong> - Métricas y gráficos de progreso
+                                    </li>
+                                    <li><i class="bi bi-people-fill text-danger me-2"></i><strong>Equipo
+                                        Multidisciplinar</strong> - Médicos, nutricionistas, psicólogos, entrenadores
+                                    </li>
+                                    <li><i class="bi bi-credit-card-fill text-danger me-2"></i><strong>Planes de
+                                        Pago</strong> - FREE, Básico (19€/mes), Premium (49€/mes)
+                                    </li>
+                                </ul>
+                                <p class="mb-0" style="color: var(--white);">
+                                    <i class="bi bi-gift-fill me-2" style="color: var(--primary-orange);"></i>
+                                    <strong style="color: var(--primary-orange);">Beneficio Beta Tester:</strong> Los
+                                    usuarios registrados en 2025 obtendrán
+                                    <strong style="color: var(--primary-orange);">descuentos permanentes</strong> cuando
+                                    lancemos los planes de pago.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="mt-4">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-lg px-5 py-3"
+                           style="background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-orange) 100%); color: white; border: none; font-weight: 600; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);">
+                            <i class="bi bi-rocket-takeoff-fill me-2"></i>
+                            Registrarme GRATIS en la BETA
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         FAQ
+         ============================================================================ -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Preguntas Frecuentes</span>
+                <h2 class="display-5 mb-3">Resolvemos Tus Dudas</h2>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- FAQ 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#faq1">
+                                    ¿Es esto un sustituto de un médico o nutricionista?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <strong>No.</strong> CoachBodyFit360 es una herramienta educativa basada en 20 años
+                                    de experiencia práctica en fitness. Siempre debes consultar con profesionales
+                                    sanitarios antes de iniciar cualquier programa de ejercicio o dieta. Esta plataforma
+                                    ofrece información y metodología, no diagnóstico médico.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#faq2">
+                                    ¿Pablo Techera es un profesional certificado?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Pablo tiene <strong>20 años de experiencia práctica</strong> trabajando con más de
+                                    500 personas en transformación física. La plataforma ofrece metodología basada en
+                                    esa experiencia real y resultados verificables (4.9★ en Google Reviews), no en
+                                    titulación académica homologada. Tú decides si aplicar esta información bajo tu
+                                    propia responsabilidad.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#faq3">
+                                    ¿Cómo funciona la IA?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <strong>FitMaster IA</strong> aplica la metodología desarrollada durante 20 años,
+                                    personalizándola con tus datos específicos (medidas, objetivos, nivel de actividad).
+                                    No es IA médica ni diagnóstica, es educativa: toma protocolos probados y los adapta
+                                    a tu caso particular automáticamente.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#faq4">
+                                    ¿Es realmente gratis?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <strong>Sí, 100% gratis.</strong> El análisis biométrico completo (15+ métricas)
+                                    y el plan básico personalizado son completamente gratuitos. En el futuro habrá
+                                    funciones premium opcionales, pero el core siempre será gratis.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 5 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#faq5">
+                                    ¿Mis datos están seguros?
+                                </button>
+                            </h2>
+                            <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <strong>Absolutamente.</strong> Usamos encriptación de última generación y cumplimos
+                                    con GDPR (Reglamento Europeo de Protección de Datos). Nunca vendemos ni compartimos
+                                    tus datos personales con terceros. Tus métricas son privadas y solo tuyas.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ 6 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#faq6">
+                                    ¿Puedo cancelar cuando quiera?
+                                </button>
+                            </h2>
+                            <div id="faq6" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <strong>Sí, sin preguntas.</strong> No hay permanencia, contratos ni letra pequeña.
+                                    Tus datos permanecen disponibles mientras quieras mantener tu cuenta activa.
+                                    Puedes pausar o eliminar tu cuenta en cualquier momento desde tu perfil.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         CTA FINAL
+         ============================================================================ -->
+    <section class="cta-final-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <h2 class="mb-4">
+                        ¿Listo Para Aplicar 20 Años de Experiencia<br>
+                        a Tu Transformación?
+                    </h2>
+                    <p class="mb-5">
+                        Únete a las <strong>500+ personas</strong> que ya han transformado su cuerpo
+                        aplicando esta metodología probada.
+                    </p>
+
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-cta-final mb-4">
+                        Comenzar Mi Análisis Gratis
+                    </a>
+
+                    <div class="cta-trust-items mb-4">
+                        <div class="cta-trust-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Sin tarjeta de crédito</span>
+                        </div>
+                        <div class="cta-trust-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>Resultados en 90 segundos</span>
+                        </div>
+                        <div class="cta-trust-item">
+                            <i class="bi bi-check-circle-fill"></i>
+                            <span>100% Gratis siempre</span>
+                        </div>
+                    </div>
+
+                    <p class="mb-0">
+                        ¿Ya tienes cuenta?
+                        <a href="{{ url_for('auth.login') }}" class="text-white fw-bold text-decoration-underline">
+                            Inicia Sesión
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
 
 {% endblock %}
 
 {% block extra_js %}
-<script>
-// Smooth scroll para enlaces ancla
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
-// Animación de números en stats (contador)
-const observerOptions = {
-    threshold: 0.5,
-    rootMargin: '0px'
-};
-
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const statNumbers = entry.target.querySelectorAll('.stat-number');
-            statNumbers.forEach(stat => {
-                const target = stat.textContent.trim();
-                if (target.includes('+')) {
-                    animateNumber(stat, parseInt(target), '+', false);
-                } else if (target.includes('★')) {
-                    stat.textContent = target; // No animar estrellas
-                } else if (target.includes('.')) {
-                    // Es un decimal (como 5.0)
-                    animateNumber(stat, parseFloat(target), '', true);
-                } else {
-                    animateNumber(stat, parseInt(target), '', false);
+    <script>
+        // Smooth scroll para enlaces ancla
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
                 }
             });
-            statsObserver.unobserve(entry.target);
+        });
+
+        // Animación de números en stats (contador)
+        const observerOptions = {
+            threshold: 0.5,
+            rootMargin: '0px'
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const target = stat.textContent.trim();
+                        if (target.includes('+')) {
+                            animateNumber(stat, parseInt(target), '+', false);
+                        } else if (target.includes('★')) {
+                            stat.textContent = target; // No animar estrellas
+                        } else if (target.includes('.')) {
+                            // Es un decimal (como 5.0)
+                            animateNumber(stat, parseFloat(target), '', true);
+                        } else {
+                            animateNumber(stat, parseInt(target), '', false);
+                        }
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        const statsSection = document.querySelector('.stats-section');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
         }
-    });
-}, observerOptions);
 
-const statsSection = document.querySelector('.stats-section');
-if (statsSection) {
-    statsObserver.observe(statsSection);
-}
-
-function animateNumber(element, target, suffix, isDecimal) {
-    let current = 0;
-    const increment = target / 50;
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            element.textContent = (isDecimal ? target.toFixed(1) : target) + suffix;
-            clearInterval(timer);
-        } else {
-            element.textContent = (isDecimal ? current.toFixed(1) : Math.floor(current)) + suffix;
+        function animateNumber(element, target, suffix, isDecimal) {
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = (isDecimal ? target.toFixed(1) : target) + suffix;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = (isDecimal ? current.toFixed(1) : Math.floor(current)) + suffix;
+                }
+            }, 30);
         }
-    }, 30);
-}
 
-// Fade-in animation para elementos
-const fadeObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-            fadeObserver.unobserve(entry.target);
-        }
-    });
-}, observerOptions);
+        // Fade-in animation para elementos
+        const fadeObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    fadeObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
 
-// Aplicar fade-in a las cards
-document.querySelectorAll('.pillar-card, .review-card, .feature-detail-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px)';
-    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-    fadeObserver.observe(card);
-});
+        // Aplicar fade-in a las cards
+        document.querySelectorAll('.pillar-card, .review-card, .feature-detail-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            fadeObserver.observe(card);
+        });
 
-// Agregar clase active al navbar en scroll (si tienes navbar)
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        if (scrolled > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    }
-});
-</script>
+        // Agregar clase active al navbar en scroll (si tienes navbar)
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                if (scrolled > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+        });
+    </script>
 {% endblock %}
