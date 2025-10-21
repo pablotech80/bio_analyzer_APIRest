@@ -127,6 +127,10 @@ def create_app(config_name = "development"):
 			"tools": [
 				{
 					"name": "create_analysis",
+					"description": "Crea un nuevo análisis corporal con datos biométricos enviados por el usuario.",
+					"server_url": "https://web-production-917c.up.railway.app",
+					"path": "/api/v1/analysis",
+					"method": "POST",
 					"description": "Genera un nuevo análisis corporal a partir de datos biométricos.",
 					"parameters": {
 						"type": "object",
@@ -135,6 +139,7 @@ def create_app(config_name = "development"):
 							"height": {"type": "number"},
 							"age": {"type": "number"},
 							"gender": {"type": "string"},
+							"activity_level": {"type": "string"}
 							"activity_level": {"type": "string"},
 							},
 						"required": ["weight", "height", "age", "gender"]
@@ -142,6 +147,28 @@ def create_app(config_name = "development"):
 					},
 				{
 					"name": "get_history",
+					"description": "Devuelve el historial completo de análisis del usuario autenticado.",
+					"server_url": "https://web-production-917c.up.railway.app",
+					"path": "/api/v1/history",
+					"method": "GET",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": []
+						}
+					},
+				{
+					"name": "get_analysis_by_id",
+					"description": "Obtiene un análisis corporal específico por su ID.",
+					"server_url": "https://web-production-917c.up.railway.app",
+					"path": "/api/v1/analysis/{analysis_id}",
+					"method": "GET",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"analysis_id": {"type": "integer"}
+							},
+						"required": ["analysis_id"]
 					"description": "Devuelve el historial de análisis del usuario.",
 					"parameters": {
 						"type": "object",
