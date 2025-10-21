@@ -13,45 +13,48 @@ config_name = os.environ.get("FLASK_ENV", "development")
 app = create_app(config_name)
 
 
+
+
 @app.cli.command()
 def init_db():
-    """Inicializar la base de datos (crear tablas)."""
-    db.create_all()
-    print("✅ Base de datos inicializada")
+	"""Inicializar la base de datos (crear tablas)."""
+	db.create_all()
+
 
 
 @app.cli.command()
 def seed_db():
-    """Poblar la base de datos con datos de prueba."""
-    from scripts.init_roles import init_roles_and_permissions
+	"""Poblar la base de datos con datos de prueba."""
+	from scripts.init_roles import init_roles_and_permissions
 
-    with app.app_context():
-        # Inicializar roles
-        init_roles_and_permissions()
+	with app.app_context():
+		# Inicializar roles
+		init_roles_and_permissions()
 
-        # Crear un usuario admin de prueba
-        from app.blueprints.auth.services import AuthService
+		# Crear un usuario admin de prueba
+		from app.blueprints.auth.services import AuthService
 
-        try:
-            admin = AuthService.register_user(
-                username="admin",
-                email="admin@coachbodyfit360.com",
-                password="Admin123!",
-                first_name="Administrador",
-                last_name="Sistema",
-            )
+		try:
+			admin = AuthService.register_user(
+				username = "admin",
+				email = "admin@coachbodyfit360.com",
+				password = "Admin123!",
+				first_name = "Administrador",
+				last_name = "Sistema",
+				)
 
-            # Asignar rol admin
-            from app.models.user import Role
+			# Asignar rol admin
+			from app.models.user import Role
 
-            admin_role = Role.query.filter_by(name="admin").first()
-            admin.role = admin_role
-            db.session.commit()
+			admin_role = Role.query.filter_by(name = "admin").first()
+			admin.role = admin_role
+			db.session.commit()
 
-            print("✅ Usuario admin creado: admin@coachbodyfit360.com / Admin123!")
-        except ValueError as e:
-            print(f"ℹ️  Usuario admin ya existe: {e}")
+
+		except ValueError as e:
+
+			print(f"ℹ️  Usuario admin ya existe: {e}")
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+	app.run(debug = True, host = "0.0.0.0", port = 5000)

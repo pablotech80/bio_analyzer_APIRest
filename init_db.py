@@ -8,9 +8,8 @@ def initialize_database():
     with app.app_context():
         try:
             db.create_all()
-            print(
-                "✅ Base de datos inicializada correctamente (solo tablas faltantes)."
-            )
+
+
         except Exception as e:
             print("⚠️ Error al inicializar la base de datos:", e)
 

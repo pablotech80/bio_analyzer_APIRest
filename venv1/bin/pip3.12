@@ -1,4 +1,4 @@
-#!/Users/macbookpro/bio_analyzer_APIRest/venv1/bin/python3
+#!/Users/macbookpro/bio_analyzer_APIRest/venv1/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
