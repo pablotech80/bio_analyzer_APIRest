@@ -56,3 +56,4 @@ test_api.py
 # Ignorar archivos específicos de configuración (pero permitir .github/)
 .firebase/
 venv1/
+venv1/
