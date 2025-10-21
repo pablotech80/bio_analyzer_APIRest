@@ -1,6 +1,5 @@
 # app/__init__.py
 from flask import Flask
-from flask import jsonify
 from flask import send_from_directory
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -9,6 +8,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
+from flask import jsonify
 
 # Inicializar extensiones (sin app todavía)
 db = SQLAlchemy()
@@ -116,6 +116,8 @@ def create_app(config_name = "development"):
 			mimetype = 'image/vnd.microsoft.icon'
 			)
 
+
+
 	@app.route("/manifest", methods = ["GET"])
 	def mcp_manifest():
 		"""
@@ -129,6 +131,7 @@ def create_app(config_name = "development"):
 					"server_url": "https://web-production-917c.up.railway.app",
 					"path": "/api/v1/analysis",
 					"method": "POST",
+					"description": "Genera un nuevo análisis corporal a partir de datos biométricos.",
 					"parameters": {
 						"type": "object",
 						"properties": {
@@ -137,6 +140,7 @@ def create_app(config_name = "development"):
 							"age": {"type": "number"},
 							"gender": {"type": "string"},
 							"activity_level": {"type": "string"}
+							"activity_level": {"type": "string"},
 							},
 						"required": ["weight", "height", "age", "gender"]
 						}
@@ -165,6 +169,13 @@ def create_app(config_name = "development"):
 							"analysis_id": {"type": "integer"}
 							},
 						"required": ["analysis_id"]
+					"description": "Devuelve el historial de análisis del usuario.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"user_id": {"type": "integer"}
+							},
+						"required": ["user_id"]
 						}
 					}
 				]
