@@ -1,5 +1,7 @@
 # app/__init__.py
 from flask import Flask
+from flask import jsonify
+from flask import send_from_directory
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -7,7 +9,7 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
-from flask import send_from_directory
+
 # Inicializar extensiones (sin app todavía)
 db = SQLAlchemy()
 migrate = Migrate()
@@ -113,5 +115,60 @@ def create_app(config_name = "development"):
 			'favicon.ico',
 			mimetype = 'image/vnd.microsoft.icon'
 			)
+	# manifiesto mcp para agent
+	@app.route("/manifest", methods = ["GET"])
+	def mcp_manifest():
+		"""
+		Devuelve la lista de herramientas disponibles para FitMaster (MCP).
+		"""
+		manifest = {
+			"tools": [
+				{
+					"name": "create_analysis",
+					"description": "Crea un nuevo análisis corporal con datos biométricos enviados por el usuario.",
+					"server_url": "https://web-production-917c.up.railway.app",
+					"path": "/api/v1/analysis",
+					"method": "POST",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"weight": {"type": "number"},
+							"height": {"type": "number"},
+							"age": {"type": "number"},
+							"gender": {"type": "string"},
+							"activity_level": {"type": "string"}
+							},
+						"required": ["weight", "height", "age", "gender"]
+						}
+					},
+				{
+					"name": "get_history",
+					"description": "Devuelve el historial completo de análisis del usuario autenticado.",
+					"server_url": "https://web-production-917c.up.railway.app",
+					"path": "/api/v1/history",
+					"method": "GET",
+					"parameters": {
+						"type": "object",
+						"properties": {},
+						"required": []
+						}
+					},
+				{
+					"name": "get_analysis_by_id",
+					"description": "Obtiene un análisis corporal específico por su ID.",
+					"server_url": "https://web-production-917c.up.railway.app",
+					"path": "/api/v1/analysis/{analysis_id}",
+					"method": "GET",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"analysis_id": {"type": "integer"}
+							},
+						"required": ["analysis_id"]
+						}
+					}
+				]
+			}
+		return jsonify(manifest), 200
 
 	return app
