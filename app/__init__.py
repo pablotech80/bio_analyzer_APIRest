@@ -1,5 +1,6 @@
 # app/__init__.py
 from flask import Flask
+from flask import send_from_directory
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
@@ -7,7 +8,8 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
-from flask import send_from_directory
+from flask import jsonify
+
 # Inicializar extensiones (sin app todavía)
 db = SQLAlchemy()
 migrate = Migrate()
@@ -113,5 +115,44 @@ def create_app(config_name = "development"):
 			'favicon.ico',
 			mimetype = 'image/vnd.microsoft.icon'
 			)
+
+
+
+	@app.route("/manifest", methods = ["GET"])
+	def mcp_manifest():
+		"""
+		Devuelve la lista de herramientas disponibles para FitMaster (MCP).
+		"""
+		manifest = {
+			"tools": [
+				{
+					"name": "create_analysis",
+					"description": "Genera un nuevo análisis corporal a partir de datos biométricos.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"weight": {"type": "number"},
+							"height": {"type": "number"},
+							"age": {"type": "number"},
+							"gender": {"type": "string"},
+							"activity_level": {"type": "string"},
+							},
+						"required": ["weight", "height", "age", "gender"]
+						}
+					},
+				{
+					"name": "get_history",
+					"description": "Devuelve el historial de análisis del usuario.",
+					"parameters": {
+						"type": "object",
+						"properties": {
+							"user_id": {"type": "integer"}
+							},
+						"required": ["user_id"]
+						}
+					}
+				]
+			}
+		return jsonify(manifest), 200
 
 	return app
