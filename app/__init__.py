@@ -115,7 +115,7 @@ def create_app(config_name = "development"):
 			'favicon.ico',
 			mimetype = 'image/vnd.microsoft.icon'
 			)
-
+	# manifiesto mcp para agent
 	@app.route("/manifest", methods = ["GET"])
 	def mcp_manifest():
 		"""
