@@ -43,7 +43,8 @@ class BioAnalyzeForm(FlaskForm):
     role = SelectField('Rol', choices=[('client', 'Cliente'), ('trainer', 'Entrenador'), ('nutritionist', 'Nutricionista')], validators=[Optional()])
 
     # Fotos de progreso
-    front_photo = FileField('Foto frontal', validators=[Optional()])
-    side_photo = FileField('Foto lateral', validators=[Optional()])
+    front_photo = FileField('Foto frontal (cuerpo entero)', validators=[Optional()])
+    side_photo = FileField('Foto lateral (cuerpo entero)', validators=[Optional()])
+    back_photo = FileField('Foto de espaldas (cuerpo entero)', validators=[Optional()])
     # Historial y notas
     notes = TextAreaField('Notas adicionales', validators=[Optional()])

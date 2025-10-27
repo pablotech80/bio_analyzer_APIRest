@@ -40,6 +40,17 @@ def new_analysis():
 	"""
 	form = BioAnalyzeForm()
 	if request.method == "POST" and form.validate_on_submit():
+		from app.services.file_upload import upload_image_to_s3
+		import os
+		bucket = os.environ.get("AWS_S3_BUCKET")
+		# Procesar fotos
+		photo_urls = {}
+		for field, label in [("front_photo", "front"), ("side_photo", "side"), ("back_photo", "back")]:
+			file = getattr(form, field).data
+			if file:
+				filename = f"progress/{current_user.id}_{label}.jpg"
+				url = upload_image_to_s3(file, filename, bucket)
+				photo_urls[field] = url
 		# Construir payload enriquecido
 		biometric_data = {
 			'weight': form.weight.data,
@@ -66,7 +77,9 @@ def new_analysis():
 			'sleep_quality': form.sleep_quality.data,
 			'role': form.role.data,
 			'notes': form.notes.data,
-			# Puedes agregar aquí más campos biométricos si lo deseas
+			'front_photo_url': photo_urls.get('front_photo'),
+			'side_photo_url': photo_urls.get('side_photo'),
+			'back_photo_url': photo_urls.get('back_photo'),
 		}
 		analysis, error = create_analysis(
 			user_id=current_user.id,
