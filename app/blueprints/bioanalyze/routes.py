@@ -8,26 +8,23 @@ Principios CoachBodyFit360:
 - API-First: Rutas preparadas para devolver JSON si se solicita
 """
 import logging
-
 from flask import flash, redirect, render_template, request, url_for, jsonify
 from flask_login import current_user, login_required
-
 from app.blueprints.bioanalyze import bioanalyze_bp
-from app.blueprints.bioanalyze.services import (
-	AnalysisPayload,
-	AnalysisValidationError,
-	build_interpretations_for_record,
-	run_biometric_analysis,
-	)
-# Nuevo servicio centralizado
+from app.blueprints.bioanalyze.forms import BioAnalyzeForm
 from app.services.biometric_service import (
 	create_analysis,
 	get_user_analyses,
 	get_analysis_by_id,
 	delete_analysis as delete_analysis_service,
 	add_fitmaster_analysis,
-	)
-
+)
+from app.blueprints.bioanalyze.services import (
+	AnalysisPayload,
+	AnalysisValidationError,
+	build_interpretations_for_record,
+	run_biometric_analysis,
+)
 logger = logging.getLogger(__name__)
 
 
@@ -41,85 +38,52 @@ def new_analysis():
 	GET: Display empty form
 	POST: Process form, create analysis, optionally request FitMaster
 	"""
-	if request.method == "POST":
-		try:
-			# Validar y procesar datos del formulario
-			payload: AnalysisPayload = run_biometric_analysis(request.form)
-		except AnalysisValidationError as exc:
-			flash(str(exc), "danger")
-			return render_template(
-				"bioanalyze/form.html",
-				form_data = request.form.to_dict(flat = True),
-				)
-
-		# 🔥 Mapear datos del formulario español → inglés para el servicio
+	form = BioAnalyzeForm()
+	if request.method == "POST" and form.validate_on_submit():
+		# Construir payload enriquecido
 		biometric_data = {
-			# Datos básicos (obligatorios)
-			'weight': payload.inputs['peso'],
-			'height': payload.inputs['altura'],
-			'age': payload.inputs['edad'],
-			'gender': 'male' if payload.inputs['genero'] == 'h' else 'female',
-			'neck': payload.inputs['cuello'],
-			'waist': payload.inputs['cintura'],
-			'hip': payload.inputs.get('cadera'),
-
-			# Medidas bilaterales (opcionales) desde el formulario
-			'biceps_left': float(request.form.get('biceps_izq') or 0) or None,
-			'biceps_right': float(request.form.get('biceps_der') or 0) or None,
-			'thigh_left': float(request.form.get('muslo_izq') or 0) or None,
-			'thigh_right': float(request.form.get('muslo_der') or 0) or None,
-			'calf_left': float(request.form.get('gemelo_izq') or 0) or None,
-			'calf_right': float(request.form.get('gemelo_der') or 0) or None,
-
-			# Activity data
-			'activity_factor': payload.inputs['factor_actividad'],
-			'activity_level': 'moderate',  # Default, puedes mapear del factor
-			'goal': payload.inputs['objetivo'],
-
-			# Métricas calculadas
-			'bmi': payload.results['imc'],
-			'bmr': payload.results['tmb'],
-			'tdee': payload.results['tdee'],
-			'body_fat_percentage': payload.results['porcentaje_grasa'],
-			'lean_mass': payload.results['masa_magra'],
-			'fat_mass': payload.results['masa_grasa'],
-			'ffmi': payload.results['ffmi'],
-			'body_water': payload.results['agua_total'],
-			'waist_hip_ratio': payload.results.get('rcc'),
-			'waist_height_ratio': payload.results['ratio_cintura_altura'],
-			'metabolic_age': payload.results.get('edad_metabolica'),
-			'maintenance_calories': payload.results['calorias_diarias'],
-			'protein_grams': payload.results['macronutrientes'].get('proteinas'),
-			'carbs_grams': payload.results['macronutrientes'].get('carbohidratos'),
-			'fats_grams': payload.results['macronutrientes'].get('grasas')
-			}
-
-		# Crear análisis usando el servicio
+			'weight': form.weight.data,
+			'height': form.height.data,
+			'age': form.age.data,
+			'gender': form.gender.data,
+			'goal': form.goal.data,
+			'activity_level': form.activity_level.data,
+			'name': form.name.data,
+			'first_name': form.first_name.data,
+			'username': form.username.data,
+			'day_description': form.day_description.data,
+			'training_time': form.training_time.data,
+			'training_preferences': form.training_preferences.data,
+			'fitness_experience': form.fitness_experience.data,
+			'limitations': form.limitations.data,
+			'motivations': form.motivations.data,
+			'diet_adherence': form.diet_adherence.data,
+			'food_preferences': form.food_preferences.data,
+			'supplements': form.supplements.data,
+			'medication': form.medication.data,
+			'social_support': form.social_support.data,
+			'stress_level': form.stress_level.data,
+			'sleep_quality': form.sleep_quality.data,
+			'role': form.role.data,
+			'notes': form.notes.data,
+			# Puedes agregar aquí más campos biométricos si lo deseas
+		}
 		analysis, error = create_analysis(
-			user_id = current_user.id,
-			biometric_data = biometric_data,
-			request_fitmaster = True  # Siempre pedir FitMaster
-			)
-
+			user_id=current_user.id,
+			biometric_data=biometric_data,
+			request_fitmaster=True
+		)
 		if error:
 			flash(f"Error al crear análisis: {error}", "danger")
-			return render_template(
-				"bioanalyze/form.html",
-				form_data = request.form.to_dict(flat = True),
-				)
-
-		# Success
+			return render_template("bioanalyze/form.html", form=form)
 		logger.info(f"Analysis created: ID={analysis.id} for user={current_user.id}")
-
 		if analysis.has_fitmaster_analysis:
 			flash("Análisis guardado con interpretación de FitMaster AI.", "success")
 		else:
 			flash("Análisis guardado. (FitMaster AI no disponible)", "warning")
-
-		return redirect(url_for("bioanalyze.result", analysis_id = analysis.id))
-
+		return redirect(url_for("bioanalyze.result", analysis_id=analysis.id))
 	# GET: Mostrar formulario vacío
-	return render_template("bioanalyze/form.html", form_data = {})
+	return render_template("bioanalyze/form.html", form=form)
 
 
 @bioanalyze_bp.route("/historial")

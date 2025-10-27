@@ -167,195 +167,99 @@
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
-                        <div class="col-6 col-md-3">
-                            <div class="text-center p-2 border rounded">
-                                <small class="text-muted d-block">Peso</small>
-                                <strong>{{ '%.1f'|format(analysis.weight) }} kg</strong>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Nombre</small>
+                                <strong class="text-dark">{{ analysis.name or analysis.first_name or '—' }}</strong>
                             </div>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="text-center p-2 border rounded">
-                                <small class="text-muted d-block">Altura</small>
-                                <strong>{{ '%.1f'|format(analysis.height) }} cm</strong>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Peso</small>
+                                <strong class="text-dark">{{ '%.1f'|format(analysis.weight) }} kg</strong>
                             </div>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="text-center p-2 border rounded">
-                                <small class="text-muted d-block">Edad</small>
-                                <strong>{{ analysis.age }} años</strong>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Altura</small>
+                                <strong class="text-dark">{{ '%.1f'|format(analysis.height) }} cm</strong>
                             </div>
                         </div>
-                        <div class="col-6 col-md-3">
-                            <div class="text-center p-2 border rounded">
-                                <small class="text-muted d-block">Género</small>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Edad</small>
+                                <strong class="text-dark">{{ analysis.age }} años</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Género</small>
                                 <strong class="text-capitalize">{{ analysis.gender }}</strong>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Medidas Corporales y Parámetros -->
-                    <hr class="my-4">
-                    <h6 class="text-muted mb-3">
-                        <i class="fas fa-ruler-combined me-2"></i>Medidas Corporales
-                    </h6>
-                    <div class="row g-3">
-                        <div class="col-6 col-md-4 col-lg-3">
-                            <div class="p-2 border rounded bg-light">
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Nivel de Actividad</small>
+                                <strong class="text-dark">{{ analysis.activity_level or '—' }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
                                 <small class="text-muted d-block mb-1">Cuello</small>
                                 <strong class="text-dark">{{ '%.1f'|format(analysis.neck) }} cm</strong>
                             </div>
                         </div>
-                        <div class="col-6 col-md-4 col-lg-3">
-                            <div class="p-2 border rounded bg-light">
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
                                 <small class="text-muted d-block mb-1">Cintura</small>
                                 <strong class="text-dark">{{ '%.1f'|format(analysis.waist) }} cm</strong>
                             </div>
                         </div>
                         {% if analysis.hip %}
-                        <div class="col-6 col-md-4 col-lg-3">
-                            <div class="p-2 border rounded bg-light">
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
                                 <small class="text-muted d-block mb-1">Cadera</small>
                                 <strong class="text-dark">{{ '%.1f'|format(analysis.hip) }} cm</strong>
                             </div>
                         </div>
                         {% endif %}
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Bíceps Izq.</small>
+                                <strong class="text-dark">{{ analysis.biceps_left and ('%.1f'|format(analysis.biceps_left)) or '—' }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Bíceps Der.</small>
+                                <strong class="text-dark">{{ analysis.biceps_right and ('%.1f'|format(analysis.biceps_right)) or '—' }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Muslo Izq.</small>
+                                <strong class="text-dark">{{ analysis.thigh_left and ('%.1f'|format(analysis.thigh_left)) or '—' }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Muslo Der.</small>
+                                <strong class="text-dark">{{ analysis.thigh_right and ('%.1f'|format(analysis.thigh_right)) or '—' }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Gemelo Izq.</small>
+                                <strong class="text-dark">{{ analysis.calf_left and ('%.1f'|format(analysis.calf_left)) or '—' }}</strong>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="p-2 border rounded bg-light mb-2">
+                                <small class="text-muted d-block mb-1">Gemelo Der.</small>
+                                <strong class="text-dark">{{ analysis.calf_right and ('%.1f'|format(analysis.calf_right)) or '—' }}</strong>
+                            </div>
+                        </div>
                     </div>
-
-                    <!-- Objetivo y Actividad -->
-                    <h6 class="text-muted mb-3 mt-4">
-                        <i class="fas fa-bullseye me-2"></i>Objetivo y Actividad
-                    </h6>
-                    <div class="row g-3">
-                        {% if analysis.goal %}
-                        <div class="col-md-6">
-                            <div class="p-2 border rounded bg-primary bg-opacity-10 border-primary">
-                                <small class="text-muted d-block mb-1">Objetivo Principal</small>
-                                <strong class="text-primary text-capitalize">
-                                    {% if analysis.goal == 'lose_weight' %}Perder Grasa
-                                    {% elif analysis.goal == 'gain_muscle' %}Ganar Masa Muscular
-                                    {% elif analysis.goal == 'maintain' %}Mantener Peso
-                                    {% else %}{{ analysis.goal.replace('_', ' ') }}
-                                    {% endif %}
-                                </strong>
-                            </div>
-                        </div>
-                        {% endif %}
-                        <div class="col-md-6">
-                            <div class="p-2 border rounded bg-info bg-opacity-10 border-info">
-                                <small class="text-muted d-block mb-1">Nivel de Actividad</small>
-                                <strong class="text-info">
-                                    {% set factor = analysis.activity_factor %}
-                                    {% if factor <= 1.2 %}Sedentario
-                                    {% elif factor <= 1.375 %}Ligero
-                                    {% elif factor <= 1.55 %}Moderado
-                                    {% elif factor <= 1.725 %}Intenso
-                                    {% else %}Muy Intenso
-                                    {% endif %}
-                                    <small class="text-muted">({{ '%.2f'|format(factor) }})</small>
-                                </strong>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Medidas Bilaterales -->
-                    {% if analysis.biceps_left or analysis.thigh_left or analysis.calf_left %}
-                    <hr class="my-4">
-                    <h3 class="h6 mb-3">Medidas Musculares (cm)</h3>
-                    <div class="row g-3">
-                        {% if analysis.biceps_left or analysis.biceps_right %}
-                        <div class="col-md-4">
-                            <div class="card bg-light">
-                                <div class="card-body py-2">
-                                    <h4 class="h6 mb-2">
-                                        <i class="fas fa-dumbbell me-2 text-primary"></i>Bíceps
-                                    </h4>
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <small class="text-muted d-block">Izquierdo</small>
-                                            <strong>{{ analysis.biceps_left and ('%.1f'|format(analysis.biceps_left)) or '—' }}</strong>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted d-block">Derecho</small>
-                                            <strong>{{ analysis.biceps_right and ('%.1f'|format(analysis.biceps_right)) or '—' }}</strong>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted d-block">Promedio</small>
-                                            <strong class="text-success">{{ analysis.biceps_average and ('%.1f'|format(analysis.biceps_average)) or '—' }}</strong>
-                                        </div>
-                                    </div>
-                                    {% if analysis.biceps_asymmetry %}
-                                    <small class="text-muted">
-                                        Asimetría: {{ '%.1f'|format(analysis.biceps_asymmetry) }}%
-                                    </small>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        {% if analysis.thigh_left or analysis.thigh_right %}
-                        <div class="col-md-4">
-                            <div class="card bg-light">
-                                <div class="card-body py-2">
-                                    <h4 class="h6 mb-2">
-                                        <i class="fas fa-walking me-2 text-primary"></i>Muslo
-                                    </h4>
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <small class="text-muted d-block">Izquierdo</small>
-                                            <strong>{{ analysis.thigh_left and ('%.1f'|format(analysis.thigh_left)) or '—' }}</strong>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted d-block">Derecho</small>
-                                            <strong>{{ analysis.thigh_right and ('%.1f'|format(analysis.thigh_right)) or '—' }}</strong>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted d-block">Promedio</small>
-                                            <strong class="text-success">{{ analysis.thigh_average and ('%.1f'|format(analysis.thigh_average)) or '—' }}</strong>
-                                        </div>
-                                    </div>
-                                    {% if analysis.thigh_asymmetry %}
-                                    <small class="text-muted">
-                                        Asimetría: {{ '%.1f'|format(analysis.thigh_asymmetry) }}%
-                                    </small>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-
-                        {% if analysis.calf_left or analysis.calf_right %}
-                        <div class="col-md-4">
-                            <div class="card bg-light">
-                                <div class="card-body py-2">
-                                    <h4 class="h6 mb-2">
-                                        <i class="fas fa-running me-2 text-primary"></i>Gemelo
-                                    </h4>
-                                    <div class="d-flex justify-content-between">
-                                        <div>
-                                            <small class="text-muted d-block">Izquierdo</small>
-                                            <strong>{{ analysis.calf_left and ('%.1f'|format(analysis.calf_left)) or '—' }}</strong>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted d-block">Derecho</small>
-                                            <strong>{{ analysis.calf_right and ('%.1f'|format(analysis.calf_right)) or '—' }}</strong>
-                                        </div>
-                                        <div>
-                                            <small class="text-muted d-block">Promedio</small>
-                                            <strong class="text-success">{{ analysis.calf_average and ('%.1f'|format(analysis.calf_average)) or '—' }}</strong>
-                                        </div>
-                                    </div>
-                                    {% if analysis.calf_asymmetry %}
-                                    <small class="text-muted">
-                                        Asimetría: {{ '%.1f'|format(analysis.calf_asymmetry) }}%
-                                    </small>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
                 </div>
             </div>
 

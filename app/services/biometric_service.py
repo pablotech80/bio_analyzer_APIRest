@@ -80,7 +80,8 @@ def create_analysis(
 			logger.error(error_msg)
 			return None, error_msg
 
-		# Create analysis object
+		# Si el género es hombre, ignorar cadera
+		hip_value = biometric_data.get('hip') if biometric_data['gender'] != 'male' else None
 		analysis = BiometricAnalysis(
 			user_id = user_id,
 			weight = biometric_data['weight'],
@@ -89,19 +90,19 @@ def create_analysis(
 			gender = biometric_data['gender'],
 			neck = biometric_data['neck'],
 			waist = biometric_data['waist'],
-			hip = biometric_data.get('hip'),
-			# Bilateral measurements
+			hip = hip_value,
+			# Bilaterales
 			biceps_left = biometric_data.get('biceps_left'),
 			biceps_right = biometric_data.get('biceps_right'),
 			thigh_left = biometric_data.get('thigh_left'),
 			thigh_right = biometric_data.get('thigh_right'),
 			calf_left = biometric_data.get('calf_left'),
 			calf_right = biometric_data.get('calf_right'),
-			# Activity data
+			# Actividad
 			activity_factor = biometric_data.get('activity_factor'),
 			activity_level = biometric_data.get('activity_level'),
 			goal = biometric_data.get('goal'),
-			# Calculated metrics (if provided)
+			# Métricas calculadas
 			bmi = biometric_data.get('bmi'),
 			bmr = biometric_data.get('bmr'),
 			tdee = biometric_data.get('tdee'),
@@ -117,7 +118,7 @@ def create_analysis(
 			protein_grams = biometric_data.get('protein_grams'),
 			carbs_grams = biometric_data.get('carbs_grams'),
 			fats_grams = biometric_data.get('fats_grams')
-			)
+		)
 
 		# Save to database first (to get ID)
 		db.session.add(analysis)
@@ -163,6 +164,17 @@ def add_fitmaster_analysis(analysis_id: int, biometric_data: Dict) -> Optional[s
 		if not analysis:
 			return f"Analysis with ID={analysis_id} not found"
 
+		# Obtener usuario y añadir nombre al payload
+		user = analysis.user  # Relación back_populates
+		if user:
+			# Prioridad: name (full_name), luego first_name, luego username
+			if user.full_name:
+				biometric_data["name"] = user.full_name
+			elif user.first_name:
+				biometric_data["first_name"] = user.first_name
+			elif user.username:
+				biometric_data["username"] = user.username
+
 		# Call FitMaster service
 		logger.info(f"Requesting FitMaster analysis for ID={analysis_id}")
 		fitmaster_response = FitMasterService.analyze_bio_results(biometric_data)
@@ -177,7 +189,7 @@ def add_fitmaster_analysis(analysis_id: int, biometric_data: Dict) -> Optional[s
 			"training_plan": fitmaster_response.get('training_plan', {}),
 			"generated_at": datetime.utcnow().isoformat(),
 			"model_version": fitmaster_response.get('model_version', 'fitmaster-v1.0')
-			}
+		}
 
 		# Save to database
 		analysis.fitmaster_data = fitmaster_data

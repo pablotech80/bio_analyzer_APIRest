@@ -43,12 +43,12 @@
                                     <td>{{ '%.2f'|format(analysis.bmi) }}</td>
                                     <td>{{ '%.2f'|format(analysis.body_fat_percentage) if analysis.body_fat_percentage is not none else '—' }}</td>
                                     <td>{{ '%.2f'|format(analysis.bmr) }}</td>
-                                    <td>{{ analysis.biceps_izq and ('%.1f'|format(analysis.biceps_izq)) or '—' }}</td>
-                                    <td>{{ analysis.biceps_der and ('%.1f'|format(analysis.biceps_der)) or '—' }}</td>
-                                    <td>{{ analysis.muslo_izq and ('%.1f'|format(analysis.muslo_izq)) or '—' }}</td>
-                                    <td>{{ analysis.muslo_der and ('%.1f'|format(analysis.muslo_der)) or '—' }}</td>
-                                    <td>{{ analysis.gemelo_izq and ('%.1f'|format(analysis.gemelo_izq)) or '—' }}</td>
-                                    <td>{{ analysis.gemelo_der and ('%.1f'|format(analysis.gemelo_der)) or '—' }}</td>
+                                    <td>{{ analysis.biceps_left and ('%.1f'|format(analysis.biceps_left)) or '—' }}</td>
+                                    <td>{{ analysis.biceps_right and ('%.1f'|format(analysis.biceps_right)) or '—' }}</td>
+                                    <td>{{ analysis.thigh_left and ('%.1f'|format(analysis.thigh_left)) or '—' }}</td>
+                                    <td>{{ analysis.thigh_right and ('%.1f'|format(analysis.thigh_right)) or '—' }}</td>
+                                    <td>{{ analysis.calf_left and ('%.1f'|format(analysis.calf_left)) or '—' }}</td>
+                                    <td>{{ analysis.calf_right and ('%.1f'|format(analysis.calf_right)) or '—' }}</td>
                                     <td class="text-end">
                                         <a class="btn btn-outline-primary btn-sm" href="{{ url_for('bioanalyze.result', analysis_id=analysis.id) }}">
                                             <i class="fas fa-eye"></i>
@@ -83,12 +83,12 @@
                                         </a>
                                     </div>
                                     <div class="row g-1 small">
-                                        <div class="col-4">Bíceps izq: <strong>{{ analysis.biceps_izq and ('%.1f'|format(analysis.biceps_izq)) or '—' }}</strong></div>
-                                        <div class="col-4">Bíceps der: <strong>{{ analysis.biceps_der and ('%.1f'|format(analysis.biceps_der)) or '—' }}</strong></div>
-                                        <div class="col-4">Muslo izq: <strong>{{ analysis.muslo_izq and ('%.1f'|format(analysis.muslo_izq)) or '—' }}</strong></div>
-                                        <div class="col-4">Muslo der: <strong>{{ analysis.muslo_der and ('%.1f'|format(analysis.muslo_der)) or '—' }}</strong></div>
-                                        <div class="col-4">Gemelo izq: <strong>{{ analysis.gemelo_izq and ('%.1f'|format(analysis.gemelo_izq)) or '—' }}</strong></div>
-                                        <div class="col-4">Gemelo der: <strong>{{ analysis.gemelo_der and ('%.1f'|format(analysis.gemelo_der)) or '—' }}</strong></div>
+                                        <div class="col-6 col-md-4">Bíceps izq: <strong>{{ analysis.biceps_left and ('%.1f'|format(analysis.biceps_left)) or '—' }}</strong></div>
+                                        <div class="col-6 col-md-4">Bíceps der: <strong>{{ analysis.biceps_right and ('%.1f'|format(analysis.biceps_right)) or '—' }}</strong></div>
+                                        <div class="col-6 col-md-4">Muslo izq: <strong>{{ analysis.thigh_left and ('%.1f'|format(analysis.thigh_left)) or '—' }}</strong></div>
+                                        <div class="col-6 col-md-4">Muslo der: <strong>{{ analysis.thigh_right and ('%.1f'|format(analysis.thigh_right)) or '—' }}</strong></div>
+                                        <div class="col-6 col-md-4">Gemelo izq: <strong>{{ analysis.calf_left and ('%.1f'|format(analysis.calf_left)) or '—' }}</strong></div>
+                                        <div class="col-6 col-md-4">Gemelo der: <strong>{{ analysis.calf_right and ('%.1f'|format(analysis.calf_right)) or '—' }}</strong></div>
                                     </div>
                                     <div class="mt-2 text-end">
                                         <form method="post" action="{{ url_for('bioanalyze.delete', analysis_id=analysis.id) }}" class="d-inline">
