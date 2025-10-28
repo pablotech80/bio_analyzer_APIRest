@@ -215,6 +215,23 @@ class BiometricAnalysis(db.Model):
         comment="Complete FitMaster AI response: interpretation, nutrition, training",
     )
 
+    # ========== 📸 PHOTO URLS (S3 Storage) ==========
+    front_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of front body photo stored in S3"
+    )
+    back_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of back body photo stored in S3"
+    )
+    side_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of side body photo stored in S3"
+    )
+
     # ========== AUDIT TIMESTAMPS ==========
     created_at = db.Column(
         db.DateTime,

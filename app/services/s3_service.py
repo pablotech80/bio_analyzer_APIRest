@@ -18,7 +18,8 @@ def upload_to_s3(file, folder="biometric_photos"):
     s3 = boto3.client(
         's3',
         aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY']
+        aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'],
+        region_name=current_app.config.get('AWS_REGION', 'eu-north-1')
     )
     
     # Generar nombre único
