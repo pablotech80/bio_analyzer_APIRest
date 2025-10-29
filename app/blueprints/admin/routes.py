@@ -32,15 +32,27 @@ def users():
         # Contar análisis totales
         total_analyses = BiometricAnalysis.query.filter_by(user_id=user.id).count()
         
-        # Contar análisis sin planificación (sin nutrition_plan ni training_plan)
-        analyses_without_plans = BiometricAnalysis.query.filter_by(user_id=user.id).filter(
-            ~BiometricAnalysis.id.in_(
-                db.session.query(NutritionPlan.analysis_id).filter(NutritionPlan.analysis_id.isnot(None))
-            ),
-            ~BiometricAnalysis.id.in_(
-                db.session.query(TrainingPlan.analysis_id).filter(TrainingPlan.analysis_id.isnot(None))
-            )
-        ).count()
+        # Obtener IDs de análisis con planes
+        nutrition_analysis_ids = set(
+            plan.analysis_id for plan in 
+            NutritionPlan.query.filter_by(user_id=user.id).filter(
+                NutritionPlan.analysis_id.isnot(None)
+            ).all()
+        )
+        training_analysis_ids = set(
+            plan.analysis_id for plan in 
+            TrainingPlan.query.filter_by(user_id=user.id).filter(
+                TrainingPlan.analysis_id.isnot(None)
+            ).all()
+        )
+        
+        # Contar análisis sin ningún plan
+        analyses_without_plans = 0
+        if total_analyses > 0:
+            all_analyses = BiometricAnalysis.query.filter_by(user_id=user.id).all()
+            for analysis in all_analyses:
+                if analysis.id not in nutrition_analysis_ids and analysis.id not in training_analysis_ids:
+                    analyses_without_plans += 1
         
         # Contar planes totales
         total_nutrition_plans = NutritionPlan.query.filter_by(user_id=user.id).count()
