@@ -216,23 +216,21 @@ class BiometricAnalysis(db.Model):
     )
 
     # ========== 📸 PHOTO URLS (S3 Storage) ==========
-    # NOTA: Estas columnas están comentadas temporalmente porque no existen en producción
-    # Descomentar cuando se ejecute la migración c18eb18a660c en Railway
-    # front_photo_url = db.Column(
-    #     db.String(255),
-    #     nullable=True,
-    #     comment="URL of front body photo stored in S3"
-    # )
-    # back_photo_url = db.Column(
-    #     db.String(255),
-    #     nullable=True,
-    #     comment="URL of back body photo stored in S3"
-    # )
-    # side_photo_url = db.Column(
-    #     db.String(255),
-    #     nullable=True,
-    #     comment="URL of side body photo stored in S3"
-    # )
+    front_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of front body photo stored in S3"
+    )
+    back_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of back body photo stored in S3"
+    )
+    side_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of side body photo stored in S3"
+    )
 
     # ========== AUDIT TIMESTAMPS ==========
     created_at = db.Column(
