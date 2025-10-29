@@ -48,10 +48,13 @@ def create_app(config_name="development"):
             # Mantiene tu configuración API existente (puedes añadir OpenAI si es necesario)
             r"/api/*": {
                 "origins": [
-                    "http://localhost:3000", # Tus frontends
-                    "http://localhost:5173",
-                    "https://*.vercel.app",
-                    "https://chat.openai.com" # Si el agente llama directamente a tu API
+                    "http://localhost:3000", # Frontend local React
+                    "http://localhost:5173", # Frontend local Vite
+                    "http://localhost:5001", # Flask dev server
+                    "https://*.vercel.app", # Frontend Vercel
+                    "https://app.coachbodyfit360.com", # Producción
+                    "https://coachbodyfit360.com", # Dominio principal
+                    "https://chat.openai.com" # OpenAI Agent
                 ],
                 "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
                 "allow_headers": ["Content-Type", "Authorization"],
