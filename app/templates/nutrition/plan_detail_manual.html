@@ -173,12 +173,12 @@
                         let html = '';
                         
                         // Título (nombre, name, titulo, etc)
-                        const title = obj.nombre || obj.name || obj.titulo || obj.comida || obj.meal || 'Comida';
+                        const title = obj.nombre || obj.name || obj.titulo || obj.comida || obj.meal || obj['plan name'] || 'Comida';
                         html += `<h6 class="mb-3 fw-bold"><i class="bi bi-clock me-2 text-muted"></i>${title}</h6>`;
                         
                         // Renderizar cada campo
                         for (let key in obj) {
-                            if (key === 'nombre' || key === 'name' || key === 'titulo') continue;
+                            if (key === 'nombre' || key === 'name' || key === 'titulo' || key === 'plan name') continue;
                             
                             const value = obj[key];
                             
@@ -188,7 +188,19 @@
                                 html += `<strong class="text-muted small">${formatKey(key)}:</strong>`;
                                 html += `<ul class="list-unstyled mb-0 mt-2">`;
                                 value.forEach(item => {
-                                    html += `<li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>${item}</li>`;
+                                    if (typeof item === 'object' && item !== null) {
+                                        // Si el item es un objeto, renderizarlo
+                                        html += `<li class="mb-2 p-2 bg-light rounded">`;
+                                        for (let subKey in item) {
+                                            const subValue = item[subKey];
+                                            if (typeof subValue === 'string' || typeof subValue === 'number') {
+                                                html += `<div><span class="text-muted">${formatKey(subKey)}:</span> <strong>${subValue}</strong></div>`;
+                                            }
+                                        }
+                                        html += `</li>`;
+                                    } else {
+                                        html += `<li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>${item}</li>`;
+                                    }
                                 });
                                 html += `</ul></div>`;
                             }
@@ -198,7 +210,17 @@
                                 html += `<strong class="text-muted small">${formatKey(key)}:</strong>`;
                                 html += `<div class="ms-3 mt-2">`;
                                 for (let subKey in value) {
-                                    html += `<div class="mb-1"><span class="text-muted">${formatKey(subKey)}:</span> <strong>${value[subKey]}</strong></div>`;
+                                    const subValue = value[subKey];
+                                    if (typeof subValue === 'string' || typeof subValue === 'number') {
+                                        html += `<div class="mb-1"><span class="text-muted">${formatKey(subKey)}:</span> <strong>${subValue}</strong></div>`;
+                                    } else if (Array.isArray(subValue)) {
+                                        html += `<div class="mb-2"><span class="text-muted">${formatKey(subKey)}:</span></div>`;
+                                        html += `<ul class="list-unstyled ms-3">`;
+                                        subValue.forEach(item => {
+                                            html += `<li class="mb-1">• ${item}</li>`;
+                                        });
+                                        html += `</ul>`;
+                                    }
                                 }
                                 html += `</div></div>`;
                             }
