@@ -307,7 +307,7 @@
                         <li class="mb-2"><a href="{{ url_for('auth.login') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Iniciar Sesión</a></li>
                         <li class="mb-2"><a href="{{ url_for('contact.send_message') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Contacto</a></li>
                         {% if current_user.is_authenticated %}
-                        <li class="mb-2"><a href="{{ url_for('bioanalyze.new_analysis') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Analizador</a></li>
+                        <li class="mb-2"><a href="{{ url_for('bioanalyze.new_analysis') }}" class="text-white-50 text-decoration-none" style="transition: color 0.3s ease;" onmouseover="this.style.color='#E67E22'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">Bioanalyze</a></li>
                         {% endif %}
                     </ul>
                 </div>
