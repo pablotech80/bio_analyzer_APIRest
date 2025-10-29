@@ -31,7 +31,6 @@ def upload_to_s3(file, folder="biometric_photos"):
         current_app.config['S3_BUCKET'],
         filename,
         ExtraArgs={
-            'ACL': 'private',
             'ContentType': file.content_type
         }
     )
