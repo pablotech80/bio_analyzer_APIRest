@@ -32,8 +32,6 @@ def upload_to_s3(file, folder="biometric_photos"):
         filename,
         ExtraArgs={
             'ContentType': file.content_type
-            # Nota: El bucket debe tener política pública o Block Public Access deshabilitado
-            # para que las fotos sean accesibles públicamente
         }
     )
     
