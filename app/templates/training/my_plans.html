@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Mis Planes de Entrenamiento{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-xl-10 col-lg-11 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="h3 mb-1">
+                        <i class="bi bi-lightning-charge-fill me-2" style="color: #E67E22;"></i>
+                        Mis Planes de Entrenamiento
+                    </h1>
+                    <p class="text-muted mb-0">Rutinas personalizadas generadas por FitMaster AI</p>
+                </div>
+                <div>
+                    <a class="btn rounded-pill text-white" href="{{ url_for('bioanalyze.new_analysis') }}" 
+                       style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); border: none; font-weight: 600;">
+                        <i class="bi bi-plus-lg me-1"></i>Nuevo Análisis
+                    </a>
+                </div>
+            </div>
+
+            {% if plans %}
+            <!-- Lista de Planes -->
+            <div class="row g-4">
+                {% for plan in plans %}
+                <div class="col-md-6">
+                    <div class="card shadow-sm h-100 hover-card" style="transition: all 0.3s ease;">
+                        <div class="card-header text-white" style="background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-calendar-check me-2"></i>
+                                    {{ plan.title }}
+                                </h5>
+                                {% if plan.is_active %}
+                                <span class="badge bg-light text-dark">
+                                    <i class="bi bi-check-circle me-1"></i>Activo
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            {% set training = plan %}
+                            
+                            <!-- Descripción -->
+                            {% if plan.description %}
+                            <p class="text-muted mb-3">{{ plan.description }}</p>
+                            {% endif %}
+
+                            <!-- Frecuencia -->
+                            {% if plan.frequency %}
+                            <p class="mb-3">
+                                <strong><i class="bi bi-calendar-week me-2" style="color: #E67E22;"></i>Frecuencia:</strong><br>
+                                <span class="ms-4">{{ plan.frequency }}</span>
+                            </p>
+                            {% endif %}
+
+                            <!-- Tipo de Rutina -->
+                            {% if plan.routine_type %}
+                            <div class="alert alert-info mb-3">
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-lightning-charge-fill me-2" style="font-size: 1.5rem;"></i>
+                                    <div>
+                                        <strong>Tipo de Rutina</strong><br>
+                                        <span>{{ plan.routine_type }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Número de entrenamientos -->
+                            {% if plan.workouts %}
+                            <p class="text-muted mb-0">
+                                <i class="bi bi-list-check me-2"></i>{{ plan.workouts|length }} entrenamientos semanales
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-white">
+                            <a href="{{ url_for('training.view_plan', plan_id=plan.id) }}" 
+                               class="btn btn-sm btn-outline-primary rounded-pill w-100">
+                                <i class="bi bi-eye me-1"></i>Ver Plan Completo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% else %}
+            <!-- Sin Planes -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="bi bi-lightning-charge-fill" style="font-size: 5rem; color: #E67E22; opacity: 0.3;"></i>
+                </div>
+                <h4 class="text-muted mb-3">No tienes planes de entrenamiento aún</h4>
+                <p class="text-muted mb-4">
+                    Crea un análisis biométrico para que FitMaster AI genere tu rutina personalizada
+                </p>
+                <a href="{{ url_for('bioanalyze.new_analysis') }}" class="btn btn-lg rounded-pill text-white"
+                   style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); border: none; font-weight: 600;">
+                    <i class="bi bi-plus-lg me-2"></i>Crear Primer Análisis
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+</style>
+{% endblock %}

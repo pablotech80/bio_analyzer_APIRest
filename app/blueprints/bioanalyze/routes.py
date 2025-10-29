@@ -12,6 +12,7 @@ import logging
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from app import db
 from . import bioanalyze_bp
 from app.blueprints.bioanalyze.services import (
     AnalysisPayload,
@@ -103,6 +104,31 @@ def new_analysis():
                 "bioanalyze/form.html",
                 form_data=request.form.to_dict(flat=True),
             )
+
+        # Procesar y subir fotos a S3 si existen
+        try:
+            from app.services.s3_service import upload_to_s3
+            
+            if 'front_photo' in request.files and request.files['front_photo'].filename:
+                front_photo = request.files['front_photo']
+                analysis.front_photo_url = upload_to_s3(front_photo)
+                logger.info(f"Front photo uploaded for analysis {analysis.id}")
+            
+            if 'back_photo' in request.files and request.files['back_photo'].filename:
+                back_photo = request.files['back_photo']
+                analysis.back_photo_url = upload_to_s3(back_photo)
+                logger.info(f"Back photo uploaded for analysis {analysis.id}")
+            
+            if 'side_photo' in request.files and request.files['side_photo'].filename:
+                side_photo = request.files['side_photo']
+                analysis.side_photo_url = upload_to_s3(side_photo)
+                logger.info(f"Side photo uploaded for analysis {analysis.id}")
+            
+            # Guardar URLs de fotos en la base de datos
+            db.session.commit()
+        except Exception as e:
+            logger.error(f"Error uploading photos for analysis {analysis.id}: {str(e)}")
+            flash("Análisis guardado, pero hubo un error al subir las fotos.", "warning")
 
         # Success
         logger.info(f"Analysis created: ID={analysis.id} for user={current_user.id}")

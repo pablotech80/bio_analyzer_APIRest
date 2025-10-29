@@ -215,6 +215,23 @@ class BiometricAnalysis(db.Model):
         comment="Complete FitMaster AI response: interpretation, nutrition, training",
     )
 
+    # ========== 📸 PHOTO URLS (S3 Storage) ==========
+    front_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of front body photo stored in S3"
+    )
+    back_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of back body photo stored in S3"
+    )
+    side_photo_url = db.Column(
+        db.String(255),
+        nullable=True,
+        comment="URL of side body photo stored in S3"
+    )
+
     # ========== AUDIT TIMESTAMPS ==========
     created_at = db.Column(
         db.DateTime,
@@ -350,6 +367,42 @@ class BiometricAnalysis(db.Model):
         """
         if self.has_fitmaster_analysis:
             return self.fitmaster_data.get("model_version")
+        return None
+
+    @property
+    def fitmaster_nutrition_plan(self) -> dict | None:
+        """
+        Get nutrition plan from FitMaster AI data.
+
+        Returns:
+                dict | None: Nutrition plan or None if not available
+        """
+        if self.has_fitmaster_analysis:
+            return self.fitmaster_data.get("nutrition_plan")
+        return None
+
+    @property
+    def fitmaster_training_plan(self) -> dict | None:
+        """
+        Get training plan from FitMaster AI data.
+
+        Returns:
+                dict | None: Training plan or None if not available
+        """
+        if self.has_fitmaster_analysis:
+            return self.fitmaster_data.get("training_plan")
+        return None
+
+    @property
+    def fitmaster_interpretation(self) -> str | None:
+        """
+        Get interpretation text from FitMaster AI data.
+
+        Returns:
+                str | None: Interpretation text or None if not available
+        """
+        if self.has_fitmaster_analysis:
+            return self.fitmaster_data.get("interpretation")
         return None
 
     # ========== 🔥 BILATERAL ANALYSIS HELPERS ==========

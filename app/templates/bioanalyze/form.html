@@ -18,7 +18,7 @@
             </div>
 
 
-            <form method="post" action="{{ url_for('bioanalyze.new_analysis') }}">
+            <form method="post" action="{{ url_for('bioanalyze.new_analysis') }}" enctype="multipart/form-data">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
                 <!-- Card: Datos personales -->
@@ -113,6 +113,32 @@
                             <div class="col-md-4">
                                 <label class="form-label" for="gemelo_der">Gemelo derecho (cm)</label>
                                 <input class="form-control" id="gemelo_der" name="gemelo_der" type="number" step="0.1" min="1" value="{{ form_values.get('gemelo_der', '') }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card: Fotos para Análisis -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Fotos para análisis (opcional)</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-camera me-2"></i>Sube fotos frontal, de espalda y lateral para un análisis más completo.
+                        </p>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label" for="front_photo">Foto frontal</label>
+                                <input class="form-control" id="front_photo" name="front_photo" type="file" accept="image/jpeg,image/jpg,image/png">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="back_photo">Foto espalda</label>
+                                <input class="form-control" id="back_photo" name="back_photo" type="file" accept="image/jpeg,image/jpg,image/png">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label" for="side_photo">Foto lateral</label>
+                                <input class="form-control" id="side_photo" name="side_photo" type="file" accept="image/jpeg,image/jpg,image/png">
                             </div>
                         </div>
                     </div>
