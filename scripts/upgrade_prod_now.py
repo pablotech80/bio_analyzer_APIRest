@@ -11,7 +11,12 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Configurar la URL de base de datos de producción
-os.environ['DATABASE_URL'] = "postgresql://postgres:engtSRttlVTDiZYzPQkRiFrnuRdgaVzg@centerbeam.proxy.rlwy.net:57147/railway"
+# Usar DATABASE_PRIVATE_URL para evitar cargos de egress en Railway
+if not os.getenv('DATABASE_PRIVATE_URL') and not os.getenv('DATABASE_URL'):
+    print("❌ ERROR: DATABASE_PRIVATE_URL o DATABASE_URL no está configurada")
+    print("   Ejecuta: railway run python scripts/upgrade_prod_now.py")
+    sys.exit(1)
+
 os.environ['FLASK_APP'] = 'run.py'
 
 # Importar después de configurar las variables de entorno

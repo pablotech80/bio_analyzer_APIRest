@@ -75,8 +75,9 @@ class ProductionConfig(Config):
     DEBUG = False
     TESTING = False
 
-    # PostgreSQL de Railway
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    # PostgreSQL de Railway - Usar red privada para evitar cargos de egress
+    # Railway provee DATABASE_PRIVATE_URL automáticamente
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_PRIVATE_URL") or os.environ.get("DATABASE_URL")
 
     # Si Railway usa postgres:// en lugar de postgresql://
     if SQLALCHEMY_DATABASE_URI and SQLALCHEMY_DATABASE_URI.startswith("postgres://"):

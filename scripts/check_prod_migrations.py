@@ -9,7 +9,13 @@ import sys
 from sqlalchemy import create_engine, text
 
 # URL de producción (Railway PostgreSQL)
-DATABASE_URL = "postgresql://postgres:engtSRttlVTDiZYzPQkRiFrnuRdgaVzg@centerbeam.proxy.rlwy.net:57147/railway"
+# Usar DATABASE_PRIVATE_URL para evitar cargos de egress
+DATABASE_URL = os.getenv('DATABASE_PRIVATE_URL') or os.getenv('DATABASE_URL')
+
+if not DATABASE_URL or DATABASE_URL == 'None':
+    print("❌ ERROR: DATABASE_PRIVATE_URL o DATABASE_URL no está configurada")
+    print("   Ejecuta: railway run python scripts/check_prod_migrations.py")
+    sys.exit(1)
 
 def check_migrations():
     """Verificar estado de migraciones en producción"""
