@@ -122,89 +122,10 @@
                         Plan de Comidas
                     </h5>
                     
-                    {# Soportar ambas estructuras: array directo o dict con "comidas" #}
-                    {% set meals_list = plan.meals.comidas if plan.meals is mapping and plan.meals.comidas else plan.meals %}
-                    
-                    {% if meals_list %}
-                        {% for meal in meals_list %}
-                        <div class="mb-4 {% if not loop.last %}pb-4 border-bottom{% endif %}">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h6 class="mb-0 fw-bold">
-                                    <i class="bi bi-clock me-2 text-muted"></i>
-                                    {{ meal.nombre or meal.name }}
-                                </h6>
-                                {% if meal.time %}
-                                <span class="badge bg-light text-dark">{{ meal.time }}</span>
-                                {% endif %}
-                                {% if meal.macros %}
-                                <span class="badge bg-info text-white">{{ meal.macros.calorias }} kcal</span>
-                                {% endif %}
-                            </div>
-                            
-                            {% if meal.descripcion or meal.description %}
-                            <p class="text-muted mb-3">{{ meal.descripcion or meal.description }}</p>
-                            {% endif %}
-                            
-                            {# Ingredientes #}
-                            {% if meal.ingredientes or meal.foods %}
-                            <div class="mb-3">
-                                <strong class="text-muted small">Ingredientes:</strong>
-                                <ul class="list-unstyled mb-0 mt-2">
-                                    {% for food in (meal.ingredientes or meal.foods) %}
-                                    <li class="mb-1">
-                                        <i class="bi bi-check2 text-success me-2"></i>{{ food }}
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            {% endif %}
-                            
-                            {# Macros #}
-                            {% if meal.macros %}
-                            <div class="row text-center g-2">
-                                <div class="col-3">
-                                    <div class="p-2 bg-light rounded">
-                                        <div class="fw-bold text-success">{{ meal.macros.proteinas }}g</div>
-                                        <small class="text-muted">Proteínas</small>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="p-2 bg-light rounded">
-                                        <div class="fw-bold text-warning">{{ meal.macros.carbohidratos }}g</div>
-                                        <small class="text-muted">Carbos</small>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="p-2 bg-light rounded">
-                                        <div class="fw-bold text-danger">{{ meal.macros.grasas }}g</div>
-                                        <small class="text-muted">Grasas</small>
-                                    </div>
-                                </div>
-                                <div class="col-3">
-                                    <div class="p-2 bg-light rounded">
-                                        <div class="fw-bold text-primary">{{ meal.macros.calorias }}</div>
-                                        <small class="text-muted">kcal</small>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-                            
-                            {# Tips de sabor #}
-                            {% if meal.tips_sabor %}
-                            <div class="mt-3">
-                                <small class="text-muted"><i class="bi bi-lightbulb me-1"></i> Tips:</small>
-                                <ul class="small text-muted mb-0 mt-1">
-                                    {% for tip in meal.tips_sabor %}
-                                    <li>{{ tip }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            {% endif %}
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <p class="text-muted">No hay comidas definidas en este plan.</p>
-                    {% endif %}
+                    {# Renderizar JSON de forma flexible - cualquier estructura #}
+                    <div class="nutrition-plan-content">
+                        <pre class="bg-light p-3 rounded" style="white-space: pre-wrap; word-wrap: break-word;">{{ plan.meals | tojson(indent=2) }}</pre>
+                    </div>
                 </div>
                 {% endif %}
 
