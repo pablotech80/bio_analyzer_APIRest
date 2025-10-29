@@ -1,7 +1,10 @@
 import boto3
 import os
 import uuid
+import logging
 from flask import current_app
+
+logger = logging.getLogger(__name__)
 
 
 def upload_to_s3(file, folder="biometric_photos"):
@@ -15,26 +18,41 @@ def upload_to_s3(file, folder="biometric_photos"):
     Returns:
         str: URL pública del archivo
     """
-    s3 = boto3.client(
-        's3',
-        aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'],
-        aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'],
-        region_name=current_app.config.get('AWS_REGION', 'eu-north-1')
-    )
-    
-    # Generar nombre único
-    ext = file.filename.split('.')[-1]
-    filename = f"{folder}/{uuid.uuid4()}.{ext}"
-    
-    s3.upload_fileobj(
-        file,
-        current_app.config['S3_BUCKET'],
-        filename,
-        ExtraArgs={
-            'ContentType': file.content_type
-        }
-    )
-    
-    # Construir URL pública con región
-    region = current_app.config.get('AWS_REGION', 'eu-north-1')
-    return f"https://{current_app.config['S3_BUCKET']}.s3.{region}.amazonaws.com/{filename}"
+    try:
+        logger.info(f"Iniciando upload a S3: {file.filename}")
+        
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id=current_app.config['AWS_ACCESS_KEY_ID'],
+            aws_secret_access_key=current_app.config['AWS_SECRET_ACCESS_KEY'],
+            region_name=current_app.config.get('AWS_REGION', 'eu-north-1')
+        )
+        
+        # Generar nombre único
+        ext = file.filename.split('.')[-1]
+        filename = f"{folder}/{uuid.uuid4()}.{ext}"
+        
+        logger.info(f"Subiendo a S3: bucket={current_app.config['S3_BUCKET']}, key={filename}")
+        
+        s3.upload_fileobj(
+            file,
+            current_app.config['S3_BUCKET'],
+            filename,
+            ExtraArgs={
+                'ContentType': file.content_type
+                # Nota: El bucket tiene Bucket Policy pública, no se necesita ACL
+            }
+        )
+        
+        # Construir URL pública con región
+        region = current_app.config.get('AWS_REGION', 'eu-north-1')
+        url = f"https://{current_app.config['S3_BUCKET']}.s3.{region}.amazonaws.com/{filename}"
+        
+        logger.info(f"Upload exitoso: {url}")
+        return url
+        
+    except Exception as e:
+        logger.error(f"Error en upload_to_s3: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise

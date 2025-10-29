@@ -128,7 +128,9 @@ def new_analysis():
             db.session.commit()
         except Exception as e:
             logger.error(f"Error uploading photos for analysis {analysis.id}: {str(e)}")
-            flash("Análisis guardado, pero hubo un error al subir las fotos.", "warning")
+            import traceback
+            logger.error(traceback.format_exc())
+            flash(f"Análisis guardado, pero hubo un error al subir las fotos: {str(e)}", "warning")
 
         # Success
         logger.info(f"Analysis created: ID={analysis.id} for user={current_user.id}")
