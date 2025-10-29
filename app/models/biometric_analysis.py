@@ -369,6 +369,42 @@ class BiometricAnalysis(db.Model):
             return self.fitmaster_data.get("model_version")
         return None
 
+    @property
+    def fitmaster_nutrition_plan(self) -> dict | None:
+        """
+        Get nutrition plan from FitMaster AI data.
+
+        Returns:
+                dict | None: Nutrition plan or None if not available
+        """
+        if self.has_fitmaster_analysis:
+            return self.fitmaster_data.get("nutrition_plan")
+        return None
+
+    @property
+    def fitmaster_training_plan(self) -> dict | None:
+        """
+        Get training plan from FitMaster AI data.
+
+        Returns:
+                dict | None: Training plan or None if not available
+        """
+        if self.has_fitmaster_analysis:
+            return self.fitmaster_data.get("training_plan")
+        return None
+
+    @property
+    def fitmaster_interpretation(self) -> str | None:
+        """
+        Get interpretation text from FitMaster AI data.
+
+        Returns:
+                str | None: Interpretation text or None if not available
+        """
+        if self.has_fitmaster_analysis:
+            return self.fitmaster_data.get("interpretation")
+        return None
+
     # ========== 🔥 BILATERAL ANALYSIS HELPERS ==========
 
     @property

@@ -12,6 +12,7 @@ import logging
 from flask import flash, jsonify, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 
+from app import db
 from . import bioanalyze_bp
 from app.blueprints.bioanalyze.services import (
     AnalysisPayload,

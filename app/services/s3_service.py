@@ -31,8 +31,11 @@ def upload_to_s3(file, folder="biometric_photos"):
         current_app.config['S3_BUCKET'],
         filename,
         ExtraArgs={
-            'ContentType': file.content_type
+            'ContentType': file.content_type,
+            'ACL': 'public-read'  # Hacer la foto pública automáticamente
         }
     )
     
-    return f"https://{current_app.config['S3_BUCKET']}.s3.amazonaws.com/{filename}"
+    # Construir URL pública con región
+    region = current_app.config.get('AWS_REGION', 'eu-north-1')
+    return f"https://{current_app.config['S3_BUCKET']}.s3.{region}.amazonaws.com/{filename}"

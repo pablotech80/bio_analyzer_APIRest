@@ -186,30 +186,41 @@
 			<div class="collapse navbar-collapse" id="navbarNav">
 				<ul class="navbar-nav ms-auto">
 					{% if current_user.is_authenticated %}
+                        {% if current_user.is_admin or current_user.has_role('trainer') %}
+                        <!-- Vista Admin/Trainer -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.users') }}">
+                                Usuarios
+                            </a>
+                        </li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('contact.admin_messages') }}">
+								Mensajes
+							</a>
+						</li>
+                        {% else %}
+                        <!-- Vista Cliente -->
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('bioanalyze.new_analysis') }}">
-								<i class="bi bi-calculator"></i> Analizador
+								Bioanalyze
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('nutrition.my_plans') }}">
+								Nutrición
+							</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('training.my_plans') }}">
+								Entrenamiento
 							</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('bioanalyze.history') }}">
-								<i class="bi bi-clock-history"></i> Historial
+								Historial
 							</a>
 						</li>
-                        {% if current_user.is_admin or current_user.has_role('trainer') %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('admin.users') }}">
-                                <i class="bi bi-people"></i> Usuarios
-                            </a>
-                        </li>
                         {% endif %}
-						{% if current_user.is_admin %}
-						<li class="nav-item">
-							<a class="nav-link" href="{{ url_for('contact.admin_messages') }}">
-								<i class="bi bi-shield-lock"></i> Panel Admin
-							</a>
-						</li>
-						{% endif %}
 						<li class="nav-item">
 							<a class="nav-link" href="{{ url_for('auth.profile') }}">
 								<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20" style="vertical-align: middle; margin-right: 6px;">

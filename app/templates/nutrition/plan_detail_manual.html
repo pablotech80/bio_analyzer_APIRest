@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}{{ plan.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background: #f8f9fa;">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-12">
+                <!-- Header Profesional -->
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h1 class="h4 mb-2 fw-bold text-dark">{{ plan.title }}</h1>
+                            <div class="text-muted small">
+                                <span>Creado: {{ plan.created_at.strftime('%d/%m/%Y') }}</span>
+                                {% if plan.start_date and plan.end_date %}
+                                <span class="mx-2">|</span>
+                                <span>Vigencia: {{ plan.start_date.strftime('%d/%m/%Y') }} - {{ plan.end_date.strftime('%d/%m/%Y') }}</span>
+                                {% endif %}
+                                {% if plan.is_active %}
+                                <span class="badge bg-success ms-2">Activo</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div>
+                            {% if current_user.is_admin %}
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
+                                ← Volver
+                            </a>
+                            {% else %}
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('nutrition.my_plans') }}">
+                                ← Mis Planes
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objetivo y Descripción -->
+                {% if plan.goal or plan.description %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    {% if plan.goal %}
+                    <div class="mb-3">
+                        <h6 class="text-uppercase text-muted small mb-2">Objetivo</h6>
+                        <p class="mb-0 fw-medium">{{ plan.goal }}</p>
+                    </div>
+                    {% endif %}
+                    {% if plan.description %}
+                    <div>
+                        <h6 class="text-uppercase text-muted small mb-2">Descripción</h6>
+                        <p class="mb-0">{{ plan.description }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Requerimientos Nutricionales -->
+                {% if plan.daily_calories or plan.protein_grams or plan.carbs_grams or plan.fats_grams %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">Requerimientos Nutricionales Diarios</h5>
+                    
+                    <div class="row g-3">
+                        {% if plan.daily_calories %}
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 border rounded">
+                                <div class="text-muted small mb-1">Calorías</div>
+                                <div class="h4 mb-0 fw-bold">{{ plan.daily_calories }}</div>
+                                <div class="text-muted small">kcal</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if plan.protein_grams %}
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 border rounded">
+                                <div class="text-muted small mb-1">Proteínas</div>
+                                <div class="h4 mb-0 fw-bold text-success">{{ plan.protein_grams }}</div>
+                                <div class="text-muted small">gramos</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if plan.carbs_grams %}
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 border rounded">
+                                <div class="text-muted small mb-1">Carbohidratos</div>
+                                <div class="h4 mb-0 fw-bold text-warning">{{ plan.carbs_grams }}</div>
+                                <div class="text-muted small">gramos</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if plan.fats_grams %}
+                        <div class="col-md-3 col-6">
+                            <div class="text-center p-3 border rounded">
+                                <div class="text-muted small mb-1">Grasas</div>
+                                <div class="h4 mb-0 fw-bold text-info">{{ plan.fats_grams }}</div>
+                                <div class="text-muted small">gramos</div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Plan de Comidas -->
+                {% if plan.meals %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">Plan de Comidas</h5>
+                    
+                    {% for meal in plan.meals %}
+                    <div class="mb-4 {% if not loop.last %}pb-4 border-bottom{% endif %}">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0 fw-bold">{{ meal.name }}</h6>
+                            {% if meal.time %}
+                            <span class="badge bg-light text-dark">{{ meal.time }}</span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if meal.foods %}
+                        <ul class="list-unstyled mb-0">
+                            {% for food in meal.foods %}
+                            <li class="mb-2">
+                                <span class="text-muted">•</span> {{ food }}
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% elif meal.description %}
+                        <p class="text-muted mb-0">{{ meal.description }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Suplementación -->
+                {% if plan.supplements %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">Suplementación Recomendada</h5>
+                    <div class="text-muted" style="white-space: pre-line;">{{ plan.supplements }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Notas del Entrenador -->
+                {% if plan.notes %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">Indicaciones del Entrenador</h5>
+                    <div class="text-muted" style="white-space: pre-line;">{{ plan.notes }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Análisis Relacionado -->
+                {% if plan.analysis %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h6 class="text-uppercase text-muted small mb-3">Análisis Biométrico Relacionado</h6>
+                    <p class="mb-2">Este plan está basado en tu análisis del {{ plan.analysis.created_at.strftime('%d/%m/%Y') }}</p>
+                    <a href="{{ url_for('bioanalyze.result', analysis_id=plan.analysis.id) }}" 
+                       class="btn btn-sm btn-outline-primary">
+                        Ver Análisis Completo →
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
