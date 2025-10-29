@@ -124,8 +124,23 @@
                     
                     {# Renderizar JSON de forma flexible - cualquier estructura #}
                     <div class="nutrition-plan-content">
-                        <pre class="bg-light p-3 rounded" style="white-space: pre-wrap; word-wrap: break-word;">{{ plan.meals | tojson(indent=2) }}</pre>
+                        <pre class="bg-light p-3 rounded" style="white-space: pre-wrap; word-wrap: break-word; font-family: 'Courier New', monospace; font-size: 14px;">{{ plan.meals | safe }}</pre>
                     </div>
+                    
+                    <script>
+                    // Formatear JSON en el cliente
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const container = document.querySelector('.nutrition-plan-content pre');
+                        if (container) {
+                            try {
+                                const data = {{ plan.meals | tojson | safe }};
+                                container.textContent = JSON.stringify(data, null, 2);
+                            } catch(e) {
+                                console.error('Error formateando JSON:', e);
+                            }
+                        }
+                    });
+                    </script>
                 </div>
                 {% endif %}
 
