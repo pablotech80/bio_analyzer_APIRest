@@ -31,8 +31,9 @@ def upload_to_s3(file, folder="biometric_photos"):
         current_app.config['S3_BUCKET'],
         filename,
         ExtraArgs={
-            'ContentType': file.content_type,
-            'ACL': 'public-read'  # Hacer la foto pública automáticamente
+            'ContentType': file.content_type
+            # Nota: El bucket debe tener política pública o Block Public Access deshabilitado
+            # para que las fotos sean accesibles públicamente
         }
     )
     
