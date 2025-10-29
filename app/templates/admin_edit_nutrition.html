@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Plan Nutricional - {{ user.first_name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-xl-10 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">🍽️ Editar Plan Nutricional</h2>
+                    <p class="text-muted mb-0">Para: <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }})</p>
+                </div>
+                <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" class="btn btn-outline-secondary rounded-pill">
+                    <i class="bi bi-arrow-left me-1"></i>Cancelar
+                </a>
+            </div>
+
+            <!-- Formulario -->
+            <form method="POST" class="card shadow-sm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Información del Plan</h5>
+                </div>
+
+                <div class="card-body">
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Título del Plan *</strong></label>
+                        <input type="text" name="title" class="form-control" required 
+                               value="{{ plan.title }}" placeholder="Ej: Plan Definición Marzo 2025">
+                        <small class="text-muted">Nombre descriptivo del plan</small>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Descripción</strong></label>
+                        <textarea name="description" class="form-control" rows="2" 
+                                  placeholder="Descripción general del plan">{{ plan.description or '' }}</textarea>
+                    </div>
+
+                    <!-- Objetivo -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Objetivo</strong></label>
+                        <input type="text" name="goal" class="form-control" 
+                               value="{{ plan.goal or '' }}" placeholder="Ej: Pérdida de grasa, Ganancia muscular, Mantenimiento">
+                    </div>
+
+                    <!-- Macros -->
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Calorías Diarias</strong></label>
+                            <input type="number" name="daily_calories" class="form-control" 
+                                   value="{{ plan.daily_calories or '' }}" placeholder="2200">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Proteínas (g)</strong></label>
+                            <input type="number" name="protein_grams" class="form-control" 
+                                   value="{{ plan.protein_grams or '' }}" placeholder="165">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Carbohidratos (g)</strong></label>
+                            <input type="number" name="carbs_grams" class="form-control" 
+                                   value="{{ plan.carbs_grams or '' }}" placeholder="220">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label"><strong>Grasas (g)</strong></label>
+                            <input type="number" name="fats_grams" class="form-control" 
+                                   value="{{ plan.fats_grams or '' }}" placeholder="73">
+                        </div>
+                    </div>
+
+                    <!-- JSON de Comidas -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Comidas (JSON)</strong></label>
+                        <textarea name="meals_json" class="form-control font-monospace" style="font-size: 13px; min-height: 300px; resize: vertical;" 
+                                  placeholder='[
+  {
+    "name": "Desayuno",
+    "time": "08:00",
+    "foods": ["Avena 80g", "Claras 4u", "Plátano 1u"]
+  },
+  {
+    "name": "Comida",
+    "time": "14:00",
+    "foods": ["Pollo 200g", "Arroz 100g", "Verduras"]
+  }
+]'>{{ meals_json }}</textarea>
+                        <small class="text-muted">
+                            <a href="/docs/ESTRUCTURA_JSON_PLANES.md" target="_blank">Ver documentación de estructura JSON</a>
+                        </small>
+                    </div>
+
+                    <!-- Suplementación -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Suplementación</strong></label>
+                        <textarea name="supplements" class="form-control" rows="3" 
+                                  placeholder="- Proteína Whey: 1 scoop post-entreno&#10;- Creatina: 5g diarios&#10;- Omega 3: 2g diarios">{{ plan.supplements or '' }}</textarea>
+                    </div>
+
+                    <!-- Notas -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Notas del Entrenador</strong></label>
+                        <textarea name="notes" class="form-control" rows="4" 
+                                  placeholder="Importante:&#10;- Beber mínimo 3L de agua al día&#10;- Ajustar carbos según actividad&#10;- Pesarse cada lunes en ayunas">{{ plan.notes or '' }}</textarea>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Fecha de Inicio</strong></label>
+                            <input type="date" name="start_date" class="form-control" value="{{ plan.start_date.strftime('%Y-%m-%d') if plan.start_date else '' }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Fecha de Fin</strong></label>
+                            <input type="date" name="end_date" class="form-control" value="{{ plan.end_date.strftime('%Y-%m-%d') if plan.end_date else '' }}">
+                        </div>
+                    </div>
+
+                    <!-- Análisis Relacionado -->
+                    {% if analyses %}
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
+                        <select name="analysis_id" class="form-select">
+                            <option value="">-- Sin análisis relacionado --</option>
+                            {% for analysis in analyses %}
+                            <option value="{{ analysis.id }}" {% if plan.analysis_id == analysis.id %}selected{% endif %}>
+                                {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
+                                Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
+                                IMC: {{ '%.1f'|format(analysis.bmi) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+
+                    <!-- Estado Activo -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if plan.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                <strong>Plan Activo</strong>
+                            </label>
+                            <small class="text-muted d-block">Los planes inactivos no se mostrarán al usuario</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" 
+                           class="btn btn-outline-secondary rounded-pill">
+                            <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-success rounded-pill px-4">
+                            <i class="bi bi-check-lg me-1"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Ayuda -->
+            <div class="alert alert-info mt-4">
+                <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Ayuda</h6>
+                <ul class="mb-0">
+                    <li>El campo <strong>Título</strong> es obligatorio</li>
+                    <li>El JSON de comidas debe seguir la estructura documentada</li>
+                    <li>Puedes dejar campos vacíos si no son necesarios</li>
+                    <li>El plan se creará como <strong>activo</strong> automáticamente</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+{% endblock %}

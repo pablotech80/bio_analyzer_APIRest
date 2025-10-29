@@ -201,3 +201,147 @@ def create_training_plan(user_id):
     # GET: Mostrar formulario
     analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
     return render_template("admin_create_training.html", user=user, analyses=analyses)
+
+
+@admin_bp.route("/nutrition/<int:plan_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_nutrition_plan(plan_id):
+    """Editar plan nutricional existente"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    plan = NutritionPlan.query.get_or_404(plan_id)
+    user = User.query.get_or_404(plan.user_id)
+    
+    if request.method == "POST":
+        try:
+            # Parsear JSON de comidas si existe
+            meals_json = request.form.get("meals_json", "").strip()
+            if meals_json:
+                plan.meals = json.loads(meals_json)
+            
+            # Actualizar campos
+            plan.title = request.form.get("title")
+            plan.description = request.form.get("description")
+            plan.goal = request.form.get("goal")
+            plan.daily_calories = int(request.form.get("daily_calories")) if request.form.get("daily_calories") else None
+            plan.protein_grams = int(request.form.get("protein_grams")) if request.form.get("protein_grams") else None
+            plan.carbs_grams = int(request.form.get("carbs_grams")) if request.form.get("carbs_grams") else None
+            plan.fats_grams = int(request.form.get("fats_grams")) if request.form.get("fats_grams") else None
+            plan.supplements = request.form.get("supplements")
+            plan.notes = request.form.get("notes")
+            plan.start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d").date() if request.form.get("start_date") else None
+            plan.end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date() if request.form.get("end_date") else None
+            plan.analysis_id = int(request.form.get("analysis_id")) if request.form.get("analysis_id") else None
+            plan.is_active = request.form.get("is_active") == "on"
+            
+            db.session.commit()
+            flash("✅ Plan nutricional actualizado correctamente", "success")
+            return redirect(url_for("nutrition.view_plan", plan_id=plan.id))
+            
+        except json.JSONDecodeError as e:
+            flash(f"❌ Error en el JSON de comidas: {str(e)}", "danger")
+        except Exception as e:
+            flash(f"❌ Error al actualizar plan: {str(e)}", "danger")
+            db.session.rollback()
+    
+    # GET: Mostrar formulario con datos actuales
+    analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
+    
+    # Convertir meals a JSON string para el formulario
+    meals_json = json.dumps(plan.meals, indent=2, ensure_ascii=False) if plan.meals else ""
+    
+    return render_template("admin_edit_nutrition.html", user=user, plan=plan, analyses=analyses, meals_json=meals_json)
+
+
+@admin_bp.route("/training/<int:plan_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_training_plan(plan_id):
+    """Editar plan de entrenamiento existente"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    plan = TrainingPlan.query.get_or_404(plan_id)
+    user = User.query.get_or_404(plan.user_id)
+    
+    if request.method == "POST":
+        try:
+            # Parsear JSON de entrenamientos si existe
+            workouts_json = request.form.get("workouts_json", "").strip()
+            if workouts_json:
+                plan.workouts = json.loads(workouts_json)
+            
+            # Actualizar campos
+            plan.title = request.form.get("title")
+            plan.description = request.form.get("description")
+            plan.goal = request.form.get("goal")
+            plan.frequency = request.form.get("frequency")
+            plan.routine_type = request.form.get("routine_type")
+            plan.duration_weeks = int(request.form.get("duration_weeks")) if request.form.get("duration_weeks") else None
+            plan.warm_up = request.form.get("warm_up")
+            plan.cool_down = request.form.get("cool_down")
+            plan.notes = request.form.get("notes")
+            plan.start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d").date() if request.form.get("start_date") else None
+            plan.end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date() if request.form.get("end_date") else None
+            plan.analysis_id = int(request.form.get("analysis_id")) if request.form.get("analysis_id") else None
+            plan.is_active = request.form.get("is_active") == "on"
+            
+            db.session.commit()
+            flash("✅ Plan de entrenamiento actualizado correctamente", "success")
+            return redirect(url_for("training.view_plan", plan_id=plan.id))
+            
+        except json.JSONDecodeError as e:
+            flash(f"❌ Error en el JSON de entrenamientos: {str(e)}", "danger")
+        except Exception as e:
+            flash(f"❌ Error al actualizar plan: {str(e)}", "danger")
+            db.session.rollback()
+    
+    # GET: Mostrar formulario con datos actuales
+    analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
+    
+    # Convertir workouts a JSON string para el formulario
+    workouts_json = json.dumps(plan.workouts, indent=2, ensure_ascii=False) if plan.workouts else ""
+    
+    return render_template("admin_edit_training.html", user=user, plan=plan, analyses=analyses, workouts_json=workouts_json)
+
+
+@admin_bp.route("/nutrition/<int:plan_id>/delete", methods=["POST"])
+@login_required
+def delete_nutrition_plan(plan_id):
+    """Eliminar plan nutricional"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    plan = NutritionPlan.query.get_or_404(plan_id)
+    user_id = plan.user_id
+    
+    try:
+        db.session.delete(plan)
+        db.session.commit()
+        flash("✅ Plan nutricional eliminado correctamente", "success")
+    except Exception as e:
+        flash(f"❌ Error al eliminar plan: {str(e)}", "danger")
+        db.session.rollback()
+    
+    return redirect(url_for("admin.user_analyses", user_id=user_id))
+
+
+@admin_bp.route("/training/<int:plan_id>/delete", methods=["POST"])
+@login_required
+def delete_training_plan(plan_id):
+    """Eliminar plan de entrenamiento"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    plan = TrainingPlan.query.get_or_404(plan_id)
+    user_id = plan.user_id
+    
+    try:
+        db.session.delete(plan)
+        db.session.commit()
+        flash("✅ Plan de entrenamiento eliminado correctamente", "success")
+    except Exception as e:
+        flash(f"❌ Error al eliminar plan: {str(e)}", "danger")
+        db.session.rollback()
+    
+    return redirect(url_for("admin.user_analyses", user_id=user_id))

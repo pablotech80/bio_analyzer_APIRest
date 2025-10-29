@@ -23,8 +23,18 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <div>
+                        <div class="d-flex gap-2">
                             {% if current_user.is_admin %}
+                            <!-- Botones Admin -->
+                            <a class="btn btn-sm btn-warning" href="{{ url_for('admin.edit_training_plan', plan_id=plan.id) }}" title="Editar plan">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                            <form method="POST" action="{{ url_for('admin.delete_training_plan', plan_id=plan.id) }}" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este plan de entrenamiento?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar plan">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
+                            </form>
                             <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
                                 ← Volver
                             </a>
