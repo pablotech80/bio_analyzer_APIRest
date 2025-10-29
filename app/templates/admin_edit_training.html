@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Crear Plan de Entrenamiento - {{ user.first_name }}{% endblock %}
+{% block title %}Editar Plan de Entrenamiento - {{ user.first_name }}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
@@ -9,7 +9,7 @@
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h2 class="mb-1">🏋️ Crear Plan de Entrenamiento</h2>
+                    <h2 class="mb-1">🏋️ Editar Plan de Entrenamiento</h2>
                     <p class="text-muted mb-0">Para: <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }})</p>
                 </div>
                 <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" class="btn btn-outline-secondary rounded-pill">
@@ -30,7 +30,7 @@
                     <div class="mb-3">
                         <label class="form-label"><strong>Título del Plan *</strong></label>
                         <input type="text" name="title" class="form-control" required 
-                               placeholder="Ej: Rutina Hipertrofia 4 días - PPL">
+                               value="{{ plan.title }}" placeholder="Ej: Rutina Hipertrofia 4 días - PPL">
                         <small class="text-muted">Nombre descriptivo del plan</small>
                     </div>
 
@@ -38,14 +38,14 @@
                     <div class="mb-3">
                         <label class="form-label"><strong>Descripción</strong></label>
                         <textarea name="description" class="form-control" rows="2" 
-                                  placeholder="Descripción general del plan"></textarea>
+                                  placeholder="Descripción general del plan">{{ plan.description or '' }}</textarea>
                     </div>
 
                     <!-- Objetivo -->
                     <div class="mb-3">
                         <label class="form-label"><strong>Objetivo</strong></label>
                         <input type="text" name="goal" class="form-control" 
-                               placeholder="Ej: Hipertrofia muscular, Fuerza, Resistencia">
+                               value="{{ plan.goal or '' }}" placeholder="Ej: Hipertrofia muscular, Fuerza, Resistencia">
                     </div>
 
                     <!-- Configuración -->
@@ -53,17 +53,17 @@
                         <div class="col-md-4">
                             <label class="form-label"><strong>Frecuencia</strong></label>
                             <input type="text" name="frequency" class="form-control" 
-                                   placeholder="Ej: 4 días/semana">
+                                   value="{{ plan.frequency or '' }}" placeholder="Ej: 4 días/semana">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label"><strong>Tipo de Rutina</strong></label>
                             <input type="text" name="routine_type" class="form-control" 
-                                   placeholder="Ej: Push/Pull/Legs">
+                                   value="{{ plan.routine_type or '' }}" placeholder="Ej: Push/Pull/Legs">
                         </div>
                         <div class="col-md-4">
                             <label class="form-label"><strong>Duración (semanas)</strong></label>
                             <input type="number" name="duration_weeks" class="form-control" 
-                                   placeholder="8">
+                                   value="{{ plan.duration_weeks or '' }}" placeholder="8">
                         </div>
                     </div>
 
@@ -102,7 +102,7 @@
       }
     ]
   }
-]'></textarea>
+]'>{{ workouts_json }}</textarea>
                         <small class="text-muted">
                             <a href="/docs/ESTRUCTURA_JSON_PLANES.md" target="_blank">Ver documentación de estructura JSON</a>
                         </small>
@@ -112,32 +112,32 @@
                     <div class="mb-3">
                         <label class="form-label"><strong>Calentamiento</strong></label>
                         <textarea name="warm_up" class="form-control" rows="3" 
-                                  placeholder="- 5 min cardio ligero&#10;- Movilidad articular 5 min&#10;- Series de aproximación con peso ligero"></textarea>
+                                  placeholder="- 5 min cardio ligero&#10;- Movilidad articular 5 min&#10;- Series de aproximación con peso ligero">{{ plan.warm_up or '' }}</textarea>
                     </div>
 
                     <!-- Enfriamiento -->
                     <div class="mb-3">
                         <label class="form-label"><strong>Enfriamiento</strong></label>
                         <textarea name="cool_down" class="form-control" rows="3" 
-                                  placeholder="- Estiramientos estáticos 10 min&#10;- Foam roller grupos trabajados&#10;- Respiración profunda 3 min"></textarea>
+                                  placeholder="- Estiramientos estáticos 10 min&#10;- Foam roller grupos trabajados&#10;- Respiración profunda 3 min">{{ plan.cool_down or '' }}</textarea>
                     </div>
 
                     <!-- Notas -->
                     <div class="mb-3">
                         <label class="form-label"><strong>Notas del Entrenador</strong></label>
                         <textarea name="notes" class="form-control" rows="4" 
-                                  placeholder="Importante:&#10;- Progresar peso cada semana si completas todas las reps&#10;- Descanso adecuado entre sesiones&#10;- Técnica perfecta antes de aumentar peso"></textarea>
+                                  placeholder="Importante:&#10;- Progresar peso cada semana si completas todas las reps&#10;- Descanso adecuado entre sesiones&#10;- Técnica perfecta antes de aumentar peso">{{ plan.notes or '' }}</textarea>
                     </div>
 
                     <!-- Fechas -->
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="form-label"><strong>Fecha de Inicio</strong></label>
-                            <input type="date" name="start_date" class="form-control">
+                            <input type="date" name="start_date" class="form-control" value="{{ plan.start_date.strftime('%Y-%m-%d') if plan.start_date else '' }}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label"><strong>Fecha de Fin</strong></label>
-                            <input type="date" name="end_date" class="form-control">
+                            <input type="date" name="end_date" class="form-control" value="{{ plan.end_date.strftime('%Y-%m-%d') if plan.end_date else '' }}">
                         </div>
                     </div>
 
@@ -148,7 +148,7 @@
                         <select name="analysis_id" class="form-select">
                             <option value="">-- Sin análisis relacionado --</option>
                             {% for analysis in analyses %}
-                            <option value="{{ analysis.id }}">
+                            <option value="{{ analysis.id }}" {% if plan.analysis_id == analysis.id %}selected{% endif %}>
                                 {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
                                 Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
                                 Masa Magra: {{ '%.1f'|format(analysis.lean_mass) }}kg
@@ -157,6 +157,17 @@
                         </select>
                     </div>
                     {% endif %}
+
+                    <!-- Estado Activo -->
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if plan.is_active %}checked{% endif %}>
+                            <label class="form-check-label" for="is_active">
+                                <strong>Plan Activo</strong>
+                            </label>
+                            <small class="text-muted d-block">Los planes inactivos no se mostrarán al usuario</small>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="card-footer bg-white">
@@ -166,7 +177,7 @@
                             <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
                         </a>
                         <button type="submit" class="btn btn-primary rounded-pill px-4">
-                            <i class="bi bi-check-lg me-1"></i>Crear Plan de Entrenamiento
+                            <i class="bi bi-check-lg me-1"></i>Guardar Cambios
                         </button>
                     </div>
                 </div>
