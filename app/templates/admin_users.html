@@ -20,26 +20,46 @@
             <button type="submit" class="btn btn-primary">Filtrar</button>
         </div>
     </form>
-    {% if users %}
-        <table class="table table-striped">
-            <thead>
+    {% if users_data %}
+        <table class="table table-hover">
+            <thead class="table-light">
                 <tr>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
+                    <th>Usuario</th>
                     <th>Email</th>
-                    <th>Género</th>
+                    <th>Análisis</th>
+                    <th>Planes Nutrición</th>
+                    <th>Planes Entrenamiento</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.first_name }}</td>
-                    <td>{{ user.last_name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.gender }}</td>
+                {% for data in users_data %}
+                <tr {% if data.needs_attention %}class="table-warning"{% endif %}>
                     <td>
-                        <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" class="btn btn-sm btn-info">Ver análisis</a>
+                        <strong>{{ data.user.first_name }} {{ data.user.last_name }}</strong>
+                        <br><small class="text-muted">{{ data.user.gender }}</small>
+                    </td>
+                    <td>{{ data.user.email }}</td>
+                    <td>
+                        <span class="badge bg-primary">{{ data.total_analyses }}</span>
+                        {% if data.analyses_without_plans > 0 %}
+                        <br><small class="text-danger">{{ data.analyses_without_plans }} sin planes</small>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge bg-success">{{ data.total_nutrition_plans }}</span></td>
+                    <td><span class="badge bg-info">{{ data.total_training_plans }}</span></td>
+                    <td>
+                        {% if data.needs_attention %}
+                        <span class="badge bg-warning text-dark">⚠️ Requiere atención</span>
+                        {% else %}
+                        <span class="badge bg-success">✓ Al día</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ url_for('admin.user_analyses', user_id=data.user.id) }}" class="btn btn-sm btn-primary">
+                            Ver Dashboard
+                        </a>
                     </td>
                 </tr>
                 {% endfor %}

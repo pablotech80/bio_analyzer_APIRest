@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Plan de Entrenamiento - {{ user.first_name }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-xl-10 mx-auto">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="mb-1">🏋️ Crear Plan de Entrenamiento</h2>
+                    <p class="text-muted mb-0">Para: <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }})</p>
+                </div>
+                <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" class="btn btn-outline-secondary rounded-pill">
+                    <i class="bi bi-arrow-left me-1"></i>Cancelar
+                </a>
+            </div>
+
+            <!-- Formulario -->
+            <form method="POST" class="card shadow-sm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Información del Plan</h5>
+                </div>
+
+                <div class="card-body">
+                    <!-- Título -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Título del Plan *</strong></label>
+                        <input type="text" name="title" class="form-control" required 
+                               placeholder="Ej: Rutina Hipertrofia 4 días - PPL">
+                        <small class="text-muted">Nombre descriptivo del plan</small>
+                    </div>
+
+                    <!-- Descripción -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Descripción</strong></label>
+                        <textarea name="description" class="form-control" rows="2" 
+                                  placeholder="Descripción general del plan"></textarea>
+                    </div>
+
+                    <!-- Objetivo -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Objetivo</strong></label>
+                        <input type="text" name="goal" class="form-control" 
+                               placeholder="Ej: Hipertrofia muscular, Fuerza, Resistencia">
+                    </div>
+
+                    <!-- Configuración -->
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Frecuencia</strong></label>
+                            <input type="text" name="frequency" class="form-control" 
+                                   placeholder="Ej: 4 días/semana">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Tipo de Rutina</strong></label>
+                            <input type="text" name="routine_type" class="form-control" 
+                                   placeholder="Ej: Push/Pull/Legs">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label"><strong>Duración (semanas)</strong></label>
+                            <input type="number" name="duration_weeks" class="form-control" 
+                                   placeholder="8">
+                        </div>
+                    </div>
+
+                    <!-- JSON de Entrenamientos -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Entrenamientos (JSON)</strong></label>
+                        <textarea name="workouts_json" class="form-control font-monospace" style="font-size: 13px; min-height: 400px; resize: vertical;" 
+                                  placeholder='[
+  {
+    "day": "Lunes",
+    "name": "Push (Pecho/Hombros/Tríceps)",
+    "exercises": [
+      {
+        "name": "Press banca",
+        "sets": 4,
+        "reps": "8-10",
+        "rest": "90s"
+      },
+      {
+        "name": "Press inclinado",
+        "sets": 3,
+        "reps": "10-12",
+        "rest": "75s"
+      }
+    ]
+  },
+  {
+    "day": "Miércoles",
+    "name": "Pull (Espalda/Bíceps)",
+    "exercises": [
+      {
+        "name": "Dominadas",
+        "sets": 4,
+        "reps": "8-10",
+        "rest": "90s"
+      }
+    ]
+  }
+]'></textarea>
+                        <small class="text-muted">
+                            <a href="/docs/ESTRUCTURA_JSON_PLANES.md" target="_blank">Ver documentación de estructura JSON</a>
+                        </small>
+                    </div>
+
+                    <!-- Calentamiento -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Calentamiento</strong></label>
+                        <textarea name="warm_up" class="form-control" rows="3" 
+                                  placeholder="- 5 min cardio ligero&#10;- Movilidad articular 5 min&#10;- Series de aproximación con peso ligero"></textarea>
+                    </div>
+
+                    <!-- Enfriamiento -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Enfriamiento</strong></label>
+                        <textarea name="cool_down" class="form-control" rows="3" 
+                                  placeholder="- Estiramientos estáticos 10 min&#10;- Foam roller grupos trabajados&#10;- Respiración profunda 3 min"></textarea>
+                    </div>
+
+                    <!-- Notas -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Notas del Entrenador</strong></label>
+                        <textarea name="notes" class="form-control" rows="4" 
+                                  placeholder="Importante:&#10;- Progresar peso cada semana si completas todas las reps&#10;- Descanso adecuado entre sesiones&#10;- Técnica perfecta antes de aumentar peso"></textarea>
+                    </div>
+
+                    <!-- Fechas -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Fecha de Inicio</strong></label>
+                            <input type="date" name="start_date" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><strong>Fecha de Fin</strong></label>
+                            <input type="date" name="end_date" class="form-control">
+                        </div>
+                    </div>
+
+                    <!-- Análisis Relacionado -->
+                    {% if analyses %}
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
+                        <select name="analysis_id" class="form-select">
+                            <option value="">-- Sin análisis relacionado --</option>
+                            {% for analysis in analyses %}
+                            <option value="{{ analysis.id }}">
+                                {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
+                                Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
+                                Masa Magra: {{ '%.1f'|format(analysis.lean_mass) }}kg
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" 
+                           class="btn btn-outline-secondary rounded-pill">
+                            <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+                        </a>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                            <i class="bi bi-check-lg me-1"></i>Crear Plan de Entrenamiento
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Ayuda -->
+            <div class="alert alert-info mt-4">
+                <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Ayuda</h6>
+                <ul class="mb-0">
+                    <li>El campo <strong>Título</strong> es obligatorio</li>
+                    <li>El JSON de entrenamientos debe seguir la estructura documentada</li>
+                    <li>Cada ejercicio debe tener: name, sets, reps, rest</li>
+                    <li>El plan se creará como <strong>activo</strong> automáticamente</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+{% endblock %}
