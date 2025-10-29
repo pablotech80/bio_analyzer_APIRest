@@ -37,6 +37,12 @@ class Config:
     WTF_CSRF_ENABLED = True
     WTF_CSRF_TIME_LIMIT = None
 
+    # AWS S3 Configuration
+    AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+    S3_BUCKET = os.environ.get("S3_BUCKET", "coach360-media")
+    AWS_REGION = os.environ.get("AWS_REGION", "eu-north-1")
+
     # Email (para futuro)
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = int(os.environ.get("MAIL_PORT", 587))
