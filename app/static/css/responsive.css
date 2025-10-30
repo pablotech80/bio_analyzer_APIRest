@@ -1,0 +1,469 @@
+/* ============================================================================
+   RESPONSIVE IMPROVEMENTS - CoachBodyFit360
+   Mejoras de responsive para móviles, tablets y desktop
+   ============================================================================ */
+
+/* ============================================================================
+   TIPOGRAFÍA RESPONSIVE
+   ============================================================================ */
+
+/* Tamaños de fuente base responsive */
+html {
+    font-size: 16px;
+}
+
+@media (max-width: 576px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+/* Headings responsive */
+h1, .h1 {
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+}
+
+h2, .h2 {
+    font-size: clamp(1.5rem, 4vw, 2rem);
+}
+
+h3, .h3 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+h4, .h4 {
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+}
+
+h5, .h5 {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+}
+
+h6, .h6 {
+    font-size: clamp(0.9rem, 1.5vw, 1rem);
+}
+
+/* ============================================================================
+   NAVBAR RESPONSIVE
+   ============================================================================ */
+
+/* Navbar brand responsive */
+.navbar-brand {
+    font-size: clamp(1.2rem, 4vw, 1.5rem) !important;
+}
+
+/* Navbar items en móvil */
+@media (max-width: 991px) {
+    .navbar-nav {
+        margin-top: 1rem;
+    }
+    
+    .navbar-nav .nav-item {
+        margin-bottom: 0.5rem;
+    }
+    
+    .navbar-nav .nav-link {
+        padding: 0.75rem 1rem !important;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+    
+    /* Mejorar contraste en móvil */
+    .navbar-collapse {
+        background: rgba(0, 0, 0, 0.15) !important;
+        padding: 1.5rem !important;
+        border-radius: 12px !important;
+        margin-top: 1rem !important;
+    }
+}
+
+/* ============================================================================
+   BOTONES RESPONSIVE
+   ============================================================================ */
+
+/* Botones más grandes en móvil para mejor touch */
+@media (max-width: 576px) {
+    .btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .btn-lg {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+}
+
+/* Botones en grupo stack en móvil */
+@media (max-width: 576px) {
+    .btn-group-responsive {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-group-responsive .btn {
+        width: 100%;
+    }
+}
+
+/* ============================================================================
+   CARDS RESPONSIVE
+   ============================================================================ */
+
+/* Cards con padding ajustado */
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1rem !important;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem !important;
+    }
+}
+
+/* ============================================================================
+   TABLAS RESPONSIVE
+   ============================================================================ */
+
+/* Tablas scroll horizontal en móvil */
+@media (max-width: 768px) {
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .table {
+        font-size: 0.875rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem;
+        white-space: nowrap;
+    }
+}
+
+/* ============================================================================
+   FORMULARIOS RESPONSIVE
+   ============================================================================ */
+
+/* Inputs y textareas más grandes en móvil */
+@media (max-width: 576px) {
+    .form-control,
+    .form-select {
+        font-size: 16px; /* Evita zoom en iOS */
+        padding: 0.75rem;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    textarea.form-control {
+        min-height: 120px;
+    }
+}
+
+/* Labels en columnas stack en móvil */
+@media (max-width: 576px) {
+    .row.g-3 > [class*="col-"] {
+        margin-bottom: 1rem;
+    }
+}
+
+/* ============================================================================
+   FOOTER RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    footer {
+        padding: 3rem 0 1.5rem !important;
+        text-align: center;
+    }
+    
+    footer .col-lg-4,
+    footer .col-lg-3,
+    footer .col-lg-2,
+    footer .col-md-6 {
+        margin-bottom: 2rem;
+    }
+    
+    footer .text-lg-end {
+        text-align: center !important;
+    }
+    
+    footer .d-flex {
+        justify-content: center !important;
+    }
+}
+
+/* ============================================================================
+   IMÁGENES RESPONSIVE
+   ============================================================================ */
+
+/* Imágenes siempre responsive */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Fotos de análisis responsive */
+@media (max-width: 768px) {
+    .col-md-4 img[alt*="Foto"] {
+        height: 250px !important;
+        object-fit: cover;
+    }
+}
+
+@media (max-width: 576px) {
+    .col-md-4 img[alt*="Foto"] {
+        height: 200px !important;
+    }
+}
+
+/* ============================================================================
+   CONTENEDORES RESPONSIVE
+   ============================================================================ */
+
+/* Padding lateral reducido en móvil */
+@media (max-width: 576px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+/* Márgenes verticales ajustados */
+@media (max-width: 576px) {
+    .my-5 {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    .my-4 {
+        margin-top: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .mb-5 {
+        margin-bottom: 2rem !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1.5rem !important;
+    }
+}
+
+/* ============================================================================
+   MODALES RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+    
+    .modal-content {
+        border-radius: 12px;
+    }
+    
+    .modal-header,
+    .modal-footer {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1rem;
+    }
+}
+
+/* ============================================================================
+   ALERTS RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 576px) {
+    .alert {
+        font-size: 0.9rem;
+        padding: 0.75rem 1rem;
+    }
+}
+
+/* ============================================================================
+   BADGES Y PILLS RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 576px) {
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.35em 0.65em;
+    }
+}
+
+/* ============================================================================
+   FLEX UTILITIES RESPONSIVE
+   ============================================================================ */
+
+/* Stack flex items en móvil */
+@media (max-width: 576px) {
+    .d-flex.flex-responsive {
+        flex-direction: column !important;
+        gap: 1rem;
+    }
+    
+    .d-flex.flex-responsive > * {
+        width: 100% !important;
+    }
+}
+
+/* ============================================================================
+   MARKDOWN CONTENT RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .markdown-content {
+        font-size: 0.95rem;
+    }
+    
+    .markdown-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .markdown-content h2 {
+        font-size: 1.3rem;
+    }
+    
+    .markdown-content h3 {
+        font-size: 1.1rem;
+    }
+    
+    .markdown-content table {
+        font-size: 0.85rem;
+    }
+    
+    .markdown-content pre {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+        overflow-x: auto;
+    }
+}
+
+/* ============================================================================
+   TEXTAREAS MONOSPACE RESPONSIVE
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    textarea[style*="monospace"],
+    textarea.font-monospace {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    textarea[style*="monospace"],
+    textarea.font-monospace {
+        font-size: 12px !important;
+    }
+}
+
+/* ============================================================================
+   TOUCH IMPROVEMENTS
+   ============================================================================ */
+
+/* Áreas de toque más grandes en móvil */
+@media (max-width: 768px) {
+    a, button, .btn, .nav-link {
+        min-height: 44px; /* Tamaño mínimo recomendado para touch */
+        display: inline-flex;
+        align-items: center;
+    }
+}
+
+/* ============================================================================
+   SCROLL IMPROVEMENTS
+   ============================================================================ */
+
+/* Scroll suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ocultar scrollbar pero mantener funcionalidad */
+.scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+
+/* ============================================================================
+   PRINT STYLES
+   ============================================================================ */
+
+@media print {
+    .navbar,
+    footer,
+    .btn,
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        font-size: 12pt;
+    }
+    
+    .container {
+        max-width: 100%;
+    }
+}
+
+/* ============================================================================
+   LANDSCAPE ORIENTATION
+   ============================================================================ */
+
+@media (max-width: 768px) and (orientation: landscape) {
+    .navbar {
+        padding: 0.5rem 0 !important;
+    }
+    
+    .my-5 {
+        margin-top: 1rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
+/* ============================================================================
+   ACCESSIBILITY IMPROVEMENTS
+   ============================================================================ */
+
+/* Focus visible mejorado */
+*:focus-visible {
+    outline: 2px solid #E67E22;
+    outline-offset: 2px;
+}
+
+/* Reducir movimiento para usuarios con preferencias */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
