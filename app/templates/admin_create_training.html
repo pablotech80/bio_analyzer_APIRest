@@ -67,44 +67,33 @@
                         </div>
                     </div>
 
-                    <!-- JSON de Entrenamientos -->
+                    <!-- Entrenamientos en Markdown -->
                     <div class="mb-3">
-                        <label class="form-label"><strong>Entrenamientos (JSON)</strong></label>
-                        <textarea name="workouts_json" class="form-control font-monospace" style="font-size: 13px; min-height: 400px; resize: vertical;" 
-                                  placeholder='[
-  {
-    "day": "Lunes",
-    "name": "Push (Pecho/Hombros/Tríceps)",
-    "exercises": [
-      {
-        "name": "Press banca",
-        "sets": 4,
-        "reps": "8-10",
-        "rest": "90s"
-      },
-      {
-        "name": "Press inclinado",
-        "sets": 3,
-        "reps": "10-12",
-        "rest": "75s"
-      }
-    ]
-  },
-  {
-    "day": "Miércoles",
-    "name": "Pull (Espalda/Bíceps)",
-    "exercises": [
-      {
-        "name": "Dominadas",
-        "sets": 4,
-        "reps": "8-10",
-        "rest": "90s"
-      }
-    ]
-  }
-]'></textarea>
+                        <label class="form-label"><strong>Entrenamientos (Markdown)</strong></label>
+                        <textarea name="workouts_text" class="form-control" style="font-size: 14px; min-height: 400px; resize: vertical; font-family: 'Courier New', monospace;" 
+                                  placeholder='## Lunes - Push (Pecho, Hombros, Tríceps)
+
+**1. Press Banca**
+- 4 series x 8-10 reps
+- Descanso: 90 segundos
+- Peso: 80% 1RM
+
+**2. Press Inclinado con Mancuernas**
+- 3 series x 10-12 reps
+- Descanso: 60 segundos
+
+> 💪 **Técnica:** Controla la fase excéntrica
+
+---
+
+## Martes - Pull (Espalda, Bíceps)
+
+**1. Dominadas**
+- 4 series x Max reps
+- Descanso: 90 segundos
+'></textarea>
                         <small class="text-muted">
-                            <a href="/docs/ESTRUCTURA_JSON_PLANES.md" target="_blank">Ver documentación de estructura JSON</a>
+                            Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
                         </small>
                     </div>
 
@@ -177,8 +166,8 @@
                 <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Ayuda</h6>
                 <ul class="mb-0">
                     <li>El campo <strong>Título</strong> es obligatorio</li>
-                    <li>El JSON de entrenamientos debe seguir la estructura documentada</li>
-                    <li>Cada ejercicio debe tener: name, sets, reps, rest</li>
+                    <li>Usa <strong>Markdown</strong> para formatear el contenido</li>
+                    <li>Puedes pedir a ChatGPT que genere el plan en formato Markdown</li>
                     <li>El plan se creará como <strong>activo</strong> automáticamente</li>
                 </ul>
             </div>

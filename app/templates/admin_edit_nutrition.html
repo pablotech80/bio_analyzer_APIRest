@@ -72,24 +72,12 @@
                         </div>
                     </div>
 
-                    <!-- JSON de Comidas -->
+                    <!-- Comidas en Markdown -->
                     <div class="mb-3">
-                        <label class="form-label"><strong>Comidas (JSON)</strong></label>
-                        <textarea name="meals_json" class="form-control font-monospace" style="font-size: 13px; min-height: 300px; resize: vertical;" 
-                                  placeholder='[
-  {
-    "name": "Desayuno",
-    "time": "08:00",
-    "foods": ["Avena 80g", "Claras 4u", "Plátano 1u"]
-  },
-  {
-    "name": "Comida",
-    "time": "14:00",
-    "foods": ["Pollo 200g", "Arroz 100g", "Verduras"]
-  }
-]'>{{ meals_json }}</textarea>
+                        <label class="form-label"><strong>Comidas (Markdown)</strong></label>
+                        <textarea name="meals_text" class="form-control" style="font-size: 14px; min-height: 300px; resize: vertical; font-family: 'Courier New', monospace;">{{ plan.meals if plan.meals else '' }}</textarea>
                         <small class="text-muted">
-                            <a href="/docs/ESTRUCTURA_JSON_PLANES.md" target="_blank">Ver documentación de estructura JSON</a>
+                            Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
                         </small>
                     </div>
 

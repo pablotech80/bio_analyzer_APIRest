@@ -106,11 +106,8 @@ def create_nutrition_plan(user_id):
     
     if request.method == "POST":
         try:
-            # Parsear JSON de comidas si existe
-            meals_json = request.form.get("meals_json", "").strip()
-            meals = None
-            if meals_json:
-                meals = json.loads(meals_json)
+            # Obtener meals como texto Markdown
+            meals_text = request.form.get("meals_text", "").strip() or None
             
             # Crear plan
             plan = NutritionPlan(
@@ -123,7 +120,7 @@ def create_nutrition_plan(user_id):
                 protein_grams=int(request.form.get("protein_grams")) if request.form.get("protein_grams") else None,
                 carbs_grams=int(request.form.get("carbs_grams")) if request.form.get("carbs_grams") else None,
                 fats_grams=int(request.form.get("fats_grams")) if request.form.get("fats_grams") else None,
-                meals=meals,
+                meals=meals_text,
                 supplements=request.form.get("supplements"),
                 notes=request.form.get("notes"),
                 start_date=datetime.strptime(request.form.get("start_date"), "%Y-%m-%d").date() if request.form.get("start_date") else None,
@@ -138,8 +135,6 @@ def create_nutrition_plan(user_id):
             # Redirigir directamente al plan creado para verificar
             return redirect(url_for("nutrition.view_plan", plan_id=plan.id))
             
-        except json.JSONDecodeError as e:
-            flash(f"❌ Error en el JSON de comidas: {str(e)}", "danger")
         except Exception as e:
             flash(f"❌ Error al crear plan: {str(e)}", "danger")
             db.session.rollback()
@@ -160,11 +155,8 @@ def create_training_plan(user_id):
     
     if request.method == "POST":
         try:
-            # Parsear JSON de entrenamientos si existe
-            workouts_json = request.form.get("workouts_json", "").strip()
-            workouts = None
-            if workouts_json:
-                workouts = json.loads(workouts_json)
+            # Obtener workouts como texto Markdown
+            workouts_text = request.form.get("workouts_text", "").strip() or None
             
             # Crear plan
             plan = TrainingPlan(
@@ -176,7 +168,7 @@ def create_training_plan(user_id):
                 frequency=request.form.get("frequency"),
                 routine_type=request.form.get("routine_type"),
                 duration_weeks=int(request.form.get("duration_weeks")) if request.form.get("duration_weeks") else None,
-                workouts=workouts,
+                workouts=workouts_text,
                 warm_up=request.form.get("warm_up"),
                 cool_down=request.form.get("cool_down"),
                 notes=request.form.get("notes"),
@@ -192,8 +184,6 @@ def create_training_plan(user_id):
             # Redirigir directamente al plan creado para verificar
             return redirect(url_for("training.view_plan", plan_id=plan.id))
             
-        except json.JSONDecodeError as e:
-            flash(f"❌ Error en el JSON de entrenamientos: {str(e)}", "danger")
         except Exception as e:
             flash(f"❌ Error al crear plan: {str(e)}", "danger")
             db.session.rollback()
@@ -215,10 +205,9 @@ def edit_nutrition_plan(plan_id):
     
     if request.method == "POST":
         try:
-            # Parsear JSON de comidas si existe
-            meals_json = request.form.get("meals_json", "").strip()
-            if meals_json:
-                plan.meals = json.loads(meals_json)
+            # Obtener meals como texto Markdown
+            meals_text = request.form.get("meals_text", "").strip() or None
+            plan.meals = meals_text
             
             # Actualizar campos
             plan.title = request.form.get("title")
@@ -239,8 +228,6 @@ def edit_nutrition_plan(plan_id):
             flash("✅ Plan nutricional actualizado correctamente", "success")
             return redirect(url_for("nutrition.view_plan", plan_id=plan.id))
             
-        except json.JSONDecodeError as e:
-            flash(f"❌ Error en el JSON de comidas: {str(e)}", "danger")
         except Exception as e:
             flash(f"❌ Error al actualizar plan: {str(e)}", "danger")
             db.session.rollback()
@@ -248,10 +235,7 @@ def edit_nutrition_plan(plan_id):
     # GET: Mostrar formulario con datos actuales
     analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
     
-    # Convertir meals a JSON string para el formulario
-    meals_json = json.dumps(plan.meals, indent=2, ensure_ascii=False) if plan.meals else ""
-    
-    return render_template("admin_edit_nutrition.html", user=user, plan=plan, analyses=analyses, meals_json=meals_json)
+    return render_template("admin_edit_nutrition.html", user=user, plan=plan, analyses=analyses)
 
 
 @admin_bp.route("/training/<int:plan_id>/edit", methods=["GET", "POST"])
@@ -266,10 +250,9 @@ def edit_training_plan(plan_id):
     
     if request.method == "POST":
         try:
-            # Parsear JSON de entrenamientos si existe
-            workouts_json = request.form.get("workouts_json", "").strip()
-            if workouts_json:
-                plan.workouts = json.loads(workouts_json)
+            # Obtener workouts como texto Markdown
+            workouts_text = request.form.get("workouts_text", "").strip() or None
+            plan.workouts = workouts_text
             
             # Actualizar campos
             plan.title = request.form.get("title")
@@ -290,8 +273,6 @@ def edit_training_plan(plan_id):
             flash("✅ Plan de entrenamiento actualizado correctamente", "success")
             return redirect(url_for("training.view_plan", plan_id=plan.id))
             
-        except json.JSONDecodeError as e:
-            flash(f"❌ Error en el JSON de entrenamientos: {str(e)}", "danger")
         except Exception as e:
             flash(f"❌ Error al actualizar plan: {str(e)}", "danger")
             db.session.rollback()
@@ -299,10 +280,7 @@ def edit_training_plan(plan_id):
     # GET: Mostrar formulario con datos actuales
     analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
     
-    # Convertir workouts a JSON string para el formulario
-    workouts_json = json.dumps(plan.workouts, indent=2, ensure_ascii=False) if plan.workouts else ""
-    
-    return render_template("admin_edit_training.html", user=user, plan=plan, analyses=analyses, workouts_json=workouts_json)
+    return render_template("admin_edit_training.html", user=user, plan=plan, analyses=analyses)
 
 
 @admin_bp.route("/nutrition/<int:plan_id>/delete", methods=["POST"])

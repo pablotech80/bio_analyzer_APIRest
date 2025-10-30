@@ -72,24 +72,32 @@
                         </div>
                     </div>
 
-                    <!-- JSON de Comidas -->
+                    <!-- Comidas en Markdown -->
                     <div class="mb-3">
-                        <label class="form-label"><strong>Comidas (JSON)</strong></label>
-                        <textarea name="meals_json" class="form-control font-monospace" style="font-size: 13px; min-height: 300px; resize: vertical;" 
-                                  placeholder='[
-  {
-    "name": "Desayuno",
-    "time": "08:00",
-    "foods": ["Avena 80g", "Claras 4u", "Plátano 1u"]
-  },
-  {
-    "name": "Comida",
-    "time": "14:00",
-    "foods": ["Pollo 200g", "Arroz 100g", "Verduras"]
-  }
-]'></textarea>
+                        <label class="form-label"><strong>Comidas (Markdown)</strong></label>
+                        <textarea name="meals_text" class="form-control" style="font-size: 14px; min-height: 300px; resize: vertical; font-family: 'Courier New', monospace;" 
+                                  placeholder='## Desayuno (08:00)
+
+**Proteínas:**
+- 4 claras de huevo
+- 1 scoop whey protein
+
+**Carbohidratos:**
+- 80g avena
+- 1 plátano
+
+> 💡 **Tip:** Mezcla con canela
+
+---
+
+## Almuerzo (14:00)
+
+**Proteínas:**
+- 200g pechuga de pollo
+- ...
+'></textarea>
                         <small class="text-muted">
-                            <a href="/docs/ESTRUCTURA_JSON_PLANES.md" target="_blank">Ver documentación de estructura JSON</a>
+                            Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
                         </small>
                     </div>
 
@@ -155,8 +163,8 @@
                 <h6 class="alert-heading"><i class="bi bi-info-circle me-2"></i>Ayuda</h6>
                 <ul class="mb-0">
                     <li>El campo <strong>Título</strong> es obligatorio</li>
-                    <li>El JSON de comidas debe seguir la estructura documentada</li>
-                    <li>Puedes dejar campos vacíos si no son necesarios</li>
+                    <li>Usa <strong>Markdown</strong> para formatear el contenido</li>
+                    <li>Puedes pedir a ChatGPT que genere el plan en formato Markdown</li>
                     <li>El plan se creará como <strong>activo</strong> automáticamente</li>
                 </ul>
             </div>
