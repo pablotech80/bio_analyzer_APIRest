@@ -36,9 +36,9 @@
 
                     <!-- Descripción -->
                     <div class="mb-3">
-                        <label class="form-label"><strong>Descripción</strong></label>
-                        <textarea name="description" class="form-control" rows="2" 
-                                  placeholder="Descripción general del plan">{{ plan.description or '' }}</textarea>
+                        <label class="form-label"><strong>Descripción (Markdown)</strong></label>
+                        <textarea name="description" class="form-control" rows="3" style="font-family: 'Courier New', monospace;" 
+                                  placeholder="Descripción general del plan en formato Markdown">{{ plan.description or '' }}</textarea>
                     </div>
 
                     <!-- Objetivo -->
@@ -83,16 +83,16 @@
 
                     <!-- Suplementación -->
                     <div class="mb-3">
-                        <label class="form-label"><strong>Suplementación</strong></label>
-                        <textarea name="supplements" class="form-control" rows="3" 
-                                  placeholder="- Proteína Whey: 1 scoop post-entreno&#10;- Creatina: 5g diarios&#10;- Omega 3: 2g diarios">{{ plan.supplements or '' }}</textarea>
+                        <label class="form-label"><strong>Suplementación (Markdown)</strong></label>
+                        <textarea name="supplements" class="form-control" rows="4" style="font-family: 'Courier New', monospace;" 
+                                  placeholder="## Suplementos Recomendados&#10;&#10;- **Proteína Whey:** 1 scoop post-entreno&#10;- **Creatina:** 5g diarios&#10;- **Omega 3:** 2g diarios">{{ plan.supplements or '' }}</textarea>
                     </div>
 
                     <!-- Notas -->
                     <div class="mb-3">
-                        <label class="form-label"><strong>Notas del Entrenador</strong></label>
-                        <textarea name="notes" class="form-control" rows="4" 
-                                  placeholder="Importante:&#10;- Beber mínimo 3L de agua al día&#10;- Ajustar carbos según actividad&#10;- Pesarse cada lunes en ayunas">{{ plan.notes or '' }}</textarea>
+                        <label class="form-label"><strong>Notas del Entrenador (Markdown)</strong></label>
+                        <textarea name="notes" class="form-control" rows="5" style="font-family: 'Courier New', monospace;" 
+                                  placeholder="## Indicaciones Importantes&#10;&#10;- Beber mínimo **3L de agua** al día&#10;- Ajustar carbos según actividad&#10;- Pesarse cada lunes en ayunas&#10;&#10;> 💡 **Tip:** Prepara comidas el domingo">{{ plan.notes or '' }}</textarea>
                     </div>
 
                     <!-- Fechas -->
