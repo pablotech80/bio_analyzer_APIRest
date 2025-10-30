@@ -233,23 +233,27 @@
                         Plan de Comidas
                     </h5>
                     
-                    {# Renderizar JSON de forma visual y flexible #}
-                    <div class="nutrition-plan-content" id="nutritionContent"></div>
-                    
-                    <script>
-                    // Renderizar JSON de forma visual
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const container = document.getElementById('nutritionContent');
-                        if (container) {
-                            try {
-                                const data = {{ plan.meals | tojson | safe }};
-                                container.innerHTML = renderNutritionPlan(data);
-                            } catch(e) {
-                                console.error('Error renderizando plan:', e);
-                                container.innerHTML = '<p class="text-muted">Error al cargar el plan</p>';
+                    {# Si meals es un string (Markdown), renderizarlo directamente #}
+                    {% if plan.meals is string %}
+                        <div class="markdown-content">{{ plan.meals | markdown }}</div>
+                    {% else %}
+                        {# Si es JSON, usar el renderizador JavaScript #}
+                        <div class="nutrition-plan-content" id="nutritionContent"></div>
+                        
+                        <script>
+                        // Renderizar JSON de forma visual
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const container = document.getElementById('nutritionContent');
+                            if (container) {
+                                try {
+                                    const data = {{ plan.meals | tojson | safe }};
+                                    container.innerHTML = renderNutritionPlan(data);
+                                } catch(e) {
+                                    console.error('Error renderizando plan:', e);
+                                    container.innerHTML = '<p class="text-muted">Error al cargar el plan</p>';
+                                }
                             }
-                        }
-                    });
+                        });
                     
                     function renderNutritionPlan(data) {
                         if (!data) return '<p class="text-muted">No hay datos disponibles</p>';
@@ -352,6 +356,7 @@
                             .replace(/^./, str => str.toUpperCase());
                     }
                     </script>
+                    {% endif %}
                 </div>
                 {% endif %}
 

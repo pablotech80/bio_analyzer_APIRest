@@ -219,23 +219,27 @@
                         Plan de Entrenamientos
                     </h5>
                     
-                    {# Renderizar JSON de forma visual y flexible #}
-                    <div class="training-plan-content" id="trainingContent"></div>
-                    
-                    <script>
-                    // Renderizar JSON de forma visual
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const container = document.getElementById('trainingContent');
-                        if (container) {
-                            try {
-                                const data = {{ plan.workouts | tojson | safe }};
-                                container.innerHTML = renderTrainingPlan(data);
-                            } catch(e) {
-                                console.error('Error renderizando plan:', e);
-                                container.innerHTML = '<p class="text-muted">Error al cargar el plan</p>';
+                    {# Si workouts es un string (Markdown), renderizarlo directamente #}
+                    {% if plan.workouts is string %}
+                        <div class="markdown-content">{{ plan.workouts | markdown }}</div>
+                    {% else %}
+                        {# Si es JSON, usar el renderizador JavaScript #}
+                        <div class="training-plan-content" id="trainingContent"></div>
+                        
+                        <script>
+                        // Renderizar JSON de forma visual
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const container = document.getElementById('trainingContent');
+                            if (container) {
+                                try {
+                                    const data = {{ plan.workouts | tojson | safe }};
+                                    container.innerHTML = renderTrainingPlan(data);
+                                } catch(e) {
+                                    console.error('Error renderizando plan:', e);
+                                    container.innerHTML = '<p class="text-muted">Error al cargar el plan</p>';
+                                }
                             }
-                        }
-                    });
+                        });
                     
                     function renderTrainingPlan(data) {
                         if (!data) return '<p class="text-muted">No hay datos disponibles</p>';
@@ -336,6 +340,7 @@
                             .replace(/^./, str => str.toUpperCase());
                     }
                     </script>
+                    {% endif %}
                 </div>
                 {% endif %}
 
