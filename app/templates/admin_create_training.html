@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-xl-10 mx-auto">
             <!-- Header -->
-            <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-3">
                 <div>
                     <h2 class="mb-1">🏋️ Crear Plan de Entrenamiento</h2>
                     <p class="text-muted mb-0">Para: <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }})</p>
@@ -149,12 +149,12 @@
                 </div>
 
                 <div class="card-footer bg-white">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex flex-column flex-sm-row justify-content-between gap-2">
                         <a href="{{ url_for('admin.user_analyses', user_id=user.id) }}" 
-                           class="btn btn-outline-secondary rounded-pill">
+                           class="btn btn-outline-secondary rounded-pill order-2 order-sm-1">
                             <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
                         </a>
-                        <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 order-1 order-sm-2">
                             <i class="bi bi-check-lg me-1"></i>Crear Plan de Entrenamiento
                         </button>
                     </div>
