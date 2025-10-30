@@ -107,6 +107,19 @@ def create_app(config_name="development"):
     # Jinja globals
     from datetime import datetime
     app.jinja_env.globals.update(now = datetime.now)
+    
+    # Filtro Markdown para renderizar MD en templates
+    import mistune
+    from markupsafe import Markup
+    
+    def markdown_filter(text):
+        """Convierte Markdown a HTML seguro"""
+        if not text:
+            return ""
+        html = mistune.html(text)
+        return Markup(html)
+    
+    app.jinja_env.filters['markdown'] = markdown_filter
 
     @app.shell_context_processor
     def make_shell_context():
