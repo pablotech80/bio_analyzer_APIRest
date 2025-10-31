@@ -13,12 +13,12 @@ LOGO_PATH = "app/static/images/logo2-coachbodyfit360.png"
 WIDTH = 1200
 HEIGHT = 630
 
-# Colores
-COLOR_BG_START = (26, 26, 26)      # #1A1A1A
-COLOR_BG_END = (44, 62, 80)        # #2C3E50
+# Colores - Diseño claro y visible
+COLOR_BG_START = (231, 76, 60)     # #E74C3C (Rojo vibrante)
+COLOR_BG_END = (192, 57, 43)       # #C0392B (Rojo oscuro)
 COLOR_WHITE = (255, 255, 255)      # #FFFFFF
-COLOR_GRAY = (189, 195, 199)       # #BDC3C7
-COLOR_GREEN = (39, 174, 96)        # #27AE60
+COLOR_BLACK = (0, 0, 0)            # #000000
+COLOR_LIGHT = (255, 255, 255)      # #FFFFFF
 
 def create_gradient_background(width, height, color_start, color_end):
     """Crea un fondo con gradiente diagonal."""
@@ -37,19 +37,29 @@ def create_gradient_background(width, height, color_start, color_end):
     base.paste(top, (0, 0), mask)
     return base
 
-def add_logo(image, logo_path, size=250):
-    """Añade el logo centrado."""
+def add_logo(image, logo_path, size=220):
+    """Añade el logo centrado con fondo blanco circular."""
     try:
         logo = Image.open(logo_path).convert("RGBA")
         logo.thumbnail((size, size), Image.Resampling.LANCZOS)
         
-        # Centrar horizontalmente, Y=150
-        x = (WIDTH - logo.width) // 2
-        y = 150
+        # Crear círculo blanco de fondo
+        circle_size = size + 40
+        circle = Image.new('RGBA', (circle_size, circle_size), (0, 0, 0, 0))
+        draw_circle = ImageDraw.Draw(circle)
+        draw_circle.ellipse([0, 0, circle_size, circle_size], fill=(255, 255, 255, 255))
         
-        # Crear capa para el logo con transparencia
-        image.paste(logo, (x, y), logo)
-        print(f"✓ Logo añadido: {logo.width}x{logo.height}px en posición ({x}, {y})")
+        # Centrar logo en el círculo
+        logo_offset = ((circle_size - logo.width) // 2, (circle_size - logo.height) // 2)
+        circle.paste(logo, logo_offset, logo)
+        
+        # Centrar círculo en la imagen
+        x = (WIDTH - circle_size) // 2
+        y = 80
+        
+        # Pegar círculo con logo
+        image.paste(circle, (x, y), circle)
+        print(f"✓ Logo añadido: {logo.width}x{logo.height}px con fondo circular blanco")
     except Exception as e:
         print(f"⚠ No se pudo cargar el logo: {e}")
         print("  Continuando sin logo...")
@@ -102,7 +112,7 @@ def generate_og_image():
     # 2. Añadir logo
     print("\n2. Añadiendo logo...")
     if os.path.exists(LOGO_PATH):
-        add_logo(image, LOGO_PATH, size=250)
+        add_logo(image, LOGO_PATH, size=220)
     else:
         print(f"⚠ Logo no encontrado en: {LOGO_PATH}")
         print("  Continuando sin logo...")
@@ -111,14 +121,14 @@ def generate_og_image():
     print("\n3. Añadiendo textos...")
     draw = ImageDraw.Draw(image)
     
-    # Título principal
-    add_text(draw, "Entrenador Personal + IA", 350, 48, COLOR_WHITE, "bold")
+    # Título principal (más abajo por el logo con círculo)
+    add_text(draw, "Entrenador Personal + IA", 380, 52, COLOR_WHITE, "bold")
     
     # Subtítulo
-    add_text(draw, "Análisis Biométrico Gratis en 90 Segundos", 420, 32, COLOR_GRAY, "regular")
+    add_text(draw, "Análisis Biométrico Gratis", 460, 36, COLOR_WHITE, "regular")
     
     # Footer con checks
-    add_text(draw, "✓ 90seg  ✓ Sin tarjeta  ✓ 100% Gratis", 510, 24, COLOR_GREEN, "regular")
+    add_text(draw, "✓ 90seg  ✓ Sin tarjeta  ✓ 100% Gratis", 530, 28, COLOR_WHITE, "bold")
     
     # 4. Guardar imagen
     print("\n4. Guardando imagen...")
