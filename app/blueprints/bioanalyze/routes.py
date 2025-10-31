@@ -41,10 +41,23 @@ def new_analysis():
     """
     if request.method == "POST":
         try:
+            logger.info(f"=== NEW ANALYSIS REQUEST from user_id={current_user.id} ===")
+            logger.info(f"Form data keys: {list(request.form.keys())}")
+            
             # Validar y procesar datos del formulario
             payload: AnalysisPayload = run_biometric_analysis(request.form)
+            logger.info("✓ Form validation successful")
+            
         except AnalysisValidationError as exc:
+            logger.error(f"✗ Validation error: {str(exc)}")
             flash(str(exc), "danger")
+            return render_template(
+                "bioanalyze/form.html",
+                form_data=request.form.to_dict(flat=True),
+            )
+        except Exception as exc:
+            logger.error(f"✗ Unexpected error in validation: {str(exc)}", exc_info=True)
+            flash(f"Error inesperado al procesar el formulario: {str(exc)}", "danger")
             return render_template(
                 "bioanalyze/form.html",
                 form_data=request.form.to_dict(flat=True),
@@ -92,14 +105,27 @@ def new_analysis():
         }
 
         # Crear análisis usando el servicio
-        analysis, error = create_analysis(
-            user_id=current_user.id,
-            biometric_data=biometric_data,
-            request_fitmaster=True,  # Siempre pedir FitMaster
-        )
+        logger.info("Creating analysis in database...")
+        try:
+            analysis, error = create_analysis(
+                user_id=current_user.id,
+                biometric_data=biometric_data,
+                request_fitmaster=True,  # Siempre pedir FitMaster
+            )
 
-        if error:
-            flash(f"Error al crear análisis: {error}", "danger")
+            if error:
+                logger.error(f"✗ Error creating analysis: {error}")
+                flash(f"Error al crear análisis: {error}", "danger")
+                return render_template(
+                    "bioanalyze/form.html",
+                    form_data=request.form.to_dict(flat=True),
+                )
+            
+            logger.info(f"✓ Analysis created successfully: ID={analysis.id}")
+            
+        except Exception as exc:
+            logger.error(f"✗ Exception in create_analysis: {str(exc)}", exc_info=True)
+            flash(f"Error crítico al crear análisis: {str(exc)}", "danger")
             return render_template(
                 "bioanalyze/form.html",
                 form_data=request.form.to_dict(flat=True),
@@ -146,12 +172,13 @@ def new_analysis():
             logger.error(traceback.format_exc())
 
         # Success
-        logger.info(f"Analysis created: ID={analysis.id} for user={current_user.id}")
+        logger.info(f"✓ Analysis complete: ID={analysis.id} for user={current_user.id}")
+        logger.info(f"✓ Redirecting to result page...")
 
         if analysis.has_fitmaster_analysis:
-            flash("Análisis guardado con interpretación de FitMaster AI.", "success")
+            flash("✅ Análisis guardado con interpretación de FitMaster AI.", "success")
         else:
-            flash("Análisis guardado. (FitMaster AI no disponible)", "warning")
+            flash("✅ Análisis guardado. (FitMaster AI no disponible)", "warning")
 
         return redirect(url_for("bioanalyze.result", analysis_id=analysis.id))
 
