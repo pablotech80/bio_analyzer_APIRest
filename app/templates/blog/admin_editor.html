@@ -3,9 +3,6 @@
 {% block title %}{% if post %}Editar Post{% else %}Nuevo Post{% endif %} - Admin{% endblock %}
 
 {% block extra_css %}
-<!-- Dropzone CSS -->
-<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
-
 <style>
     .editor-container {
         display: grid;
@@ -274,19 +271,20 @@
             </div>
             
             <!-- Dropzone -->
-            <form action="{{ url_for('blog.admin_upload') }}" 
-                  class="dropzone" 
-                  id="mediaDropzone">
-                <div class="dz-message">
-                    <svg class="mx-auto h-12 w-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                    </svg>
-                    <p class="text-lg font-medium mb-1">Arrastra archivos aquí o haz click para seleccionar</p>
-                    <p class="text-sm text-gray-500">
-                        <span id="upload-hint">Imágenes: JPG, PNG, GIF, WebP (máx 10MB)</span>
-                    </p>
-                </div>
-            </form>
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors" id="mediaDropzone">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                        </svg>
+                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click para subir</span> o arrastra y suelta</p>
+                        <p class="text-xs text-gray-500">
+                            <span id="upload-hint">Imágenes: JPG, PNG, GIF, WebP (máx 10MB)</span>
+                        </p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div>
             
             <!-- Uploaded Files List -->
             <div id="uploaded-files" class="mt-4 space-y-2"></div>
@@ -439,73 +437,37 @@
     });
 </script>
 
-<!-- Dropzone JS -->
-<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
-
 <script>
-    // Deshabilitar auto-discover de Dropzone
-    Dropzone.autoDiscover = false;
-    
     // Configuración de tipos de archivo
     const fileTypes = {
         image: {
-            accept: 'image/jpeg,image/png,image/gif,image/webp',
+            accept: '.jpg,.jpeg,.png,.gif,.webp',
             hint: 'Imágenes: JPG, PNG, GIF, WebP (máx 10MB)',
-            maxSize: 10
+            maxSize: 10 * 1024 * 1024 // 10MB en bytes
         },
         video: {
-            accept: 'video/mp4,video/webm,video/quicktime',
+            accept: '.mp4,.webm,.mov',
             hint: 'Videos: MP4, WebM, MOV (máx 50MB)',
-            maxSize: 50
+            maxSize: 50 * 1024 * 1024 // 50MB
         },
         audio: {
-            accept: 'audio/mpeg,audio/wav,audio/ogg,audio/mp4',
+            accept: '.mp3,.wav,.ogg,.m4a',
             hint: 'Audios: MP3, WAV, OGG, M4A (máx 20MB) - Perfecto para NotebookLM',
-            maxSize: 20
+            maxSize: 20 * 1024 * 1024 // 20MB
         }
     };
     
     let currentType = 'image';
     
-    // Inicializar Dropzone
-    const myDropzone = new Dropzone("#mediaDropzone", {
-        url: "{{ url_for('blog.admin_upload') }}",
-        paramName: "file",
-        maxFilesize: fileTypes[currentType].maxSize, // MB
-        acceptedFiles: fileTypes[currentType].accept,
-        addRemoveLinks: true,
-        dictDefaultMessage: "Arrastra archivos aquí o haz click",
-        dictRemoveFile: "Eliminar",
-        dictCancelUpload: "Cancelar",
-        dictMaxFilesExceeded: "No puedes subir más archivos",
-        headers: {
-            'X-CSRFToken': '{{ csrf_token() }}'
-        },
-        init: function() {
-            this.on("success", function(file, response) {
-                console.log('Upload exitoso:', response);
-                
-                // Insertar código Markdown en el editor
-                if (response.markdown) {
-                    insertMarkdown(response.markdown);
-                }
-                
-                // Mostrar archivo subido
-                showUploadedFile(response.file, response.markdown);
-                
-                // Remover preview después de 2 segundos
-                setTimeout(() => {
-                    this.removeFile(file);
-                }, 2000);
-            });
-            
-            this.on("error", function(file, errorMessage) {
-                console.error('Error:', errorMessage);
-                alert('Error al subir archivo: ' + (errorMessage.error || errorMessage));
-                this.removeFile(file);
-            });
-        }
-    });
+    // Obtener elementos
+    const dropzoneFile = document.getElementById('dropzone-file');
+    const dropzoneLabel = document.getElementById('mediaDropzone');
+    
+    // Configurar input file según tipo actual
+    function updateFileInput() {
+        dropzoneFile.accept = fileTypes[currentType].accept;
+        document.getElementById('upload-hint').textContent = fileTypes[currentType].hint;
+    }
     
     // Cambiar tipo de archivo con tabs
     document.querySelectorAll('.media-tab').forEach(tab => {
@@ -517,14 +479,128 @@
             // Cambiar tipo
             currentType = this.dataset.type;
             
-            // Actualizar hint
-            document.getElementById('upload-hint').textContent = fileTypes[currentType].hint;
-            
-            // Actualizar configuración de Dropzone
-            myDropzone.options.maxFilesize = fileTypes[currentType].maxSize;
-            myDropzone.options.acceptedFiles = fileTypes[currentType].accept;
+            // Actualizar input file
+            updateFileInput();
         });
     });
+    
+    // Inicializar
+    updateFileInput();
+    
+    // Manejar selección de archivos
+    dropzoneFile.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                uploadFile(file);
+            });
+        }
+    });
+    
+    // Drag and drop
+    dropzoneLabel.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('border-red-500', 'bg-red-50');
+    });
+    
+    dropzoneLabel.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('border-red-500', 'bg-red-50');
+    });
+    
+    dropzoneLabel.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('border-red-500', 'bg-red-50');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                uploadFile(file);
+            });
+        }
+    });
+    
+    // Función para subir archivo
+    function uploadFile(file) {
+        // Validar tamaño
+        if (file.size > fileTypes[currentType].maxSize) {
+            alert(`El archivo es demasiado grande. Máximo: ${fileTypes[currentType].maxSize / (1024 * 1024)}MB`);
+            return;
+        }
+        
+        // Crear FormData
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Mostrar loading
+        showLoading(file.name);
+        
+        // Upload
+        fetch("{{ url_for('blog.admin_upload') }}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            
+            if (data.success) {
+                console.log('Upload exitoso:', data);
+                
+                // Insertar código Markdown en el editor
+                if (data.markdown) {
+                    insertMarkdown(data.markdown);
+                }
+                
+                // Mostrar archivo subido
+                showUploadedFile(data.file, data.markdown);
+            } else {
+                alert('Error: ' + (data.error || 'Error desconocido'));
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Error:', error);
+            alert('Error al subir archivo: ' + error.message);
+        });
+        
+        // Limpiar input
+        dropzoneFile.value = '';
+    }
+    
+    // Mostrar loading
+    function showLoading(filename) {
+        const container = document.getElementById('uploaded-files');
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loading-indicator';
+        loadingDiv.className = 'flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg';
+        loadingDiv.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">Subiendo ${filename}...</p>
+                </div>
+            </div>
+        `;
+        container.insertBefore(loadingDiv, container.firstChild);
+    }
+    
+    // Ocultar loading
+    function hideLoading() {
+        const loading = document.getElementById('loading-indicator');
+        if (loading) {
+            loading.remove();
+        }
+    }
     
     // Insertar Markdown en el editor
     function insertMarkdown(markdown) {
