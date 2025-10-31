@@ -10,8 +10,17 @@ from . import main_bp
 @main_bp.route("/")
 def landing():
     """Landing page pública con propuesta de valor"""
+    from app.models.blog_post import BlogPost
+    
     seo_data = get_landing_seo_data()
-    return render_template("main/landing.html", seo=seo_data)
+    
+    # Obtener últimos 3 posts del blog
+    latest_posts = BlogPost.query.filter_by(is_published=True)\
+        .order_by(BlogPost.published_at.desc())\
+        .limit(3)\
+        .all()
+    
+    return render_template("main/landing.html", seo=seo_data, latest_posts=latest_posts)
 
 
 @main_bp.route("/avisos-legales")

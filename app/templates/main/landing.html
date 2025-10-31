@@ -1103,6 +1103,90 @@
         }
 
         /* ============================================================================
+           BLOG SECTION
+           ============================================================================ */
+        .blog-section {
+            padding: 5rem 0;
+            background: var(--white);
+        }
+        
+        .blog-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(231, 76, 60, 0.2);
+        }
+        
+        .blog-card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .blog-card-body {
+            padding: 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .blog-card-category {
+            display: inline-block;
+            background: var(--gradient-hero);
+            color: var(--white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+        
+        .blog-card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-black);
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        
+        .blog-card-title:hover {
+            color: var(--primary-red);
+        }
+        
+        .blog-card-excerpt {
+            color: var(--dark-gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+        
+        .blog-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--dark-gray);
+            padding-top: 1rem;
+            border-top: 1px solid var(--light-gray);
+        }
+        
+        .blog-card-meta i {
+            color: var(--primary-red);
+        }
+
+        /* ============================================================================
            CTA FINAL
            ============================================================================ */
         .cta-final-section {
@@ -1837,6 +1921,69 @@
             </div>
         </div>
     </section>
+
+    <!-- ============================================================================
+         BLOG SECTION
+         ============================================================================ -->
+    {% if latest_posts %}
+    <section class="blog-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Blog</span>
+                <h2 class="mt-3 mb-3">Últimos Artículos</h2>
+                <p class="text-muted">Aprende sobre fitness, nutrición y transformación física</p>
+            </div>
+            
+            <div class="row g-4">
+                {% for post in latest_posts %}
+                <div class="col-lg-4 col-md-6">
+                    <article class="blog-card">
+                        {% if post.featured_image %}
+                        <img src="{{ post.featured_image }}" alt="{{ post.title }}" class="blog-card-img">
+                        {% else %}
+                        <div class="blog-card-img" style="background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%); display: flex; align-items: center; justify-content: center;">
+                            <i class="bi bi-journal-text" style="font-size: 3rem; color: rgba(255,255,255,0.3);"></i>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="blog-card-body">
+                            <span class="blog-card-category">{{ post.category|title }}</span>
+                            
+                            <h3 class="blog-card-title">
+                                <a href="{{ url_for('blog.post', slug=post.slug) }}" class="text-decoration-none">
+                                    {{ post.title }}
+                                </a>
+                            </h3>
+                            
+                            <p class="blog-card-excerpt">
+                                {{ post.excerpt or (post.content[:150] + '...') }}
+                            </p>
+                            
+                            <div class="blog-card-meta">
+                                <span>
+                                    <i class="bi bi-clock"></i>
+                                    {{ post.reading_time }} min
+                                </span>
+                                <span>
+                                    <i class="bi bi-eye"></i>
+                                    {{ post.views_count }} vistas
+                                </span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="{{ url_for('blog.index') }}" class="btn btn-outline-dark btn-lg">
+                    Ver Todos los Artículos
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     <!-- ============================================================================
          CTA FINAL

@@ -1,0 +1,681 @@
+{% extends "blog/blog_base.html" %}
+
+{% block title %}{% if post %}Editar Post{% else %}Nuevo Post{% endif %} - Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+    .editor-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        height: calc(100vh - 300px);
+    }
+    
+    @media (max-width: 768px) {
+        .editor-container {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+    }
+    
+    .markdown-editor {
+        height: 100%;
+        font-family: 'Courier New', monospace;
+        font-size: 14px;
+        line-height: 1.6;
+    }
+    
+    .preview-container {
+        height: 100%;
+        overflow-y: auto;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        background: white;
+    }
+    
+    /* Dropzone custom styles */
+    .dropzone {
+        border: 2px dashed #e5e7eb;
+        border-radius: 0.5rem;
+        background: #f9fafb;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .dropzone:hover {
+        border-color: #ef4444;
+        background: #fef2f2;
+    }
+    
+    .dropzone.dz-drag-hover {
+        border-color: #ef4444;
+        background: #fee2e2;
+    }
+    
+    .dropzone .dz-message {
+        margin: 0;
+        font-size: 1rem;
+        color: #6b7280;
+    }
+    
+    .dropzone .dz-preview {
+        margin: 1rem;
+    }
+    
+    .dropzone .dz-preview .dz-image {
+        border-radius: 0.5rem;
+    }
+    
+    .dropzone .dz-preview .dz-success-mark,
+    .dropzone .dz-preview .dz-error-mark {
+        display: none;
+    }
+    
+    .media-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .media-tab {
+        padding: 0.75rem 1.5rem;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid transparent;
+        color: #6b7280;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .media-tab:hover {
+        color: #ef4444;
+    }
+    
+    .media-tab.active {
+        color: #ef4444;
+        border-bottom-color: #ef4444;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">
+                    {% if post %}Editar Post{% else %}Nuevo Post{% endif %}
+                </h1>
+                <p class="mt-1 text-sm text-gray-500">
+                    Escribe en Markdown y ve el preview en tiempo real
+                </p>
+            </div>
+            <a href="{{ url_for('blog.admin_dashboard') }}" 
+               class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Volver
+            </a>
+        </div>
+    </div>
+    
+    <!-- Form -->
+    <form method="POST" class="space-y-6">
+        {{ form.hidden_tag() }}
+        
+        <!-- Basic Info Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Información Básica</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Title -->
+                <div class="md:col-span-2">
+                    <label for="title" class="block text-sm font-medium text-gray-700 mb-2">
+                        Título *
+                    </label>
+                    {{ form.title(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="title") }}
+                    {% if form.title.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.title.errors[0] }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Category -->
+                <div>
+                    <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
+                        Categoría *
+                    </label>
+                    {{ form.category(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="category") }}
+                    {% if form.category.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.category.errors[0] }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Tags -->
+                <div>
+                    <label for="tags" class="block text-sm font-medium text-gray-700 mb-2">
+                        Tags
+                    </label>
+                    {{ form.tags(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="tags") }}
+                    <p class="mt-1 text-xs text-gray-500">Separados por comas</p>
+                </div>
+                
+                <!-- Featured Image -->
+                <div class="md:col-span-2">
+                    <label for="featured_image" class="block text-sm font-medium text-gray-700 mb-2">
+                        URL Imagen Destacada
+                    </label>
+                    {{ form.featured_image(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="featured_image") }}
+                    {% if form.featured_image.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.featured_image.errors[0] }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Excerpt -->
+                <div class="md:col-span-2">
+                    <label for="excerpt" class="block text-sm font-medium text-gray-700 mb-2">
+                        Resumen (Excerpt)
+                    </label>
+                    {{ form.excerpt(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="excerpt", rows="3") }}
+                    <p class="mt-1 text-xs text-gray-500">Máximo 300 caracteres. Si lo dejas vacío, se generará automáticamente.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Editor Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Contenido (Markdown)</h2>
+                <div class="flex items-center space-x-2">
+                    <button type="button" 
+                            onclick="togglePreview()"
+                            class="inline-flex items-center px-3 py-1 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        Toggle Preview
+                    </button>
+                    <a href="https://www.markdownguide.org/basic-syntax/" 
+                       target="_blank"
+                       class="text-xs text-blue-600 hover:text-blue-800">
+                        Guía Markdown
+                    </a>
+                </div>
+            </div>
+            
+            <div class="editor-container">
+                <!-- Markdown Editor -->
+                <div>
+                    <label for="content" class="block text-sm font-medium text-gray-700 mb-2">
+                        Editor
+                    </label>
+                    {{ form.content(class="markdown-editor block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 font-mono text-sm", id="content", rows="25") }}
+                    {% if form.content.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.content.errors[0] }}</p>
+                    {% endif %}
+                </div>
+                
+                <!-- Preview -->
+                <div id="preview-panel" class="hidden md:block">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Preview
+                    </label>
+                    <div id="preview" class="preview-container prose prose-lg max-w-none">
+                        <p class="text-gray-400 italic">El preview aparecerá aquí...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Media Upload Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold text-gray-900">Subir Multimedia</h2>
+                <a href="{{ url_for('blog.admin_media') }}" 
+                   target="_blank"
+                   class="text-sm text-blue-600 hover:text-blue-800">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Ver Galería
+                </a>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="media-tabs">
+                <button type="button" class="media-tab active" data-type="image">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    Imágenes
+                </button>
+                <button type="button" class="media-tab" data-type="video">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                    </svg>
+                    Videos
+                </button>
+                <button type="button" class="media-tab" data-type="audio">
+                    <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                    </svg>
+                    Audios (NotebookLM)
+                </button>
+            </div>
+            
+            <!-- Dropzone -->
+            <div class="flex items-center justify-center w-full">
+                <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors" id="mediaDropzone">
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                        </svg>
+                        <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click para subir</span> o arrastra y suelta</p>
+                        <p class="text-xs text-gray-500">
+                            <span id="upload-hint">Imágenes: JPG, PNG, GIF, WebP (máx 10MB)</span>
+                        </p>
+                    </div>
+                    <input id="dropzone-file" type="file" class="hidden" multiple />
+                </label>
+            </div>
+            
+            <!-- Uploaded Files List -->
+            <div id="uploaded-files" class="mt-4 space-y-2"></div>
+        </div>
+        
+        <!-- SEO Card -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">SEO</h2>
+            
+            <div class="space-y-4">
+                <!-- Meta Description -->
+                <div>
+                    <label for="meta_description" class="block text-sm font-medium text-gray-700 mb-2">
+                        Meta Description
+                    </label>
+                    {{ form.meta_description(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="meta_description", rows="2") }}
+                    <p class="mt-1 text-xs text-gray-500">Máximo 160 caracteres para Google</p>
+                </div>
+                
+                <!-- Meta Keywords -->
+                <div>
+                    <label for="meta_keywords" class="block text-sm font-medium text-gray-700 mb-2">
+                        Meta Keywords
+                    </label>
+                    {{ form.meta_keywords(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="meta_keywords") }}
+                    <p class="mt-1 text-xs text-gray-500">Separadas por comas</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <input type="checkbox" 
+                           id="is_published" 
+                           name="is_published" 
+                           {% if form.is_published.data %}checked{% endif %}
+                           class="h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded">
+                    <label for="is_published" class="ml-2 block text-sm text-gray-900">
+                        Publicar inmediatamente
+                    </label>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                    <a href="{{ url_for('blog.admin_dashboard') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+                        Cancelar
+                    </a>
+                    <button type="submit" 
+                            class="inline-flex items-center px-6 py-2 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        {% if post %}Actualizar Post{% else %}Crear Post{% endif %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Marked.js para renderizar Markdown en el preview -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+    // Configurar marked
+    marked.setOptions({
+        breaks: true,
+        gfm: true,
+        headerIds: true,
+        mangle: false
+    });
+    
+    // Preview en tiempo real
+    const contentTextarea = document.getElementById('content');
+    const previewDiv = document.getElementById('preview');
+    
+    if (contentTextarea && previewDiv) {
+        // Renderizar preview inicial si hay contenido
+        if (contentTextarea.value) {
+            previewDiv.innerHTML = marked.parse(contentTextarea.value);
+        }
+        
+        // Actualizar preview mientras escribes
+        contentTextarea.addEventListener('input', function() {
+            if (this.value) {
+                previewDiv.innerHTML = marked.parse(this.value);
+            } else {
+                previewDiv.innerHTML = '<p class="text-gray-400 italic">El preview aparecerá aquí...</p>';
+            }
+        });
+    }
+    
+    // Toggle preview en móvil
+    function togglePreview() {
+        const previewPanel = document.getElementById('preview-panel');
+        previewPanel.classList.toggle('hidden');
+    }
+    
+    // Auto-generar slug desde el título (opcional)
+    const titleInput = document.getElementById('title');
+    if (titleInput && !{{ 'true' if post else 'false' }}) {
+        titleInput.addEventListener('blur', function() {
+            // Aquí podrías agregar lógica para generar slug
+            console.log('Título:', this.value);
+        });
+    }
+    
+    // Contador de caracteres para meta description
+    const metaDescInput = document.getElementById('meta_description');
+    if (metaDescInput) {
+        const maxChars = 160;
+        const counterDiv = document.createElement('div');
+        counterDiv.className = 'text-xs text-gray-500 mt-1';
+        metaDescInput.parentNode.appendChild(counterDiv);
+        
+        function updateCounter() {
+            const remaining = maxChars - metaDescInput.value.length;
+            counterDiv.textContent = `${metaDescInput.value.length}/${maxChars} caracteres`;
+            counterDiv.className = remaining < 0 ? 'text-xs text-red-600 mt-1' : 'text-xs text-gray-500 mt-1';
+        }
+        
+        metaDescInput.addEventListener('input', updateCounter);
+        updateCounter();
+    }
+    
+    // Prevenir pérdida de datos
+    let formChanged = false;
+    const form = document.querySelector('form');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    
+    inputs.forEach(input => {
+        input.addEventListener('change', () => {
+            formChanged = true;
+        });
+    });
+    
+    window.addEventListener('beforeunload', (e) => {
+        if (formChanged) {
+            e.preventDefault();
+            e.returnValue = '';
+        }
+    });
+    
+    form.addEventListener('submit', () => {
+        formChanged = false;
+    });
+</script>
+
+<script>
+    // Configuración de tipos de archivo
+    const fileTypes = {
+        image: {
+            accept: '.jpg,.jpeg,.png,.gif,.webp',
+            hint: 'Imágenes: JPG, PNG, GIF, WebP (máx 10MB)',
+            maxSize: 10 * 1024 * 1024 // 10MB en bytes
+        },
+        video: {
+            accept: '.mp4,.webm,.mov',
+            hint: 'Videos: MP4, WebM, MOV (máx 50MB)',
+            maxSize: 50 * 1024 * 1024 // 50MB
+        },
+        audio: {
+            accept: '.mp3,.wav,.ogg,.m4a',
+            hint: 'Audios: MP3, WAV, OGG, M4A (máx 20MB) - Perfecto para NotebookLM',
+            maxSize: 20 * 1024 * 1024 // 20MB
+        }
+    };
+    
+    let currentType = 'image';
+    
+    // Obtener elementos
+    const dropzoneFile = document.getElementById('dropzone-file');
+    const dropzoneLabel = document.getElementById('mediaDropzone');
+    
+    // Configurar input file según tipo actual
+    function updateFileInput() {
+        dropzoneFile.accept = fileTypes[currentType].accept;
+        document.getElementById('upload-hint').textContent = fileTypes[currentType].hint;
+    }
+    
+    // Cambiar tipo de archivo con tabs
+    document.querySelectorAll('.media-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Actualizar tabs activos
+            document.querySelectorAll('.media-tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Cambiar tipo
+            currentType = this.dataset.type;
+            
+            // Actualizar input file
+            updateFileInput();
+        });
+    });
+    
+    // Inicializar
+    updateFileInput();
+    
+    // Manejar selección de archivos
+    dropzoneFile.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                uploadFile(file);
+            });
+        }
+    });
+    
+    // Drag and drop
+    dropzoneLabel.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.add('border-red-500', 'bg-red-50');
+    });
+    
+    dropzoneLabel.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('border-red-500', 'bg-red-50');
+    });
+    
+    dropzoneLabel.addEventListener('drop', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.classList.remove('border-red-500', 'bg-red-50');
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            Array.from(files).forEach(file => {
+                uploadFile(file);
+            });
+        }
+    });
+    
+    // Función para subir archivo
+    function uploadFile(file) {
+        // Validar tamaño
+        if (file.size > fileTypes[currentType].maxSize) {
+            alert(`El archivo es demasiado grande. Máximo: ${fileTypes[currentType].maxSize / (1024 * 1024)}MB`);
+            return;
+        }
+        
+        // Crear FormData
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        // Mostrar loading
+        showLoading(file.name);
+        
+        // Upload
+        fetch("{{ url_for('blog.admin_upload') }}", {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoading();
+            
+            if (data.success) {
+                console.log('Upload exitoso:', data);
+                
+                // Insertar código Markdown en el editor
+                if (data.markdown) {
+                    insertMarkdown(data.markdown);
+                }
+                
+                // Mostrar archivo subido
+                showUploadedFile(data.file, data.markdown);
+            } else {
+                alert('Error: ' + (data.error || 'Error desconocido'));
+            }
+        })
+        .catch(error => {
+            hideLoading();
+            console.error('Error:', error);
+            alert('Error al subir archivo: ' + error.message);
+        });
+        
+        // Limpiar input
+        dropzoneFile.value = '';
+    }
+    
+    // Mostrar loading
+    function showLoading(filename) {
+        const container = document.getElementById('uploaded-files');
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loading-indicator';
+        loadingDiv.className = 'flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-lg';
+        loadingDiv.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <svg class="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">Subiendo ${filename}...</p>
+                </div>
+            </div>
+        `;
+        container.insertBefore(loadingDiv, container.firstChild);
+    }
+    
+    // Ocultar loading
+    function hideLoading() {
+        const loading = document.getElementById('loading-indicator');
+        if (loading) {
+            loading.remove();
+        }
+    }
+    
+    // Insertar Markdown en el editor
+    function insertMarkdown(markdown) {
+        const textarea = document.getElementById('content');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        
+        // Insertar en la posición del cursor
+        const before = text.substring(0, start);
+        const after = text.substring(end, text.length);
+        
+        textarea.value = before + '\n\n' + markdown + '\n\n' + after;
+        
+        // Actualizar preview
+        if (window.marked) {
+            document.getElementById('preview').innerHTML = marked.parse(textarea.value);
+        }
+        
+        // Mover cursor después del markdown insertado
+        const newPosition = start + markdown.length + 4;
+        textarea.setSelectionRange(newPosition, newPosition);
+        textarea.focus();
+    }
+    
+    // Mostrar archivo subido en la lista
+    function showUploadedFile(file, markdown) {
+        const container = document.getElementById('uploaded-files');
+        
+        const fileDiv = document.createElement('div');
+        fileDiv.className = 'flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg';
+        
+        fileDiv.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">${file.filename}</p>
+                    <p class="text-xs text-gray-500">${file.file_type} - ${formatFileSize(file.file_size)}</p>
+                </div>
+            </div>
+            <button type="button" 
+                    onclick="copyToClipboard('${markdown.replace(/'/g, "\\'")}', this)" 
+                    class="text-xs text-blue-600 hover:text-blue-800">
+                Copiar código
+            </button>
+        `;
+        
+        container.insertBefore(fileDiv, container.firstChild);
+        
+        // Remover después de 10 segundos
+        setTimeout(() => {
+            fileDiv.remove();
+        }, 10000);
+    }
+    
+    // Copiar al portapapeles
+    function copyToClipboard(text, button) {
+        navigator.clipboard.writeText(text).then(() => {
+            const originalText = button.textContent;
+            button.textContent = '✓ Copiado!';
+            setTimeout(() => {
+                button.textContent = originalText;
+            }, 2000);
+        });
+    }
+    
+    // Formatear tamaño de archivo
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 B';
+        const k = 1024;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+</script>
+{% endblock %}

@@ -261,6 +261,11 @@
 								Mensajes
 							</a>
 						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="{{ url_for('blog.admin_dashboard') }}">
+								<i class="bi bi-journal-text"></i> Blog
+							</a>
+						</li>
                         {% else %}
                         <!-- Vista Cliente -->
 						<li class="nav-item">
@@ -298,6 +303,11 @@
                             </a>
                         </li>
                     {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('blog.index') }}">
+                                <i class="bi bi-journal-text"></i> Blog
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('auth.login') }}">
                                 <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión

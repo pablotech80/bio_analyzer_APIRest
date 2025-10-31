@@ -53,13 +53,14 @@ def register():
             # Auto-login después del registro
             login_user(user)
 
-            # Redirigir a donde intentaba ir o al historial de análisis
+            # Redirigir según el rol del usuario
             next_page = request.args.get("next")
-            return (
-                redirect(next_page)
-                if next_page
-                else redirect(url_for("bioanalyze.history"))
-            )
+            if next_page:
+                return redirect(next_page)
+            elif user.is_admin:
+                return redirect(url_for("admin.users"))
+            else:
+                return redirect(url_for("bioanalyze.history"))
 
         except ValueError as e:
             flash(str(e), "danger")
@@ -94,13 +95,14 @@ def login():
 
             flash(f"¡Bienvenido de vuelta, {user.username}!", "success")
 
-            # Redirigir a donde intentaba ir o al historial de análisis
+            # Redirigir según el rol del usuario
             next_page = request.args.get("next")
-            return (
-                redirect(next_page)
-                if next_page
-                else redirect(url_for("bioanalyze.history"))
-            )
+            if next_page:
+                return redirect(next_page)
+            elif user.is_admin:
+                return redirect(url_for("admin.users"))
+            else:
+                return redirect(url_for("bioanalyze.history"))
         else:
             flash(
                 "Email o contraseña incorrectos. Por favor intenta nuevamente.",

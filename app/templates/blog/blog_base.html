@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO -->
+    <title>{% block title %}Blog - CoachBodyFit360{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Blog de fitness, nutrición y entrenamiento con 20 años de experiencia{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}fitness, nutrición, entrenamiento, blog{% endblock %}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{% block og_title %}{{ self.title() }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ self.meta_description() }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{{ url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}article{% endblock %}">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Flowbite CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Highlight.js para código (syntax highlighting) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+    
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Estilos para contenido Markdown */
+        .prose {
+            max-width: 65ch;
+        }
+        
+        .prose h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .prose h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            line-height: 1.3;
+        }
+        
+        .prose h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .prose p {
+            margin-bottom: 1.25rem;
+            line-height: 1.75;
+            font-size: 1.125rem;
+            color: #374151;
+        }
+        
+        .prose ul, .prose ol {
+            margin-bottom: 1.25rem;
+            padding-left: 1.5rem;
+        }
+        
+        .prose li {
+            margin-bottom: 0.5rem;
+            line-height: 1.75;
+        }
+        
+        .prose a {
+            color: #E74C3C;
+            text-decoration: underline;
+            font-weight: 500;
+        }
+        
+        .prose a:hover {
+            color: #C0392B;
+        }
+        
+        .prose code {
+            background-color: #F3F4F6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.875rem;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .prose pre {
+            background-color: #1F2937;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-bottom: 1.25rem;
+        }
+        
+        .prose pre code {
+            background-color: transparent;
+            padding: 0;
+            color: #F9FAFB;
+        }
+        
+        .prose blockquote {
+            border-left: 4px solid #E74C3C;
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            font-style: italic;
+            color: #6B7280;
+        }
+        
+        .prose img {
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .prose table {
+            width: 100%;
+            margin: 1.5rem 0;
+            border-collapse: collapse;
+        }
+        
+        .prose th, .prose td {
+            border: 1px solid #E5E7EB;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        .prose th {
+            background-color: #F9FAFB;
+            font-weight: 600;
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <!-- Logo -->
+                    <div class="flex-shrink-0 flex items-center">
+                        <a href="{{ url_for('main.landing') }}" class="flex items-center">
+                            <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                                CoachBodyFit360
+                            </span>
+                        </a>
+                    </div>
+                    
+                    <!-- Navigation Links -->
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="{{ url_for('blog.index') }}" 
+                           class="border-transparent text-gray-900 hover:border-red-500 hover:text-red-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                            Blog
+                        </a>
+                        <a href="{{ url_for('blog.index', category='entrenamiento') }}" 
+                           class="border-transparent text-gray-500 hover:border-red-500 hover:text-red-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                            Entrenamiento
+                        </a>
+                        <a href="{{ url_for('blog.index', category='nutricion') }}" 
+                           class="border-transparent text-gray-500 hover:border-red-500 hover:text-red-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                            Nutrición
+                        </a>
+                        <a href="{{ url_for('blog.index', category='transformaciones') }}" 
+                           class="border-transparent text-gray-500 hover:border-red-500 hover:text-red-500 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors">
+                            Transformaciones
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Right side -->
+                <div class="flex items-center space-x-4">
+                    <!-- Search -->
+                    <form action="{{ url_for('blog.search') }}" method="GET" class="hidden md:block">
+                        <div class="relative">
+                            <input type="text" 
+                                   name="q" 
+                                   placeholder="Buscar..." 
+                                   class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    {% if current_user.is_authenticated and current_user.is_admin %}
+                    <!-- Admin Link -->
+                    <a href="{{ url_for('blog.admin_dashboard') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all">
+                        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        Admin Panel
+                    </a>
+                    {% else %}
+                    <!-- CTA Button para usuarios no-admin -->
+                    <a href="{{ url_for('auth.register') }}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-red-500 to-orange-500 hover:from-red-600 hover:to-orange-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all">
+                        Análisis Gratis
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Column 1: Brand -->
+                <div class="col-span-1 md:col-span-2">
+                    <span class="text-2xl font-bold bg-gradient-to-r from-red-500 to-orange-500 bg-clip-text text-transparent">
+                        CoachBodyFit360
+                    </span>
+                    <p class="mt-4 text-gray-600 text-sm">
+                        20 años de experiencia en fitness + IA avanzada. 
+                        Transforma tu cuerpo con planes personalizados.
+                    </p>
+                    <div class="mt-4">
+                        <a href="mailto:contacto@coachbodyfit360.com" class="text-gray-600 hover:text-red-500 text-sm">
+                            contacto@coachbodyfit360.com
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Column 2: Blog -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase">Blog</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a href="{{ url_for('blog.index', category='entrenamiento') }}" class="text-gray-600 hover:text-red-500 text-sm">Entrenamiento</a></li>
+                        <li><a href="{{ url_for('blog.index', category='nutricion') }}" class="text-gray-600 hover:text-red-500 text-sm">Nutrición</a></li>
+                        <li><a href="{{ url_for('blog.index', category='transformaciones') }}" class="text-gray-600 hover:text-red-500 text-sm">Transformaciones</a></li>
+                        <li><a href="{{ url_for('blog.index', category='ciencia') }}" class="text-gray-600 hover:text-red-500 text-sm">Ciencia</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Column 3: Legal -->
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-900 tracking-wider uppercase">Legal</h3>
+                    <ul class="mt-4 space-y-2">
+                        <li><a href="{{ url_for('main.privacy_policy') }}" class="text-gray-600 hover:text-red-500 text-sm">Privacidad</a></li>
+                        <li><a href="{{ url_for('main.terms_of_service') }}" class="text-gray-600 hover:text-red-500 text-sm">Términos</a></li>
+                        <li><a href="{{ url_for('main.legal_notices') }}" class="text-gray-600 hover:text-red-500 text-sm">Avisos Legales</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-8 border-t border-gray-200 pt-8">
+                <p class="text-center text-gray-400 text-sm">
+                    &copy; 2025 CoachBodyFit360. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Flowbite JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+    
+    <!-- Highlight.js para syntax highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -86,6 +86,7 @@ def create_app(config_name="development"):
     from app.blueprints.api import api_bp
     from app.blueprints.auth import auth_bp
     from app.blueprints.bioanalyze import bioanalyze_bp
+    from app.blueprints.blog import blog_bp
     from app.blueprints.contact import contact_bp
     from app.blueprints.main import main_bp
     from app.blueprints.nutrition import nutrition_bp
@@ -94,6 +95,7 @@ def create_app(config_name="development"):
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix = "/auth")
     app.register_blueprint(bioanalyze_bp)
+    app.register_blueprint(blog_bp)
     app.register_blueprint(nutrition_bp)
     app.register_blueprint(training_bp)
     app.register_blueprint(api_bp, url_prefix = "/api/v1")
