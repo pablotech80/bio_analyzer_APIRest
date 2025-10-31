@@ -35,36 +35,36 @@ def index():
     """Listado de posts del blog"""
     try:
         # Paginación
-    page = request.args.get('page', 1, type=int)
-    per_page = 12
-    
-    # Filtro por categoría
-    category = request.args.get('category')
-    
-    # Query base: solo posts publicados, ordenados por fecha
-    query = BlogPost.query.filter_by(is_published=True).order_by(BlogPost.published_at.desc())
-    
-    # Filtrar por categoría si se especifica
-    if category:
-        query = query.filter_by(category=category)
-    
-    # Paginación
-    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
-    posts = pagination.items
-    
-    # Posts destacados (3 más vistos)
-    featured_posts = BlogPost.query.filter_by(is_published=True)\
-        .order_by(BlogPost.views_count.desc())\
-        .limit(3)\
-        .all()
-    
-    # Categorías con conteo
-    categories = db.session.query(
-        BlogPost.category,
-        db.func.count(BlogPost.id).label('count')
-    ).filter_by(is_published=True)\
-     .group_by(BlogPost.category)\
-     .all()
+        page = request.args.get('page', 1, type=int)
+        per_page = 12
+        
+        # Filtro por categoría
+        category = request.args.get('category')
+        
+        # Query base: solo posts publicados, ordenados por fecha
+        query = BlogPost.query.filter_by(is_published=True).order_by(BlogPost.published_at.desc())
+        
+        # Filtrar por categoría si se especifica
+        if category:
+            query = query.filter_by(category=category)
+        
+        # Paginación
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        posts = pagination.items
+        
+        # Posts destacados (3 más vistos)
+        featured_posts = BlogPost.query.filter_by(is_published=True)\
+            .order_by(BlogPost.views_count.desc())\
+            .limit(3)\
+            .all()
+        
+        # Categorías con conteo
+        categories = db.session.query(
+            BlogPost.category,
+            db.func.count(BlogPost.id).label('count')
+        ).filter_by(is_published=True)\
+         .group_by(BlogPost.category)\
+         .all()
     
         return render_template(
             'blog/index.html',
