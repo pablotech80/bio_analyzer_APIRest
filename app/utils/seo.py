@@ -20,6 +20,15 @@ def get_landing_seo_data() -> Dict[str, Any]:
     Returns:
         Dict con todos los campos SEO necesarios
     """
+    # Generar URL de imagen y forzar HTTPS
+    og_image_url = url_for(
+        'static',
+        filename='images/og-image-cbf360.jpg',
+        _external=True
+    ).replace('http://', 'https://')
+    
+    canonical_url = url_for('main.landing', _external=True).replace('http://', 'https://')
+    
     return {
         'title': 'Entrenador Personal + IA | Análisis Gratis 90seg | CoachBodyFit360',
         'description': (
@@ -33,13 +42,10 @@ def get_landing_seo_data() -> Dict[str, Any]:
             'plan entrenamiento personalizado, nutrición deportiva, '
             'transformación corporal, entrenador personal España'
         ),
-        'og_image': url_for(
-            'static',
-            filename='images/og-image-cbf360.jpg',
-            _external=True
-        ),
+        'og_image': og_image_url,
+        'og_image_alt': 'CoachBodyFit360 - Entrenador Personal con IA - Análisis Biométrico Gratis',
         'og_type': 'website',
-        'canonical': url_for('main.landing', _external=True),
+        'canonical': canonical_url,
     }
 
 

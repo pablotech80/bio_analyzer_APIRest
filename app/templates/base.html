@@ -12,13 +12,16 @@
     <link rel="canonical" href="{{ seo.canonical if seo else request.url }}">
     
     <!-- Open Graph / Facebook -->
+    <meta property="fb:app_id" content="1234567890">
     <meta property="og:type" content="{{ seo.og_type if seo else 'website' }}">
-    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:url" content="{{ request.url | replace('http://', 'https://') }}">
     <meta property="og:title" content="{{ seo.title if seo else 'CoachBodyFit360 - Entrenador Personal + IA' }}">
     <meta property="og:description" content="{{ seo.description if seo else 'Transforma tu cuerpo con entrenador personal + IA' }}">
-    <meta property="og:image" content="{{ seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}">
+    <meta property="og:image" content="{{ (seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True)) | replace('http://', 'https://') }}">
+    <meta property="og:image:alt" content="{{ seo.og_image_alt if seo else 'CoachBodyFit360 - Entrenador Personal con IA' }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:locale" content="es_ES">
     <meta property="og:site_name" content="CoachBodyFit360">
     
@@ -26,7 +29,8 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ seo.title if seo else 'CoachBodyFit360 - Entrenador Personal + IA' }}">
     <meta name="twitter:description" content="{{ seo.description if seo else 'Transforma tu cuerpo con entrenador personal + IA' }}">
-    <meta name="twitter:image" content="{{ seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}">
+    <meta name="twitter:image" content="{{ (seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True)) | replace('http://', 'https://') }}">
+    <meta name="twitter:image:alt" content="{{ seo.og_image_alt if seo else 'CoachBodyFit360 - Entrenador Personal con IA' }}">
     
     <!-- Schema.org JSON-LD -->
     <script type="application/ld+json">
