@@ -257,19 +257,21 @@
         });
         toggleHipField();
 
-        // Mostrar/ocultar macros solo si es competición
+        // Mostrar/ocultar macros solo si es competición (si existe el campo)
         const nivelSelect = document.getElementById('nivel');
         const macrosCompeticion = document.getElementById('macros-competicion');
-        function toggleMacros() {
-            if (nivelSelect.value === 'competicion') {
-                macrosCompeticion.style.display = '';
-            } else {
-                macrosCompeticion.style.display = 'none';
+        if (nivelSelect && macrosCompeticion) {
+            function toggleMacros() {
+                if (nivelSelect.value === 'competicion') {
+                    macrosCompeticion.style.display = '';
+                } else {
+                    macrosCompeticion.style.display = 'none';
+                }
             }
+            nivelSelect.addEventListener('change', toggleMacros);
+            // Inicializar al cargar
+            toggleMacros();
         }
-        nivelSelect.addEventListener('change', toggleMacros);
-        // Inicializar al cargar
-        toggleMacros();
     })();
 </script>
 {% endblock %}
