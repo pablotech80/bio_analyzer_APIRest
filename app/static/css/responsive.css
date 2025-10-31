@@ -591,3 +591,52 @@ html {
         outline-offset: 3px;
     }
 }
+
+
+/* ============================================================================
+   FIX: Botón "Historial de análisis" en formulario
+   ============================================================================ */
+
+/* Header del formulario de análisis - responsive */
+@media (max-width: 767px) {
+    /* Cambiar a layout vertical en móvil */
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem;
+    }
+
+    /* Botón historial ocupa todo el ancho en móvil */
+    .historial-btn-responsive {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-top: 0.75rem !important;
+        padding: 0.75rem 1.25rem !important;
+        font-size: 0.95rem !important;
+        white-space: nowrap;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
+/* Tablet - ajustar padding */
+@media (min-width: 768px) and (max-width: 991px) {
+    .historial-btn-responsive {
+        padding: 0.5rem 1rem !important;
+        font-size: 0.875rem !important;
+        white-space: nowrap;
+    }
+}
+
+/* Evitar que el texto se desborde */
+@media (max-width: 576px) {
+    .historial-btn-responsive {
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Ocultar icono en móviles muy pequeños si es necesario */
+    .historial-btn-responsive i {
+        margin-right: 0.5rem;
+    }
+}
