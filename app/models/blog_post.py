@@ -20,7 +20,7 @@ class BlogPost(db.Model):
     featured_image = db.Column(db.String(500))  # URL de la imagen destacada
     
     # Categorización
-    category = db.Column(db.String(50), index=True)  # Entrenamiento, Nutrición, etc
+    category = db.Column(db.String(50), index=True)  # Entrenamiento, Nutrición, etc.
     tags = db.Column(db.String(200))  # Separados por comas
     
     # SEO
