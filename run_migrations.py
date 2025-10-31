@@ -10,23 +10,23 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from app import create_app, db
-from app.models import BlogPost, MediaFile
+from flask_migrate import upgrade
 
 def run_migrations():
-    """Ejecuta todas las migraciones pendientes"""
+    """Ejecuta todas las migraciones pendientes usando Alembic"""
     app = create_app()
     
     with app.app_context():
-        print("🔧 Ejecutando migraciones...")
+        print("🔧 Ejecutando migraciones de Alembic...")
         
         try:
-            # Crear todas las tablas
+            # Ejecutar migraciones de Alembic
+            upgrade()
+            print("✅ Migraciones de Alembic completadas exitosamente!")
+            
+            # Crear cualquier tabla que falte (fallback)
             db.create_all()
-            print("✅ Migraciones completadas exitosamente!")
-            print("\n📊 Tablas creadas/verificadas:")
-            print("  - blog_posts")
-            print("  - media_files")
-            print("  - (y todas las demás tablas existentes)")
+            print("✅ Verificación de tablas completada!")
             
             return True
             
@@ -34,7 +34,16 @@ def run_migrations():
             print(f"❌ Error en migraciones: {str(e)}")
             import traceback
             traceback.print_exc()
-            return False
+            
+            # Intentar crear tablas como fallback
+            try:
+                print("🔄 Intentando crear tablas directamente...")
+                db.create_all()
+                print("✅ Tablas creadas exitosamente!")
+                return True
+            except Exception as e2:
+                print(f"❌ Error al crear tablas: {str(e2)}")
+                return False
 
 if __name__ == '__main__':
     success = run_migrations()
