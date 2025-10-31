@@ -37,9 +37,9 @@ class BlogPostForm(FlaskForm):
     
     # Imagen destacada
     featured_image = StringField(
-        'URL Imagen Destacada',
-        validators=[Optional(), URL(message='Debe ser una URL válida')],
-        render_kw={'placeholder': 'https://ejemplo.com/imagen.jpg'}
+        'URL Imagen Destacada (opcional)',
+        validators=[Optional()],
+        render_kw={'placeholder': 'Deja vacío o pega URL de Unsplash/Imgur'}
     )
     
     # Categorización
