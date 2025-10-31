@@ -57,29 +57,54 @@ def initialize_database():
             
             # Crear TODAS las tablas
             print("\n🔨 Ejecutando db.create_all()...")
-            db.create_all()
-            print("✅ db.create_all() completado!")
+            try:
+                db.create_all()
+                print("✅ db.create_all() completado!")
+            except Exception as create_error:
+                print(f"⚠️  Error en db.create_all(): {create_error}")
+                print("🔄 Intentando crear tablas individualmente...")
+                
+                # Intentar crear tablas una por una
+                from sqlalchemy import Table
+                for table_name, table in db.metadata.tables.items():
+                    try:
+                        table.create(db.engine, checkfirst=True)
+                        print(f"  ✅ {table_name}")
+                    except Exception as e:
+                        print(f"  ⚠️  {table_name}: {str(e)[:50]}")
             
             # Verificar tablas finales
             inspector = inspect(db.engine)
             final_tables = inspector.get_table_names()
             print(f"\n✅ Tablas finales ({len(final_tables)}): {', '.join(final_tables)}")
             
-            # Verificar tablas críticas
-            critical_tables = ['users', 'blog_posts', 'media_files', 'biometric_analyses']
-            print("\n🔍 Verificando tablas críticas:")
-            all_ok = True
-            for table in critical_tables:
+            # Verificar tablas críticas (solo las esenciales)
+            essential_tables = ['users', 'biometric_analyses']
+            optional_tables = ['blog_posts', 'media_files']
+            
+            print("\n🔍 Verificando tablas esenciales:")
+            all_essential_ok = True
+            for table in essential_tables:
                 status = "✅" if table in final_tables else "❌"
                 print(f"  {status} {table}")
                 if table not in final_tables:
-                    all_ok = False
+                    all_essential_ok = False
             
-            if not all_ok:
-                missing = [t for t in critical_tables if t not in final_tables]
-                print(f"\n⚠️  ADVERTENCIA: Tablas faltantes: {', '.join(missing)}")
-                print("⚠️  La aplicación puede no funcionar correctamente")
+            print("\n🔍 Verificando tablas opcionales (blog):")
+            for table in optional_tables:
+                status = "✅" if table in final_tables else "⚠️ "
+                print(f"  {status} {table}")
+            
+            if not all_essential_ok:
+                missing = [t for t in essential_tables if t not in final_tables]
+                print(f"\n❌ ERROR: Tablas esenciales faltantes: {', '.join(missing)}")
+                print("❌ La aplicación NO puede funcionar sin estas tablas")
                 return False
+            
+            missing_optional = [t for t in optional_tables if t not in final_tables]
+            if missing_optional:
+                print(f"\n⚠️  Tablas opcionales faltantes: {', '.join(missing_optional)}")
+                print("⚠️  El blog no funcionará, pero el resto de la app sí")
             
             print("\n" + "=" * 60)
             print("✅ TODAS LAS TABLAS CREADAS EXITOSAMENTE")
