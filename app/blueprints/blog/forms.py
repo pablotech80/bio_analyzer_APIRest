@@ -31,7 +31,8 @@ class BlogPostForm(FlaskForm):
         render_kw={
             'placeholder': '# Título Principal\n\n## Subtítulo\n\nTu contenido aquí...',
             'rows': 20,
-            'class': 'font-monospace'
+            'class': 'font-monospace',
+            'style': 'white-space: pre-wrap; word-wrap: break-word; overflow-wrap: break-word;'
         }
     )
     
