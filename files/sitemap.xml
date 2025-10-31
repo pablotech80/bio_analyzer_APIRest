@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Sitemap XML para CoachBodyFit360
+  ================================
+  
+  Este archivo indica a Google qué páginas indexar y con qué prioridad.
+  
+  Ubicación: templates/sitemap.xml
+  
+  Elementos clave:
+  - <loc>: URL completa de la página
+  - <lastmod>: Fecha última modificación (formato ISO 8601)
+  - <changefreq>: Frecuencia de cambio estimada
+  - <priority>: Importancia relativa (0.0 a 1.0)
+  
+  Valores de changefreq:
+  - always: Contenido que cambia cada vez que se accede (ej: feed en vivo)
+  - hourly: Cambia cada hora (ej: noticias)
+  - daily: Cambia diariamente (ej: blog activo)
+  - weekly: Cambia semanalmente (ej: servicios)
+  - monthly: Cambia mensualmente (ej: páginas estáticas)
+  - yearly: Cambia anualmente (ej: about us)
+  - never: Contenido archivado
+  
+  Prioridades sugeridas:
+  - 1.0: Homepage
+  - 0.8: Páginas de conversión (registro, precios)
+  - 0.6: Contenido principal (servicios, características)
+  - 0.4: Contenido secundario (blog posts individuales)
+  - 0.2: Contenido terciario (categorías de blog)
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+
+  <!-- PÁGINA PRINCIPAL (Máxima prioridad) -->
+  <url>
+    <loc>{{ url_for('landing.index', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- REGISTRO (Alta prioridad - página de conversión) -->
+  <url>
+    <loc>{{ url_for('auth.register', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- LOGIN (Prioridad media - funcional) -->
+  <url>
+    <loc>{{ url_for('auth.login', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  {% if pages %}
+  <!-- PÁGINAS DINÁMICAS (generadas desde la vista) -->
+  {% for page in pages %}
+  <url>
+    <loc>{{ page }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  {% endfor %}
+  {% endif %}
+
+  <!-- 
+    TODO: Descomentar cuando implementes estas páginas
+    
+  <url>
+    <loc>{{ url_for('legal.privacy', _external=True) }}</loc>
+    <lastmod>2025-10-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>{{ url_for('legal.terms', _external=True) }}</loc>
+    <lastmod>2025-10-31</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+
+  <url>
+    <loc>{{ url_for('blog.index', _external=True) }}</loc>
+    <lastmod>2025-10-31</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  -->
+
+</urlset>

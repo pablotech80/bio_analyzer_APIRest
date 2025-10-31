@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Landing Page -->
+  <url>
+    <loc>{{ url_for('main.landing', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  
+  <!-- Registro -->
+  <url>
+    <loc>{{ url_for('auth.register', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Login -->
+  <url>
+    <loc>{{ url_for('auth.login', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Contacto -->
+  <url>
+    <loc>{{ url_for('contact.send_message', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- Avisos Legales -->
+  <url>
+    <loc>{{ url_for('main.legal_notices', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- Política de Privacidad -->
+  <url>
+    <loc>{{ url_for('main.privacy_policy', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- Términos de Servicio -->
+  <url>
+    <loc>{{ url_for('main.terms_of_service', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  
+  <!-- Sobre Nosotros -->
+  <url>
+    <loc>{{ url_for('main.about', _external=True) }}</loc>
+    <lastmod>{{ now.strftime('%Y-%m-%d') if now else '2025-10-31' }}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>

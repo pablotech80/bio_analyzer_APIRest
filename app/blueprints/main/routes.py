@@ -1,4 +1,8 @@
-from flask import render_template
+from datetime import datetime
+
+from flask import make_response, render_template
+
+from app.utils.seo import get_landing_seo_data
 
 from . import main_bp
 
@@ -6,7 +10,8 @@ from . import main_bp
 @main_bp.route("/")
 def landing():
     """Landing page pública con propuesta de valor"""
-    return render_template("main/landing.html")
+    seo_data = get_landing_seo_data()
+    return render_template("main/landing.html", seo=seo_data)
 
 
 @main_bp.route("/avisos-legales")
@@ -43,3 +48,31 @@ def terms():
 def about():
     """Página Sobre Nosotros"""
     return render_template("main/about.html")
+
+
+@main_bp.route("/sitemap.xml")
+def sitemap():
+    """Genera sitemap.xml dinámico para SEO."""
+    sitemap_xml = render_template("sitemap.xml", now=datetime.now())
+    response = make_response(sitemap_xml)
+    response.headers["Content-Type"] = "application/xml"
+    return response
+
+
+@main_bp.route("/robots.txt")
+def robots():
+    """Genera robots.txt dinámico para crawlers."""
+    from flask import url_for
+    
+    robots_txt = f"""User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/v1/admin/
+Disallow: /debug/
+
+# Sitemap
+Sitemap: {url_for('main.sitemap', _external=True)}
+"""
+    response = make_response(robots_txt)
+    response.headers["Content-Type"] = "text/plain"
+    return response

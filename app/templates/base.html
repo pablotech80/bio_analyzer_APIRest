@@ -4,10 +4,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CoachBodyFit360{% endblock %}</title>
+    <title>{% block title %}{{ seo.title if seo else 'CoachBodyFit360' }}{% endblock %}</title>
+
+    <!-- ========== SEO META TAGS ========== -->
+    <meta name="description" content="{{ seo.description if seo else 'Transforma tu cuerpo con entrenador personal profesional + IA. Análisis biométrico gratis en 90 segundos.' }}">
+    <meta name="keywords" content="{{ seo.keywords if seo else 'entrenador personal online, IA fitness, análisis biométrico' }}">
+    <link rel="canonical" href="{{ seo.canonical if seo else request.url }}">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{{ seo.og_type if seo else 'website' }}">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="{{ seo.title if seo else 'CoachBodyFit360 - Entrenador Personal + IA' }}">
+    <meta property="og:description" content="{{ seo.description if seo else 'Transforma tu cuerpo con entrenador personal + IA' }}">
+    <meta property="og:image" content="{{ seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:locale" content="es_ES">
+    <meta property="og:site_name" content="CoachBodyFit360">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ seo.title if seo else 'CoachBodyFit360 - Entrenador Personal + IA' }}">
+    <meta name="twitter:description" content="{{ seo.description if seo else 'Transforma tu cuerpo con entrenador personal + IA' }}">
+    <meta name="twitter:image" content="{{ seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}">
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "CoachBodyFit360",
+      "description": "Entrenador personal profesional con 20 años de experiencia + IA avanzada",
+      "url": "{{ request.url_root }}",
+      "image": "{{ url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}",
+      "priceRange": "Gratis - Premium",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "ES"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "5.0",
+        "reviewCount": "50"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR",
+        "availability": "https://schema.org/InStock",
+        "description": "Análisis biométrico gratuito con IA"
+      }
+    }
+    </script>
+    <!-- ========== END SEO META TAGS ========== -->
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">

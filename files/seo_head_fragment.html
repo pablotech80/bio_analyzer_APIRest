@@ -1,0 +1,159 @@
+<!-- ============================================================================
+     FRAGMENTO SEO - INSERTAR EN <head> DE base.html
+     Instrucciones: Copia este bloque DENTRO de tu <head>, después del <title>
+     ============================================================================ -->
+
+<!-- 1. META TAGS BÁSICOS -->
+<!-- Descripción que aparece en Google (máximo 160 caracteres) -->
+<meta name="description" content="{{ seo.description if seo else 'Transforma tu cuerpo con entrenador personal profesional + IA. Análisis biométrico gratis en 90 segundos. Plan personalizado sin tarjeta de crédito.' }}">
+
+<!-- Palabras clave (menos importante para Google, pero útil para documentación) -->
+<meta name="keywords" content="{{ seo.keywords if seo else 'entrenador personal online, plan fitness personalizado, análisis biométrico, IA fitness, coaching nutricional, perder peso, ganar músculo' }}">
+
+<!-- URL canónica (evita contenido duplicado) -->
+<link rel="canonical" href="{{ seo.canonical if seo else request.url }}">
+
+<!-- Autor y copyright -->
+<meta name="author" content="CoachBodyFit360">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+<!-- 2. OPEN GRAPH (Facebook, LinkedIn, WhatsApp) -->
+<!-- Cuando alguien comparte tu web, esto controla cómo se ve -->
+<meta property="og:type" content="{{ seo.og_type if seo else 'website' }}">
+<meta property="og:url" content="{{ request.url }}">
+<meta property="og:title" content="{{ seo.title if seo else (title ~ ' | CoachBodyFit360') }}">
+<meta property="og:description" content="{{ seo.description if seo else 'Entrenador Personal + IA. Análisis biométrico completo gratis.' }}">
+<meta property="og:image" content="{{ seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="CoachBodyFit360">
+<meta property="og:locale" content="es_ES">
+
+<!-- 3. TWITTER CARD -->
+<!-- Similar a Open Graph pero específico para Twitter/X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="{{ request.url }}">
+<meta name="twitter:title" content="{{ seo.title if seo else (title ~ ' | CoachBodyFit360') }}">
+<meta name="twitter:description" content="{{ seo.description if seo else 'Entrenador Personal + IA' }}">
+<meta name="twitter:image" content="{{ seo.og_image if seo else url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}">
+<meta name="twitter:creator" content="@coachbodyfit360">
+
+<!-- 4. FAVICON Y APPLE TOUCH ICONS -->
+<!-- Iconos para diferentes dispositivos y navegadores -->
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='images/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='images/favicon-16x16.png') }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/apple-touch-icon.png') }}">
+<link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+
+<!-- 5. SCHEMA.ORG JSON-LD (STRUCTURED DATA) -->
+<!-- Le dice a Google qué tipo de negocio eres y le da contexto -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "CoachBodyFit360",
+  "description": "Entrenador personal profesional con 20 años de experiencia combinado con inteligencia artificial para planes de fitness personalizados",
+  "url": "{{ request.url_root }}",
+  "logo": {
+    "@type": "ImageObject",
+    "url": "{{ url_for('static', filename='images/logo-cbf360.png', _external=True) }}",
+    "width": 250,
+    "height": 250
+  },
+  "image": "{{ url_for('static', filename='images/og-image-cbf360.jpg', _external=True) }}",
+  "telephone": "+34-XXX-XXX-XXX",
+  "email": "info@coachbodyfit360.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressCountry": "ES"
+  },
+  "sameAs": [
+    "https://www.instagram.com/coachbodyfit360",
+    "https://www.facebook.com/coachbodyfit360"
+  ],
+  "priceRange": "€€",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR",
+    "availability": "https://schema.org/InStock",
+    "description": "Análisis biométrico completo y plan básico gratuitos para siempre",
+    "url": "{{ url_for('auth.register', _external=True) }}"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "5.0",
+    "bestRating": "5",
+    "worstRating": "1",
+    "ratingCount": "500"
+  },
+  "review": [
+    {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "María González"
+      },
+      "reviewBody": "En 3 meses perdí 8kg siguiendo el plan personalizado. La IA ajusta todo automáticamente."
+    },
+    {
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": "5",
+        "bestRating": "5"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Carlos Ruiz"
+      },
+      "reviewBody": "20 años de experiencia se notan. El análisis biométrico es impresionante."
+    }
+  ],
+  "potentialAction": {
+    "@type": "Action",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "{{ url_for('auth.register', _external=True) }}"
+    },
+    "name": "Comenzar Análisis Gratuito"
+  }
+}
+</script>
+
+<!-- 6. BREADCRUMB SCHEMA (para páginas internas) -->
+{% if breadcrumbs %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {% for crumb in breadcrumbs %}
+    {
+      "@type": "ListItem",
+      "position": {{ loop.index }},
+      "name": "{{ crumb.name }}",
+      "item": "{{ crumb.url }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]
+}
+</script>
+{% endif %}
+
+<!-- 7. PRECONNECT Y DNS-PREFETCH (mejora velocidad de carga) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+
+<!-- 8. VIEWPORT Y MOBILE OPTIMIZATION -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="theme-color" content="#E74C3C">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
