@@ -1,18 +1,40 @@
 """
 Rutas públicas del blog
 """
-from flask import render_template, abort, request
+from flask import render_template, request, abort, jsonify
 from app.blueprints.blog import blog_bp
 from app.models.blog_post import BlogPost
 from app.utils.markdown_utils import render_markdown
 from app import db
-from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+@blog_bp.route('/health')
+def health():
+    """Health check endpoint para debugging"""
+    try:
+        # Verificar que la tabla existe
+        count = BlogPost.query.count()
+        return jsonify({
+            'status': 'ok',
+            'blog_posts_count': count,
+            'database': 'connected'
+        }), 200
+    except Exception as e:
+        logger.error(f"Blog health check failed: {str(e)}", exc_info=True)
+        return jsonify({
+            'status': 'error',
+            'error': str(e),
+            'database': 'error'
+        }), 500
 
 
 @blog_bp.route('/')
 def index():
     """Listado de posts del blog"""
-    # Paginación
+    try:
+        # Paginación
     page = request.args.get('page', 1, type=int)
     per_page = 12
     
@@ -44,14 +66,25 @@ def index():
      .group_by(BlogPost.category)\
      .all()
     
-    return render_template(
-        'blog/index.html',
-        posts=posts,
-        pagination=pagination,
-        featured_posts=featured_posts,
-        categories=categories,
-        current_category=category
-    )
+        return render_template(
+            'blog/index.html',
+            posts=posts,
+            pagination=pagination,
+            featured_posts=featured_posts,
+            categories=categories,
+            current_category=category
+        )
+    except Exception as e:
+        logger.error(f"Error in blog index: {str(e)}", exc_info=True)
+        return render_template(
+            'blog/index.html',
+            posts=[],
+            pagination=None,
+            featured_posts=[],
+            categories=[],
+            current_category=None,
+            error=str(e)
+        )
 
 
 @blog_bp.route('/<slug>')
