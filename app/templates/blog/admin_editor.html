@@ -179,7 +179,9 @@
                         Tags
                     </label>
                     {{ form.tags(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="tags") }}
-                    <p class="mt-1 text-xs text-gray-500">Separados por comas</p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        <span id="tags-count" class="font-medium">0/200</span> - Separados por comas
+                    </p>
                 </div>
                 
                 <!-- Featured Image -->
@@ -199,7 +201,9 @@
                         Resumen (Excerpt)
                     </label>
                     {{ form.excerpt(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="excerpt", rows="3") }}
-                    <p class="mt-1 text-xs text-gray-500">Máximo 300 caracteres. Si lo dejas vacío, se generará automáticamente.</p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        <span id="excerpt-count" class="font-medium">0/300</span> caracteres. Si lo dejas vacío, se generará automáticamente.
+                    </p>
                 </div>
             </div>
         </div>
@@ -317,7 +321,9 @@
                         Meta Description
                     </label>
                     {{ form.meta_description(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="meta_description", rows="2") }}
-                    <p class="mt-1 text-xs text-gray-500">Máximo 160 caracteres para Google</p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        <span id="meta-desc-count" class="font-medium">0/160</span> caracteres para Google
+                    </p>
                 </div>
                 
                 <!-- Meta Keywords -->
@@ -326,7 +332,9 @@
                         Meta Keywords
                     </label>
                     {{ form.meta_keywords(class="block w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500", id="meta_keywords") }}
-                    <p class="mt-1 text-xs text-gray-500">Separadas por comas</p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        <span id="meta-keywords-count" class="font-medium">0/200</span> - Separadas por comas
+                    </p>
                 </div>
             </div>
         </div>
@@ -685,6 +693,40 @@
             }, 2000);
         });
     }
+    
+    // Contador de caracteres
+    function updateCharCount(element, counterId, maxLength) {
+        const currentLength = element.value.length;
+        const counter = document.getElementById(counterId);
+        if (counter) {
+            counter.textContent = `${currentLength}/${maxLength}`;
+            // Cambiar color si se acerca al límite
+            if (currentLength > maxLength * 0.9) {
+                counter.classList.add('text-red-600');
+                counter.classList.remove('text-gray-600');
+            } else {
+                counter.classList.add('text-gray-600');
+                counter.classList.remove('text-red-600');
+            }
+        }
+    }
+    
+    // Inicializar contadores al cargar la página
+    document.addEventListener('DOMContentLoaded', function() {
+        const fields = [
+            { id: 'excerpt', counterId: 'excerpt-count', maxLength: 300 },
+            { id: 'tags', counterId: 'tags-count', maxLength: 200 },
+            { id: 'meta_description', counterId: 'meta-desc-count', maxLength: 160 },
+            { id: 'meta_keywords', counterId: 'meta-keywords-count', maxLength: 200 }
+        ];
+        
+        fields.forEach(field => {
+            const element = document.getElementById(field.id);
+            if (element) {
+                updateCharCount(element, field.counterId, field.maxLength);
+            }
+        });
+    });
     
     // Formatear tamaño de archivo
     function formatFileSize(bytes) {

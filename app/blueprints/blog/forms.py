@@ -21,7 +21,9 @@ class BlogPostForm(FlaskForm):
         validators=[Optional(), Length(max=300)],
         render_kw={
             'placeholder': 'Resumen corto que aparecerá en el listado de posts (máx 300 caracteres)',
-            'rows': 3
+            'rows': 3,
+            'maxlength': '300',
+            'oninput': 'updateCharCount(this, "excerpt-count", 300)'
         }
     )
     
@@ -38,9 +40,9 @@ class BlogPostForm(FlaskForm):
     
     # Imagen destacada
     featured_image = StringField(
-        'URL Imagen Destacada (opcional)',
-        validators=[Optional()],
-        render_kw={'placeholder': 'Deja vacío o pega URL de Unsplash/Imgur'}
+        'Imagen Destacada (opcional)',
+        validators=[Optional(), Length(max=500)],
+        render_kw={'placeholder': 'URL de imagen o deja vacío'}
     )
     
     # Categorización
@@ -60,7 +62,11 @@ class BlogPostForm(FlaskForm):
     tags = StringField(
         'Tags',
         validators=[Optional(), Length(max=200)],
-        render_kw={'placeholder': 'proteinas, musculo, nutricion (separados por comas)'}
+        render_kw={
+            'placeholder': 'proteinas, musculo, nutricion (separados por comas)',
+            'maxlength': '200',
+            'oninput': 'updateCharCount(this, "tags-count", 200)'
+        }
     )
     
     # SEO
@@ -69,14 +75,20 @@ class BlogPostForm(FlaskForm):
         validators=[Optional(), Length(max=160)],
         render_kw={
             'placeholder': 'Descripción para Google (máx 160 caracteres)',
-            'rows': 2
+            'rows': 2,
+            'maxlength': '160',
+            'oninput': 'updateCharCount(this, "meta-desc-count", 160)'
         }
     )
     
     meta_keywords = StringField(
         'Meta Keywords (SEO)',
         validators=[Optional(), Length(max=200)],
-        render_kw={'placeholder': 'proteinas, ganar musculo, nutricion deportiva'}
+        render_kw={
+            'placeholder': 'proteinas, ganar musculo, nutricion deportiva',
+            'maxlength': '200',
+            'oninput': 'updateCharCount(this, "meta-keywords-count", 200)'
+        }
     )
     
     # Estado
