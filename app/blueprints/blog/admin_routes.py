@@ -1,17 +1,19 @@
 """
 Rutas de administración del blog (solo para admins)
 """
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app.blueprints.blog import blog_bp
 from app.blueprints.blog.forms import BlogPostForm
 from app.models.blog_post import BlogPost
+from app.models.media_file import MediaFile
 from app.utils.markdown_utils import (
     generate_slug, 
     calculate_reading_time, 
     generate_excerpt,
     render_markdown
 )
+from app.utils.file_upload import save_uploaded_file, delete_file
 from app import db
 from datetime import datetime
 from functools import wraps
@@ -167,3 +169,104 @@ def admin_preview(post_id):
         related_posts=[],
         is_preview=True
     )
+
+
+@blog_bp.route('/admin/upload', methods=['POST'])
+@admin_required
+def admin_upload():
+    """Upload de archivos multimedia (imágenes, videos, audios)"""
+    try:
+        # Verificar que se envió un archivo
+        if 'file' not in request.files:
+            return jsonify({'error': 'No se envió ningún archivo'}), 400
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            return jsonify({'error': 'No se seleccionó ningún archivo'}), 400
+        
+        # Guardar archivo
+        file_info = save_uploaded_file(file)
+        
+        # Crear registro en base de datos
+        media_file = MediaFile(
+            filename=file_info['filename'],
+            file_path=file_info['file_path'],
+            file_url=file_info['file_url'],
+            file_type=file_info['file_type'],
+            mime_type=file_info['mime_type'],
+            file_size=file_info['file_size'],
+            width=file_info['width'],
+            height=file_info['height'],
+            duration=file_info['duration'],
+            uploaded_by=current_user.id
+        )
+        
+        db.session.add(media_file)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'file': media_file.to_dict(),
+            'markdown': media_file.markdown_embed
+        }), 200
+        
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        return jsonify({'error': f'Error al subir archivo: {str(e)}'}), 500
+
+
+@blog_bp.route('/admin/media')
+@admin_required
+def admin_media():
+    """Galería de medios"""
+    # Filtros
+    file_type = request.args.get('type')  # image, video, audio
+    page = request.args.get('page', 1, type=int)
+    per_page = 24
+    
+    # Query base
+    query = MediaFile.query.order_by(MediaFile.uploaded_at.desc())
+    
+    # Filtrar por tipo si se especifica
+    if file_type:
+        query = query.filter_by(file_type=file_type)
+    
+    # Paginación
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    media_files = pagination.items
+    
+    # Estadísticas
+    total_files = MediaFile.query.count()
+    total_images = MediaFile.query.filter_by(file_type='image').count()
+    total_videos = MediaFile.query.filter_by(file_type='video').count()
+    total_audios = MediaFile.query.filter_by(file_type='audio').count()
+    
+    return render_template(
+        'blog/admin_media.html',
+        media_files=media_files,
+        pagination=pagination,
+        total_files=total_files,
+        total_images=total_images,
+        total_videos=total_videos,
+        total_audios=total_audios,
+        current_type=file_type
+    )
+
+
+@blog_bp.route('/admin/media/<int:media_id>/delete', methods=['POST'])
+@admin_required
+def admin_media_delete(media_id):
+    """Eliminar archivo multimedia"""
+    media_file = MediaFile.query.get_or_404(media_id)
+    
+    # Eliminar archivo físico
+    delete_file(media_file.file_path)
+    
+    # Eliminar registro de BD
+    db.session.delete(media_file)
+    db.session.commit()
+    
+    flash(f'Archivo "{media_file.filename}" eliminado exitosamente.', 'success')
+    return redirect(url_for('blog.admin_media'))
