@@ -6,19 +6,41 @@ Ejecutar manualmente si run_migrations.py falla
 import os
 import sys
 
+print("=" * 60)
+print("🚀 INICIANDO force_create_tables.py")
+print("=" * 60)
+
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 def force_create_tables():
     """Fuerza la creación de todas las tablas"""
+    print("\n📦 Importando módulos...")
     from app import create_app, db
     from sqlalchemy import text
     
+    print("✅ Módulos importados")
+    print("\n🏗️  Creando app...")
     app = create_app()
+    print(f"✅ App creada: {app.name}")
     
     with app.app_context():
-        print("=" * 60)
+        print("\n" + "=" * 60)
         print("🚨 FORZANDO CREACIÓN DE TABLAS")
         print("=" * 60)
+        
+        # Importar TODOS los modelos explícitamente
+        print("\n📋 Importando modelos...")
+        from app.models import (
+            User, Role, Permission, 
+            BiometricAnalysis, ContactMessage,
+            NutritionPlan, TrainingPlan,
+            BlogPost, MediaFile
+        )
+        print("✅ Modelos importados:")
+        print(f"  - User, Role, Permission")
+        print(f"  - BiometricAnalysis, ContactMessage")
+        print(f"  - NutritionPlan, TrainingPlan")
+        print(f"  - BlogPost, MediaFile")
         
         try:
             # Verificar conexión
