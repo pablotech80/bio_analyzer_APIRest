@@ -35,23 +35,35 @@ def admin_required(f):
 @admin_required
 def admin_dashboard():
     """Dashboard de administración del blog"""
-    # Estadísticas
-    total_posts = BlogPost.query.count()
-    published_posts = BlogPost.query.filter_by(is_published=True).count()
-    draft_posts = BlogPost.query.filter_by(is_published=False).count()
-    total_views = db.session.query(db.func.sum(BlogPost.views_count)).scalar() or 0
-    
-    # Todos los posts (publicados y drafts)
-    posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
-    
-    return render_template(
-        'blog/admin_dashboard.html',
-        posts=posts,
-        total_posts=total_posts,
-        published_posts=published_posts,
-        draft_posts=draft_posts,
-        total_views=total_views
-    )
+    try:
+        # Estadísticas
+        total_posts = BlogPost.query.count()
+        published_posts = BlogPost.query.filter_by(is_published=True).count()
+        draft_posts = BlogPost.query.filter_by(is_published=False).count()
+        total_views = db.session.query(db.func.sum(BlogPost.views_count)).scalar() or 0
+        
+        # Todos los posts (publicados y drafts)
+        posts = BlogPost.query.order_by(BlogPost.created_at.desc()).all()
+        
+        return render_template(
+            'blog/admin_dashboard.html',
+            posts=posts,
+            total_posts=total_posts,
+            published_posts=published_posts,
+            draft_posts=draft_posts,
+            total_views=total_views
+        )
+    except Exception as e:
+        flash(f'Error al cargar el dashboard del blog: {str(e)}', 'danger')
+        return render_template(
+            'blog/admin_dashboard.html',
+            posts=[],
+            total_posts=0,
+            published_posts=0,
+            draft_posts=0,
+            total_views=0,
+            error=str(e)
+        )
 
 
 @blog_bp.route('/admin/nuevo', methods=['GET', 'POST'])
@@ -221,38 +233,52 @@ def admin_upload():
 @admin_required
 def admin_media():
     """Galería de medios"""
-    # Filtros
-    file_type = request.args.get('type')  # image, video, audio
-    page = request.args.get('page', 1, type=int)
-    per_page = 24
-    
-    # Query base
-    query = MediaFile.query.order_by(MediaFile.uploaded_at.desc())
-    
-    # Filtrar por tipo si se especifica
-    if file_type:
-        query = query.filter_by(file_type=file_type)
-    
-    # Paginación
-    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
-    media_files = pagination.items
-    
-    # Estadísticas
-    total_files = MediaFile.query.count()
-    total_images = MediaFile.query.filter_by(file_type='image').count()
-    total_videos = MediaFile.query.filter_by(file_type='video').count()
-    total_audios = MediaFile.query.filter_by(file_type='audio').count()
-    
-    return render_template(
-        'blog/admin_media.html',
-        media_files=media_files,
-        pagination=pagination,
-        total_files=total_files,
-        total_images=total_images,
-        total_videos=total_videos,
-        total_audios=total_audios,
-        current_type=file_type
-    )
+    try:
+        # Filtros
+        file_type = request.args.get('type')  # image, video, audio
+        page = request.args.get('page', 1, type=int)
+        per_page = 24
+        
+        # Query base
+        query = MediaFile.query.order_by(MediaFile.uploaded_at.desc())
+        
+        # Filtrar por tipo si se especifica
+        if file_type:
+            query = query.filter_by(file_type=file_type)
+        
+        # Paginación
+        pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+        media_files = pagination.items
+        
+        # Estadísticas
+        total_files = MediaFile.query.count()
+        total_images = MediaFile.query.filter_by(file_type='image').count()
+        total_videos = MediaFile.query.filter_by(file_type='video').count()
+        total_audios = MediaFile.query.filter_by(file_type='audio').count()
+        
+        return render_template(
+            'blog/admin_media.html',
+            media_files=media_files,
+            pagination=pagination,
+            total_files=total_files,
+            total_images=total_images,
+            total_videos=total_videos,
+            total_audios=total_audios,
+            current_type=file_type
+        )
+    except Exception as e:
+        flash(f'Error al cargar la galería de medios: {str(e)}', 'danger')
+        return render_template(
+            'blog/admin_media.html',
+            media_files=[],
+            pagination=None,
+            total_files=0,
+            total_images=0,
+            total_videos=0,
+            total_audios=0,
+            current_type=file_type,
+            error=str(e)
+        )
 
 
 @blog_bp.route('/admin/media/<int:media_id>/delete', methods=['POST'])
