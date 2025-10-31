@@ -118,7 +118,7 @@ def logout():
     """Cerrar sesión del usuario."""
     logout_user()
     flash("Has cerrado sesión exitosamente.", "info")
-    return redirect(url_for("auth.login"))
+    return redirect(url_for("main.landing"))
 
 
 @auth_bp.route("/profile")

@@ -61,7 +61,7 @@ class BlogPost(db.Model):
             'meta_keywords': self.meta_keywords.split(',') if self.meta_keywords else [],
             'author': {
                 'id': self.author.id,
-                'name': self.author.name,
+                'name': self.author.full_name,
                 'email': self.author.email
             } if self.author else None,
             'is_published': self.is_published,
