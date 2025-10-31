@@ -1,74 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}CoachBodyFit360 - 20 Años de Experiencia en Fitness + IA
-    <!-- ============================================================================
-         WHATSAPP FLOTANTE
-         ============================================================================ -->
-    <a href="https://wa.me/34644325470?text=Hola%2C%20quiero%20información%20sobre%20CoachBodyFit360" 
-       class="whatsapp-float" 
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="Contactar por WhatsApp">
-        <i class="bi bi-whatsapp"></i>
-    </a>
-
-    <style>
-    .whatsapp-float {
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        bottom: 30px;
-        right: 30px;
-        background-color: #25d366;
-        color: #FFF;
-        border-radius: 50px;
-        text-align: center;
-        font-size: 30px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
-        }
-    }
-
-    .whatsapp-float:hover {
-        background-color: #128C7E;
-        transform: scale(1.1);
-        color: #FFF;
-        animation: none;
-    }
-
-    .whatsapp-float i {
-        margin-top: 0;
-    }
-
-    @media (max-width: 768px) {
-        .whatsapp-float {
-            width: 50px;
-            height: 50px;
-            bottom: 20px;
-            right: 20px;
-            font-size: 25px;
-        }
-    }
-    </style>
-
-{% endblock %}
+{% block title %}CoachBodyFit360 - 20 Años de Experiencia en Fitness + IA{% endblock %}
 
 {% block extra_css %}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1237,74 +1169,6 @@
             background-clip: text;
         }
     </style>
-
-    <!-- ============================================================================
-         WHATSAPP FLOTANTE
-         ============================================================================ -->
-    <a href="https://wa.me/34644325470?text=Hola%2C%20quiero%20información%20sobre%20CoachBodyFit360" 
-       class="whatsapp-float" 
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="Contactar por WhatsApp">
-        <i class="bi bi-whatsapp"></i>
-    </a>
-
-    <style>
-    .whatsapp-float {
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        bottom: 30px;
-        right: 30px;
-        background-color: #25d366;
-        color: #FFF;
-        border-radius: 50px;
-        text-align: center;
-        font-size: 30px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
-        }
-    }
-
-    .whatsapp-float:hover {
-        background-color: #128C7E;
-        transform: scale(1.1);
-        color: #FFF;
-        animation: none;
-    }
-
-    .whatsapp-float i {
-        margin-top: 0;
-    }
-
-    @media (max-width: 768px) {
-        .whatsapp-float {
-            width: 50px;
-            height: 50px;
-            bottom: 20px;
-            right: 20px;
-            font-size: 25px;
-        }
-    }
-    </style>
-
 {% endblock %}
 
 {% block content %}
@@ -1412,6 +1276,347 @@
                 <div class="col-6 col-md-3 stat-item">
                     <span class="stat-number">50</span>
                     <div class="stat-label">Reseñas Verificadas</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         LOS 4 PILARES - 3D CAROUSEL CORREGIDO
+         ============================================================================ -->
+    <section class="pillars-section" id="pilares">
+        <div class="container">
+            <!-- TÍTULO -->
+            <div class="text-center mb-5">
+                <span class="section-badge">Metodología Probada</span>
+                <h2 class="section-title display-5 text-white mb-3">Los 4 Pilares de CoachBodyFit360</h2>
+                <p class="text-secondary" style="font-size: 1.2rem;">Basado en 20 años de experiencia práctica</p>
+            </div>
+
+            <!-- CAROUSEL 3D (Desktop) -->
+            <div class="carousel-3d-wrapper">
+                <div class="carousel-3d-scene">
+                    <div class="carousel-3d" id="pillarsCarousel">
+                        <!-- PILAR 1: STRONG -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                            </div>
+                            <h3 class="text-danger">STRONG</h3>
+                            <p>Rutinas personalizadas según tu composición corporal y objetivos específicos.</p>
+                        </div>
+
+                        <!-- PILAR 2: NOURISH -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon text-success">
+                                <i class="bi bi-apple"></i>
+                            </div>
+                            <h3 class="text-success">NOURISH</h3>
+                            <p>Planes nutricionales con 5 comidas diarias y macros adaptados a tu metabolismo.</p>
+                        </div>
+
+                        <!-- PILAR 3: LIVE -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <h3 class="text-danger">LIVE</h3>
+                            <p>Seguimiento continuo con métricas biométricas profesionales (IMC, FFMI, % grasa).</p>
+                        </div>
+
+                        <!-- PILAR 4: THRIVE -->
+                        <div class="pillar-card">
+                            <div class="pillar-icon" style="color: var(--primary-orange);">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <h3 style="color: var(--primary-orange);">THRIVE</h3>
+                            <p>Prospera con IA que aprende de tu progreso y optimiza tu plan continuamente.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTROLES -->
+                <div class="carousel-controls">
+                    <button class="carousel-control-btn" onclick="rotateCarousel('prev')" aria-label="Anterior">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="carousel-control-btn" onclick="rotateCarousel('next')" aria-label="Siguiente">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- FALLBACK GRID (Móviles < 992px) -->
+            <div class="pillars-grid-mobile">
+                <div class="row g-4">
+                    <!-- STRONG -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-heart-pulse-fill"></i>
+                            </div>
+                            <h3 class="text-danger">STRONG</h3>
+                            <p>Rutinas personalizadas según tu composición corporal y objetivos específicos.</p>
+                        </div>
+                    </div>
+
+                    <!-- NOURISH -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon text-success">
+                                <i class="bi bi-apple"></i>
+                            </div>
+                            <h3 class="text-success">NOURISH</h3>
+                            <p>Planes nutricionales con 5 comidas diarias y macros adaptados a tu metabolismo.</p>
+                        </div>
+                    </div>
+
+                    <!-- LIVE -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon text-danger">
+                                <i class="bi bi-activity"></i>
+                            </div>
+                            <h3 class="text-danger">LIVE</h3>
+                            <p>Seguimiento continuo con métricas biométricas profesionales (IMC, FFMI, % grasa).</p>
+                        </div>
+                    </div>
+
+                    <!-- THRIVE -->
+                    <div class="col-md-6">
+                        <div class="pillar-card-mobile">
+                            <div class="pillar-icon" style="color: var(--primary-orange);">
+                                <i class="bi bi-graph-up-arrow"></i>
+                            </div>
+                            <h3 style="color: var(--primary-orange);">THRIVE</h3>
+                            <p>Prospera con IA que aprende de tu progreso y optimiza tu plan continuamente.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Control del carousel 3D
+        let currentRotation = 0;
+        const carousel = document.getElementById('pillarsCarousel');
+
+        function rotateCarousel(direction) {
+            if (!carousel) return;
+            
+            // Pausar animación automática
+            carousel.style.animation = 'none';
+            
+            // Rotar 90 grados (360/4 pilares)
+            if (direction === 'next') {
+                currentRotation -= 90;
+            } else {
+                currentRotation += 90;
+            }
+            
+            // Aplicar rotación
+            carousel.style.transform = `rotateY(${currentRotation}deg)`;
+            carousel.style.transition = 'transform 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            
+            // Reanudar animación después de 3 segundos
+            setTimeout(() => {
+                carousel.style.transition = '';
+                carousel.style.animation = 'autoRotate 20s linear infinite';
+                // Ajustar punto de inicio de la animación
+                carousel.style.animationDelay = `-${(currentRotation % 360) / 360 * 20}s`;
+            }, 3000);
+        }
+
+        // Pausar/reanudar al hacer hover
+        if (carousel) {
+            carousel.addEventListener('mouseenter', () => {
+                carousel.style.animationPlayState = 'paused';
+            });
+            
+            carousel.addEventListener('mouseleave', () => {
+                carousel.style.animationPlayState = 'running';
+            });
+        }
+    </script>
+
+    <!-- ============================================================================
+         EXPERIENCIA Y METODOLOGÍA
+         ============================================================================ -->
+    <section class="experience-section" id="experiencia">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5 mb-5 mb-lg-0">
+                    <!-- Foto de Pablo (coloca tu foto en static/images/pablo-techera.jpg) -->
+                    <img src="{{ url_for('static', filename='images/pablo-techera.jpg') }}"
+                         alt="Pablo Techera - Coach Fitness"
+                         class="img-fluid rounded-3 shadow-lg"
+                         style="max-width: 100%; height: auto;"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="experience-icon-box" style="display: none;">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="experience-content">
+                        <span class="section-badge">Mi Historia</span>
+                        <h2>Mi Experiencia, Tu Transformación</h2>
+
+                        <p class="lead mb-4">
+                            Soy <strong>Pablo Techera</strong>, y durante 20 años he trabajado con más de 500 personas
+                            ayudándolas a alcanzar sus múltiples objetivos de transformación física.
+                        </p>
+
+                        <ul class="experience-list">
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                <div>
+                                    <strong>Desde personas que buscan mejorar su salud básica</strong> y perder peso
+                                    de forma sostenible y saludable
+                                </div>
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                <div>
+                                    <strong>Hasta atletas que compiten</strong> y necesitan optimización de
+                                    rendimiento y composición corporal
+                                </div>
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle-fill"></i>
+                                <div>
+                                    <strong>Cada cuerpo es diferente, cada objetivo es único.</strong>
+                                    Esa es la base de mi metodología
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="experience-quote">
+                            <p class="mb-0">
+                                <i class="bi bi-quote text-danger fs-3"></i><br>
+                                <strong>CoachBodyFit360 es la evolución natural:</strong> mi experiencia práctica
+                                validada por resultados reales + tecnología IA que personaliza TODO
+                                específicamente para ti.
+                            </p>
+                        </div>
+
+                        <blockquote class="border-start border-4 border-danger ps-4 mb-4">
+                            <p class="mb-0 fst-italic">
+                                "No soy médico ni nutricionista titulado. Soy un experto en fitness con 20 años
+                                aplicando y perfeccionando una metodología que funciona. Los resultados de mis
+                                clientes hablan por sí mismos."
+                            </p>
+                        </blockquote>
+
+                        <div class="experience-disclaimer">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            Esta metodología está basada en experiencia práctica, no en titulación médica.
+                            Consulta con profesionales sanitarios antes de iniciar cualquier programa.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         COMPARACIÓN
+         ============================================================================ -->
+    <section class="comparison-section" id="comparacion">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Mi Evolución</span>
+                <h2 class="display-5 mb-3">De Entrenador Personal a Plataforma Digital</h2>
+                <p class="lead text-muted">Cómo la tecnología me permitió democratizar mi metodología</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="comparison-table">
+                        <div class="comparison-header">
+                            <div>Mi Trabajo como Entrenador Personal</div>
+                            <div class="highlight">CoachBodyFit360 Hoy</div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-people"></i>
+                                <span>Limitado a 15-20 clientes simultáneos</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Miles de personas</strong> accediendo a la metodología</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-geo-alt"></i>
+                                <span>Solo clientes de mi zona geográfica</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Accesible desde cualquier lugar</strong> del mundo</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-clock-history"></i>
+                                <span>Repetir lo mismo con cada cliente</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>IA personaliza automáticamente</strong> según cada caso</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-currency-euro"></i>
+                                <span>Inversión significativa por sesión</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Gratis para todos</strong> (modelo freemium)</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-journal-text"></i>
+                                <span>Planes escritos a mano</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Generación instantánea</strong> con 20 años de experiencia</span>
+                            </div>
+                        </div>
+
+                        <div class="comparison-row">
+                            <div class="comparison-cell traditional">
+                                <i class="bi bi-hourglass"></i>
+                                <span>Tiempo limitado para cada cliente</span>
+                            </div>
+                            <div class="comparison-cell cbf">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>Disponible 24/7</strong> sin límites</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-5">
+                        <div class="alert alert-info d-inline-block" style="max-width: 800px; text-align: left;">
+                            <i class="bi bi-lightbulb-fill me-2"></i>
+                            <strong>Mi Visión:</strong> Durante años trabajé como entrenador personal presencial
+                            y amé cada momento. Pero me di cuenta de que estaba limitado: solo podía ayudar a
+                            15-20 personas a la vez. CoachBodyFit360 me permite escalar mi metodología probada
+                            y hacerla accesible para miles de personas que no pueden permitirse o acceder a
+                            entrenamiento personalizado tradicional. No es mejor ni peor, es diferente:
+                            <strong>es democratizar el conocimiento</strong>.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1704,6 +1909,194 @@
     </section>
 
     <!-- ============================================================================
+         FEATURES DETALLADOS
+         ============================================================================ -->
+    <section class="features-section" id="features">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Qué Obtienes</span>
+                <h2 class="display-5 mb-3">Todo lo Necesario para Tu Transformación</h2>
+            </div>
+
+            <div class="row g-4">
+                <!-- Feature 1 -->
+                <div class="col-lg-4">
+                    <div class="feature-detail-card">
+                        <div class="feature-detail-icon">
+                            <i class="bi bi-clipboard-data"></i>
+                        </div>
+                        <h3>Análisis Biométrico Completo</h3>
+                        <ul class="feature-detail-list">
+                            <li>IMC y clasificación WHO</li>
+                            <li>% Grasa corporal (Método Navy)</li>
+                            <li>Masa magra total</li>
+                            <li>FFMI (Índice músculo-grasa)</li>
+                            <li>Edad metabólica estimada</li>
+                            <li>Peso ideal según objetivos</li>
+                            <li>Requerimientos calóricos (TMB/TDEE)</li>
+                            <li>Distribución de macros óptima</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="col-lg-4">
+                    <div class="feature-detail-card">
+                        <div class="feature-detail-icon">
+                            <i class="bi bi-egg-fried"></i>
+                        </div>
+                        <h3>Plan Nutricional Detallado</h3>
+                        <ul class="feature-detail-list">
+                            <li>5 comidas diarias personalizadas</li>
+                            <li>Macronutrientes calculados</li>
+                            <li>Opciones intercambiables</li>
+                            <li>Adaptado a tus preferencias</li>
+                            <li>Actualización automática</li>
+                            <li>Lista de compras incluida</li>
+                            <li>Recetas paso a paso</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="col-lg-4">
+                    <div class="feature-detail-card">
+                        <div class="feature-detail-icon">
+                            <i class="bi bi-heart-pulse"></i>
+                        </div>
+                        <h3>Rutina de Entrenamiento</h3>
+                        <ul class="feature-detail-list">
+                            <li>Ejercicios específicos para ti</li>
+                            <li>Series y repeticiones óptimas</li>
+                            <li>Descansos calculados</li>
+                            <li>Progresión semanal</li>
+                            <li>Adaptado a tu nivel</li>
+                            <li>Videos explicativos</li>
+                            <li>Alternativas si no tienes equipo</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
+         PRECIOS BETA 2025
+         ============================================================================ -->
+    <section class="pricing-section" id="precios">
+        <div class="container">
+            <div class="text-center mb-5">
+                <span class="section-badge">Precios Transparentes</span>
+                <h2 class="display-5 mb-3">Planes Diseñados para Ti</h2>
+                <p class="lead text-muted">
+                    Acceso completo a mi metodología profesional con tecnología de última generación
+                </p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                <!-- Nota sobre BETA -->
+                <div class="text-center mt-5">
+                    <!-- Alert BETA Gratis -->
+                    <div class="d-inline-block"
+                         style="max-width: 900px; text-align: left; background: linear-gradient(135deg, rgba(231, 76, 60, 0.1) 0%, rgba(230, 126, 34, 0.1) 100%); border: 2px solid var(--primary-orange); border-radius: 15px; padding: 1.5rem;">
+                        <div class="d-flex align-items-start">
+                            <div class="bg-danger rounded-circle p-3 me-3"
+                                 style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                                <i class="bi bi-rocket-takeoff-fill fs-4 text-white"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-2" style="color: var(--primary-black);"><strong>BETA 2025 - TODO
+                                    GRATIS</strong></h5>
+                                <p class="mb-2" style="color: var(--dark-gray);">
+                                    Durante toda la fase BETA, <strong style="color: var(--primary-orange);">acceso
+                                    completo sin costo</strong>:
+                                </p>
+                                <ul class="mb-2" style="color: var(--dark-gray);">
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Análisis biométrico
+                                        profesional (15+ métricas)
+                                    </li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Planes de nutrición
+                                        generados por FitMaster IA
+                                    </li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Rutinas de
+                                        entrenamiento personalizadas con IA
+                                    </li>
+                                    <li><i class="bi bi-check-circle-fill text-success me-2"></i>Historial completo de
+                                        análisis
+                                    </li>
+                                </ul>
+                                <p class="mb-0" style="color: var(--dark-gray);">
+                                    <strong style="color: var(--primary-black);">¿Necesitas personalización
+                                        avanzada?</strong>
+                                    <a href="{{ url_for('contact.send_message') }}"
+                                       style="color: var(--primary-orange); font-weight: 600; text-decoration: underline;">
+                                        Contáctame directamente
+                                    </a>
+                                    para seguimiento personalizado con atención humana.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alert Roadmap 2026 -->
+                    <div class="d-inline-block mt-3"
+                         style="max-width: 900px; text-align: left; background: var(--primary-black); border: 2px solid var(--primary-orange); border-radius: 15px; color: var(--white); padding: 1.5rem;">
+                        <div class="d-flex align-items-start">
+                            <div class="rounded-circle p-3 me-3"
+                                 style="min-width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: var(--primary-orange);">
+                                <i class="bi bi-stars fs-4 text-white"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-2" style="color: var(--primary-orange);"><strong>Roadmap 2026 - Lo que
+                                    viene</strong></h5>
+                                <p class="mb-2" style="color: var(--secondary-gray);">
+                                    Estamos desarrollando funcionalidades avanzadas que se lanzarán en 2026:
+                                </p>
+                                <ul class="mb-2" style="color: var(--secondary-gray);">
+                                    <li><i class="bi bi-cpu-fill text-danger me-2"></i><strong>IA Completa
+                                        Mejorada</strong> - Modelos más precisos y personalizados
+                                    </li>
+                                    <li><i class="bi bi-camera-fill text-danger me-2"></i><strong>Visión
+                                        Computacional</strong> - Análisis de fotos para seguimiento visual
+                                    </li>
+                                    <li><i class="bi bi-heart-pulse-fill text-danger me-2"></i><strong>Análisis de
+                                        Analíticas Médicas</strong> - Integración con tus análisis de sangre
+                                    </li>
+                                    <li><i class="bi bi-graph-up-arrow text-danger me-2"></i><strong>Dashboard
+                                        Avanzado</strong> - Métricas y gráficos de progreso
+                                    </li>
+                                    <li><i class="bi bi-people-fill text-danger me-2"></i><strong>Equipo
+                                        Multidisciplinar</strong> - Médicos, nutricionistas, psicólogos, entrenadores
+                                    </li>
+                                    <li><i class="bi bi-credit-card-fill text-danger me-2"></i><strong>Planes de
+                                        Pago</strong> - FREE, Básico (19€/mes), Premium (49€/mes)
+                                    </li>
+                                </ul>
+                                <p class="mb-0" style="color: var(--white);">
+                                    <i class="bi bi-gift-fill me-2" style="color: var(--primary-orange);"></i>
+                                    <strong style="color: var(--primary-orange);">Beneficio Beta Tester:</strong> Los
+                                    usuarios registrados en 2025 obtendrán
+                                    <strong style="color: var(--primary-orange);">descuentos permanentes</strong> cuando
+                                    lancemos los planes de pago.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CTA Button -->
+                    <div class="mt-4">
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-lg px-5 py-3"
+                           style="background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-orange) 100%); color: white; border: none; font-weight: 600; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);">
+                            <i class="bi bi-rocket-takeoff-fill me-2"></i>
+                            Registrarme GRATIS en la BETA
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================================
          FAQ
          ============================================================================ -->
     <section class="faq-section" id="faq">
@@ -1873,74 +2266,6 @@
         </div>
     </section>
 
-
-    <!-- ============================================================================
-         WHATSAPP FLOTANTE
-         ============================================================================ -->
-    <a href="https://wa.me/34644325470?text=Hola%2C%20quiero%20información%20sobre%20CoachBodyFit360" 
-       class="whatsapp-float" 
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="Contactar por WhatsApp">
-        <i class="bi bi-whatsapp"></i>
-    </a>
-
-    <style>
-    .whatsapp-float {
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        bottom: 30px;
-        right: 30px;
-        background-color: #25d366;
-        color: #FFF;
-        border-radius: 50px;
-        text-align: center;
-        font-size: 30px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
-        }
-    }
-
-    .whatsapp-float:hover {
-        background-color: #128C7E;
-        transform: scale(1.1);
-        color: #FFF;
-        animation: none;
-    }
-
-    .whatsapp-float i {
-        margin-top: 0;
-    }
-
-    @media (max-width: 768px) {
-        .whatsapp-float {
-            width: 50px;
-            height: 50px;
-            bottom: 20px;
-            right: 20px;
-            font-size: 25px;
-        }
-    }
-    </style>
-
 {% endblock %}
 
 {% block extra_js %}
@@ -2038,72 +2363,4 @@
             }
         });
     </script>
-
-    <!-- ============================================================================
-         WHATSAPP FLOTANTE
-         ============================================================================ -->
-    <a href="https://wa.me/34644325470?text=Hola%2C%20quiero%20información%20sobre%20CoachBodyFit360" 
-       class="whatsapp-float" 
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="Contactar por WhatsApp">
-        <i class="bi bi-whatsapp"></i>
-    </a>
-
-    <style>
-    .whatsapp-float {
-        position: fixed;
-        width: 60px;
-        height: 60px;
-        bottom: 30px;
-        right: 30px;
-        background-color: #25d366;
-        color: #FFF;
-        border-radius: 50px;
-        text-align: center;
-        font-size: 30px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
-        z-index: 1000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
-        }
-    }
-
-    .whatsapp-float:hover {
-        background-color: #128C7E;
-        transform: scale(1.1);
-        color: #FFF;
-        animation: none;
-    }
-
-    .whatsapp-float i {
-        margin-top: 0;
-    }
-
-    @media (max-width: 768px) {
-        .whatsapp-float {
-            width: 50px;
-            height: 50px;
-            bottom: 20px;
-            right: 20px;
-            font-size: 25px;
-        }
-    }
-    </style>
-
 {% endblock %}
