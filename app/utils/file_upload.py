@@ -15,7 +15,7 @@ ALLOWED_EXTENSIONS = {
     'video': {'mp4', 'webm', 'mov'},
     'audio': {'mp3', 'wav', 'ogg', 'm4a'}
 }
-MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+MAX_FILE_SIZE = 100 * 1024 * 1024  # 100MB
 
 
 def allowed_file(filename, file_type=None):
