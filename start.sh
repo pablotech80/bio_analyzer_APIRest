@@ -10,17 +10,16 @@ echo "=================================================="
 export FLASK_ENV=production
 echo "🔧 Ambiente: $FLASK_ENV"
 
-# Ejecutar migraciones de Flask
+# Ejecutar script para crear tablas del blog
 echo ""
-echo "📊 Paso 1: Ejecutando migraciones de base de datos..."
-FLASK_ENV=production flask db upgrade
+echo "📊 Paso 1: Creando tablas del blog..."
+FLASK_ENV=production python create_blog_tables.py
 
-# Verificar si las migraciones tuvieron éxito
+# Verificar si tuvo éxito
 if [ $? -eq 0 ]; then
-    echo "✅ Migraciones ejecutadas correctamente"
+    echo "✅ Tablas del blog creadas/verificadas correctamente"
 else
-    echo "⚠️  Advertencia: Migraciones fallaron, intentando init_db.py..."
-    FLASK_ENV=production python init_db.py
+    echo "⚠️  Advertencia: create_blog_tables.py falló"
 fi
 
 # Iniciar gunicorn
