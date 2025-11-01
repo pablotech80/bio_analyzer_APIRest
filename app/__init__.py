@@ -25,6 +25,9 @@ def create_app(config_name="development"):
 
     from app.config import config_by_name
     app.config.from_object(config_by_name[config_name])
+    
+    # Aumentar límite de upload para videos (100MB)
+    app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 
     # Inicializar extensiones CON LA APP
     db.init_app(app)
