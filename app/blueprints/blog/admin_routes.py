@@ -14,6 +14,7 @@ from app.utils.markdown_utils import (
     render_markdown
 )
 from app.utils.file_upload import save_uploaded_file, delete_file
+from app.services.storage_service import storage_service
 from app import db
 from datetime import datetime
 from functools import wraps
@@ -186,7 +187,7 @@ def admin_preview(post_id):
 @blog_bp.route('/admin/upload', methods=['POST'])
 @admin_required
 def admin_upload():
-    """Upload de archivos multimedia (imágenes, videos, audios)"""
+    """Upload de archivos multimedia (imágenes, videos, audios) con S3"""
     try:
         # Verificar que se envió un archivo
         if 'file' not in request.files:
@@ -197,22 +198,72 @@ def admin_upload():
         if file.filename == '':
             return jsonify({'error': 'No se seleccionó ningún archivo'}), 400
         
-        # Guardar archivo
-        file_info = save_uploaded_file(file)
-        
-        # Crear registro en base de datos
-        media_file = MediaFile(
-            filename=file_info['filename'],
-            file_path=file_info['file_path'],
-            file_url=file_info['file_url'],
-            file_type=file_info['file_type'],
-            mime_type=file_info['mime_type'],
-            file_size=file_info['file_size'],
-            width=file_info['width'],
-            height=file_info['height'],
-            duration=file_info['duration'],
-            uploaded_by=current_user.id
-        )
+        # Intentar subir a S3 si está configurado
+        if storage_service.is_configured():
+            # Detectar tipo de archivo
+            mime_type = file.content_type or 'application/octet-stream'
+            
+            if mime_type.startswith('image/'):
+                # Subir imagen con optimización a S3
+                result = storage_service.upload_image(
+                    file,
+                    folder='blog',
+                    optimize=True,
+                    max_width=1920
+                )
+                
+                # Crear registro en base de datos
+                media_file = MediaFile(
+                    filename=file.filename,
+                    file_path=result['s3_key'],
+                    file_url=result['url'],
+                    file_type='image',
+                    mime_type='image/webp',
+                    file_size=result['size'],
+                    width=result['width'],
+                    height=result['height'],
+                    uploaded_by=current_user.id
+                )
+            else:
+                # Subir otros archivos (videos, audios, etc.) a S3
+                result = storage_service.upload_file(
+                    file,
+                    folder='blog'
+                )
+                
+                # Detectar tipo
+                if mime_type.startswith('video/'):
+                    file_type = 'video'
+                elif mime_type.startswith('audio/'):
+                    file_type = 'audio'
+                else:
+                    file_type = 'file'
+                
+                media_file = MediaFile(
+                    filename=file.filename,
+                    file_path=result['s3_key'],
+                    file_url=result['url'],
+                    file_type=file_type,
+                    mime_type=result['mime_type'],
+                    file_size=result['size'],
+                    uploaded_by=current_user.id
+                )
+        else:
+            # Fallback: guardar localmente si S3 no está configurado
+            file_info = save_uploaded_file(file)
+            
+            media_file = MediaFile(
+                filename=file_info['filename'],
+                file_path=file_info['file_path'],
+                file_url=file_info['file_url'],
+                file_type=file_info['file_type'],
+                mime_type=file_info['mime_type'],
+                file_size=file_info['file_size'],
+                width=file_info['width'],
+                height=file_info['height'],
+                duration=file_info['duration'],
+                uploaded_by=current_user.id
+            )
         
         db.session.add(media_file)
         db.session.commit()
@@ -220,7 +271,8 @@ def admin_upload():
         return jsonify({
             'success': True,
             'file': media_file.to_dict(),
-            'markdown': media_file.markdown_embed
+            'markdown': media_file.markdown_embed,
+            'storage': 'S3' if storage_service.is_configured() else 'Local'
         }), 200
         
     except ValueError as e:

@@ -71,6 +71,27 @@ def create_app(config_name="development"):
     # ---> 5. INICIALIZA Swagger DESPUÉS de CORS <---
     swagger.init_app(app)
 
+    # ========================================================================
+    # IMPORTAR MODELOS EXPLÍCITAMENTE (CRÍTICO PARA db.create_all())
+    # ========================================================================
+    # IMPORTANTE: SQLAlchemy necesita que los modelos estén importados
+    # ANTES de db.create_all() para que se registren en db.metadata
+    
+    with app.app_context():
+        # Importar TODOS los modelos para registrarlos en db.metadata
+        from app.models import (
+            User, Role, Permission,              # Autenticación
+            BiometricAnalysis, ContactMessage,   # Core
+            NutritionPlan, TrainingPlan,         # Planes
+            BlogPost, MediaFile                  # Blog (CRÍTICO)
+        )
+    
+    # ========================================================================
+    # INICIALIZAR STORAGE SERVICE (S3)
+    # ========================================================================
+    from app.services.storage_service import storage_service
+    storage_service.init_app(app)
+
     # Configurar Flask-Login
     login_manager.login_view = "auth.login"
     login_manager.login_message = "Por favor inicia sesión para acceder a esta página."

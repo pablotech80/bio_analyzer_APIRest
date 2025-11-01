@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoachBodyFit360 - Editor de Posts</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Flowbite CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Editor Styles */
+        .ProseMirror {
+            outline: none;
+            min-height: 500px;
+        }
+        
+        .ProseMirror p {
+            margin-bottom: 1em;
+        }
+        
+        .ProseMirror h2 {
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        
+        .ProseMirror h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-top: 1.2em;
+            margin-bottom: 0.5em;
+        }
+        
+        .ProseMirror blockquote {
+            border-left: 4px solid #3b82f6;
+            padding-left: 1rem;
+            color: #6b7280;
+            font-style: italic;
+            margin: 1.5em 0;
+        }
+        
+        .ProseMirror code {
+            background: #f3f4f6;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875em;
+        }
+        
+        .ProseMirror pre {
+            background: #1f2937;
+            color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 1.5em 0;
+        }
+        
+        .ProseMirror pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+        
+        .ProseMirror ul,
+        .ProseMirror ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1em;
+        }
+        
+        .ProseMirror li {
+            margin-bottom: 0.5em;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Dropzone */
+        .dropzone {
+            transition: all 0.2s;
+        }
+        
+        .dropzone.dragover {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+        }
+        
+        /* Tag input */
+        .tag-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            background: #f3f4f6;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .tag-badge button {
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+        
+        .tag-badge button:hover {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body class="h-full bg-gray-50">
+    <!-- Main Container -->
+    <div class="h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-white border-b border-gray-200 px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-dumbbell text-2xl text-blue-600"></i>
+                        <span class="text-xl font-bold text-gray-900">CoachBodyFit360</span>
+                    </div>
+                    
+                    <!-- Breadcrumb -->
+                    <nav class="flex" aria-label="Breadcrumb">
+                        <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                            <li class="inline-flex items-center">
+                                <a href="/blog/admin" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
+                                    Blog
+                                </a>
+                            </li>
+                            <li aria-current="page">
+                                <div class="flex items-center">
+                                    <i class="fas fa-chevron-right text-gray-400 text-xs mx-2"></i>
+                                    <span class="text-sm font-medium text-gray-500">Nuevo Post</span>
+                                </div>
+                            </li>
+                        </ol>
+                    </nav>
+                </div>
+                
+                <!-- Header Actions -->
+                <div class="flex items-center gap-3">
+                    <button type="button" id="previewBtn" class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center gap-2">
+                        <i class="fas fa-eye"></i>
+                        <span>Preview</span>
+                    </button>
+                    
+                    <button type="button" id="saveDraftBtn" class="text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center gap-2">
+                        <i class="fas fa-save"></i>
+                        <span>Guardar Borrador</span>
+                    </button>
+                    
+                    <button type="button" id="publishBtn" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 inline-flex items-center gap-2">
+                        <i class="fas fa-rocket"></i>
+                        <span>Publicar</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="flex-1 flex overflow-hidden">
+            <!-- Left Sidebar -->
+            <aside class="w-64 bg-white border-r border-gray-200 overflow-y-auto">
+                <div class="p-4 space-y-6">
+                    <!-- Content Section -->
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Contenido</h3>
+                        <div class="space-y-1">
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg" data-tool="editor">
+                                <i class="fas fa-edit w-5"></i>
+                                <span>Editor</span>
+                            </button>
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="media">
+                                <i class="fas fa-images w-5"></i>
+                                <span>Galería de Medios</span>
+                            </button>
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="blocks">
+                                <i class="fas fa-th-large w-5"></i>
+                                <span>Bloques</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Integrations Section -->
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Integraciones</h3>
+                        <div class="space-y-1">
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="nano-banana">
+                                <i class="fas fa-robot w-5"></i>
+                                <span>Nano Banana</span>
+                            </button>
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="notebooklm">
+                                <i class="fas fa-podcast w-5"></i>
+                                <span>NotebookLM</span>
+                            </button>
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="unsplash">
+                                <i class="fas fa-camera w-5"></i>
+                                <span>Unsplash</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Tools Section -->
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Herramientas</h3>
+                        <div class="space-y-1">
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="seo">
+                                <i class="fas fa-search w-5"></i>
+                                <span>Análisis SEO</span>
+                            </button>
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="readability">
+                                <i class="fas fa-book-reader w-5"></i>
+                                <span>Legibilidad</span>
+                            </button>
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="ai-improve">
+                                <i class="fas fa-magic w-5"></i>
+                                <span>Mejorar con IA</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Analytics Section -->
+                    <div>
+                        <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Analytics</h3>
+                        <div class="space-y-1">
+                            <button class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg" data-tool="stats">
+                                <i class="fas fa-chart-line w-5"></i>
+                                <span>Estadísticas</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Editor Area -->
+            <main class="flex-1 flex flex-col overflow-hidden bg-white">
+                <!-- Toolbar -->
+                <div class="border-b border-gray-200 p-3 bg-gray-50">
+                    <div class="flex flex-wrap items-center gap-1">
+                        <!-- Text Formatting -->
+                        <div class="flex items-center gap-1 pr-2 mr-2 border-r border-gray-300">
+                            <button type="button" data-action="bold" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Negrita (Ctrl+B)">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" data-action="italic" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Cursiva (Ctrl+I)">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" data-action="underline" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Subrayado (Ctrl+U)">
+                                <i class="fas fa-underline"></i>
+                            </button>
+                            <button type="button" data-action="strike" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Tachado">
+                                <i class="fas fa-strikethrough"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Headings -->
+                        <div class="flex items-center gap-1 pr-2 mr-2 border-r border-gray-300">
+                            <button type="button" data-action="h2" class="px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-200 rounded" title="Título 2">
+                                H2
+                            </button>
+                            <button type="button" data-action="h3" class="px-3 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-200 rounded" title="Título 3">
+                                H3
+                            </button>
+                        </div>
+                        
+                        <!-- Lists -->
+                        <div class="flex items-center gap-1 pr-2 mr-2 border-r border-gray-300">
+                            <button type="button" data-action="bulletList" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Lista con viñetas">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                            <button type="button" data-action="orderedList" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Lista numerada">
+                                <i class="fas fa-list-ol"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Special Blocks -->
+                        <div class="flex items-center gap-1 pr-2 mr-2 border-r border-gray-300">
+                            <button type="button" data-action="blockquote" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Cita">
+                                <i class="fas fa-quote-right"></i>
+                            </button>
+                            <button type="button" data-action="codeBlock" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Bloque de código">
+                                <i class="fas fa-code"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Media -->
+                        <div class="flex items-center gap-1 pr-2 mr-2 border-r border-gray-300">
+                            <button type="button" data-action="link" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Insertar enlace">
+                                <i class="fas fa-link"></i>
+                            </button>
+                            <button type="button" data-action="image" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Insertar imagen">
+                                <i class="fas fa-image"></i>
+                            </button>
+                            <button type="button" data-action="video" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Insertar video">
+                                <i class="fas fa-video"></i>
+                            </button>
+                            <button type="button" data-action="audio" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Insertar audio">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Undo/Redo -->
+                        <div class="flex items-center gap-1">
+                            <button type="button" data-action="undo" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Deshacer (Ctrl+Z)">
+                                <i class="fas fa-undo"></i>
+                            </button>
+                            <button type="button" data-action="redo" class="p-2 text-gray-600 hover:bg-gray-200 rounded" title="Rehacer (Ctrl+Y)">
+                                <i class="fas fa-redo"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Editor Content -->
+                <div class="flex-1 overflow-y-auto">
+                    <div class="max-w-4xl mx-auto px-8 py-12">
+                        <!-- Title Input -->
+                        <input 
+                            type="text" 
+                            id="postTitle"
+                            class="w-full text-4xl font-bold text-gray-900 border-0 focus:ring-0 placeholder-gray-300 mb-6" 
+                            placeholder="Título del post..."
+                        >
+                        
+                        <!-- Editor -->
+                        <div id="editor" class="ProseMirror text-lg text-gray-700 leading-relaxed" contenteditable="true">
+                            <p>Comienza a escribir tu post aquí...</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            
+            <!-- Right Sidebar -->
+            <aside class="w-80 bg-white border-l border-gray-200 overflow-y-auto">
+                <div class="p-6 space-y-6">
+                    <!-- Featured Image -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">Imagen Destacada</label>
+                        <div id="featuredImageUpload" class="dropzone flex flex-col items-center justify-center w-full h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3"></i>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click para subir</span> o arrastra aquí</p>
+                                <p class="text-xs text-gray-500">PNG, JPG, WEBP hasta 5MB</p>
+                            </div>
+                            <input type="file" id="featuredImageInput" class="hidden" accept="image/*">
+                        </div>
+                        <img id="featuredImagePreview" class="hidden mt-3 w-full rounded-lg">
+                    </div>
+                    
+                    <!-- Category -->
+                    <div>
+                        <label for="postCategory" class="block text-sm font-medium text-gray-900 mb-2">Categoría</label>
+                        <select id="postCategory" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <option value="">Seleccionar categoría</option>
+                            <option value="entrenamiento">Entrenamiento</option>
+                            <option value="nutricion">Nutrición</option>
+                            <option value="bienestar">Bienestar</option>
+                            <option value="suplementos">Suplementos</option>
+                            <option value="recetas">Recetas</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Tags -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">Tags</label>
+                        <div class="flex gap-2 mb-2">
+                            <input 
+                                type="text" 
+                                id="tagInput"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+                                placeholder="Añadir tag..."
+                            >
+                            <button type="button" id="addTagBtn" class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-4 py-2">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div id="tagsList" class="flex flex-wrap gap-2"></div>
+                    </div>
+                    
+                    <!-- Excerpt -->
+                    <div>
+                        <label for="postExcerpt" class="block text-sm font-medium text-gray-900 mb-2">Extracto</label>
+                        <textarea 
+                            id="postExcerpt"
+                            rows="3" 
+                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500" 
+                            placeholder="Resumen breve del post (max 160 caracteres)"
+                            maxlength="160"
+                        ></textarea>
+                        <p class="mt-1 text-xs text-gray-500"><span id="excerptCount">0</span>/160 caracteres</p>
+                    </div>
+                    
+                    <!-- SEO -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-900 mb-2">SEO</label>
+                        <div class="mb-3">
+                            <label for="postSlug" class="block text-xs font-medium text-gray-500 mb-1">Slug URL</label>
+                            <input 
+                                type="text" 
+                                id="postSlug"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" 
+                                placeholder="mi-post-increible"
+                            >
+                        </div>
+                        
+                        <!-- SEO Score -->
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-sm font-semibold text-gray-700">Puntuación SEO</span>
+                                <span id="seoScoreValue" class="text-sm font-bold text-green-600">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2 mb-3">
+                                <div id="seoScoreFill" class="bg-green-600 h-2 rounded-full" style="width: 85%"></div>
+                            </div>
+                            <div id="seoTips" class="text-xs text-gray-600 space-y-1">
+                                <p><i class="fas fa-check text-green-500"></i> Título optimizado</p>
+                                <p><i class="fas fa-check text-green-500"></i> Imagen destacada añadida</p>
+                                <p><i class="fas fa-exclamation-triangle text-yellow-500"></i> Añade más de 300 palabras</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Schedule Publication -->
+                    <div>
+                        <label for="publishDate" class="block text-sm font-medium text-gray-900 mb-2">Programar Publicación</label>
+                        <input 
+                            type="datetime-local" 
+                            id="publishDate"
+                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        >
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+    
+    <!-- Media Gallery Modal -->
+    <div id="mediaModal" data-modal-backdrop="static" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-7xl max-h-full">
+            <div class="relative bg-white rounded-lg shadow">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                    <h3 class="text-xl font-semibold text-gray-900">
+                        Galería de Medios
+                    </h3>
+                    <button type="button" id="closeMediaModal" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <!-- Modal body -->
+                <div class="p-4 md:p-5">
+                    <!-- Tabs -->
+                    <div class="border-b border-gray-200 mb-4">
+                        <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" role="tablist">
+                            <li class="me-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-blue-600 text-blue-600 rounded-t-lg" data-media-type="images" type="button" role="tab">
+                                    <i class="fas fa-image mr-2"></i>Imágenes
+                                </button>
+                            </li>
+                            <li class="me-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" data-media-type="videos" type="button" role="tab">
+                                    <i class="fas fa-video mr-2"></i>Videos
+                                </button>
+                            </li>
+                            <li class="me-2" role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" data-media-type="audios" type="button" role="tab">
+                                    <i class="fas fa-microphone mr-2"></i>Audios
+                                </button>
+                            </li>
+                            <li role="presentation">
+                                <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 hover:border-gray-300 rounded-t-lg" data-media-type="upload" type="button" role="tab">
+                                    <i class="fas fa-cloud-upload-alt mr-2"></i>Subir
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Upload Dropzone -->
+                    <div id="dropzone" class="hidden">
+                        <div class="dropzone flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <i class="fas fa-cloud-upload-alt text-5xl text-gray-400 mb-4"></i>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Arrastra archivos aquí</span> o haz click para seleccionar</p>
+                                <p class="text-xs text-gray-500">Imágenes, videos o audios hasta 50MB</p>
+                            </div>
+                            <input type="file" id="fileInput" class="hidden" multiple accept="image/*,video/*,audio/*">
+                        </div>
+                    </div>
+                    
+                    <!-- Media Grid -->
+                    <div id="mediaGrid" class="grid grid-cols-4 gap-4">
+                        <!-- Items loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Flowbite JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script>
+        // App State
+        const appState = {
+            tags: [],
+            autosaveTimer: null,
+            postId: null
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initEditor();
+            initToolbar();
+            initTags();
+            initFeaturedImage();
+            initMediaModal();
+            initAutosave();
+            initSlugGeneration();
+            initExcerptCounter();
+        });
+        
+        // Editor Initialization
+        function initEditor() {
+            const editor = document.getElementById('editor');
+            editor.addEventListener('input', updateWordCount);
+            editor.addEventListener('input', updateSEOScore);
+        }
+        
+        // Toolbar Actions
+        function initToolbar() {
+            document.querySelectorAll('[data-action]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const action = btn.dataset.action;
+                    executeCommand(action);
+                    btn.classList.toggle('bg-blue-100');
+                });
+            });
+        }
+        
+        function executeCommand(action) {
+            const commands = {
+                'bold': () => document.execCommand('bold'),
+                'italic': () => document.execCommand('italic'),
+                'underline': () => document.execCommand('underline'),
+                'strike': () => document.execCommand('strikeThrough'),
+                'h2': () => document.execCommand('formatBlock', false, 'h2'),
+                'h3': () => document.execCommand('formatBlock', false, 'h3'),
+                'bulletList': () => document.execCommand('insertUnorderedList'),
+                'orderedList': () => document.execCommand('insertOrderedList'),
+                'blockquote': () => document.execCommand('formatBlock', false, 'blockquote'),
+                'link': () => {
+                    const url = prompt('URL del enlace:');
+                    if (url) document.execCommand('createLink', false, url);
+                },
+                'image': () => openMediaModal('images'),
+                'video': () => openMediaModal('videos'),
+                'audio': () => openMediaModal('audios')
+            };
+            
+            if (commands[action]) {
+                commands[action]();
+            }
+        }
+        
+        // Slug Generation
+        function initSlugGeneration() {
+            const titleInput = document.getElementById('postTitle');
+            const slugInput = document.getElementById('postSlug');
+            
+            titleInput.addEventListener('input', (e) => {
+                const slug = e.target.value
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/[^a-z0-9]+/g, '-')
+                    .replace(/^-|-$/g, '');
+                slugInput.value = slug;
+            });
+        }
+        
+        // Tags Management
+        function initTags() {
+            const tagInput = document.getElementById('tagInput');
+            const addTagBtn = document.getElementById('addTagBtn');
+            
+            addTagBtn.addEventListener('click', () => addTag());
+            tagInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    addTag();
+                }
+            });
+        }
+        
+        function addTag() {
+            const tagInput = document.getElementById('tagInput');
+            const tag = tagInput.value.trim();
+            
+            if (tag && !appState.tags.includes(tag)) {
+                appState.tags.push(tag);
+                renderTags();
+                tagInput.value = '';
+            }
+        }
+        
+        function removeTag(tag) {
+            appState.tags = appState.tags.filter(t => t !== tag);
+            renderTags();
+        }
+        
+        function renderTags() {
+            const tagsList = document.getElementById('tagsList');
+            tagsList.innerHTML = appState.tags.map(tag => `
+                <span class="tag-badge">
+                    ${tag}
+                    <button type="button" onclick="removeTag('${tag}')">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </span>
+            `).join('');
+        }
+        
+        // Excerpt Counter
+        function initExcerptCounter() {
+            const excerptTextarea = document.getElementById('postExcerpt');
+            const excerptCount = document.getElementById('excerptCount');
+            
+            excerptTextarea.addEventListener('input', (e) => {
+                excerptCount.textContent = e.target.value.length;
+            });
+        }
+        
+        // Featured Image
+        function initFeaturedImage() {
+            const upload = document.getElementById('featuredImageUpload');
+            const input = document.getElementById('featuredImageInput');
+            const preview = document.getElementById('featuredImagePreview');
+            
+            upload.addEventListener('click', () => input.click());
+            
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        preview.src = event.target.result;
+                        preview.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Media Modal
+        function initMediaModal() {
+            const modal = document.getElementById('mediaModal');
+            const closeBtn = document.getElementById('closeMediaModal');
+            
+            closeBtn.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+            
+            // Tab switching
+            document.querySelectorAll('[data-media-type]').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const type = tab.dataset.mediaType;
+                    switchMediaTab(type);
+                });
+            });
+        }
+        
+        function openMediaModal(type = 'images') {
+            const modal = document.getElementById('mediaModal');
+            modal.classList.remove('hidden');
+            switchMediaTab(type);
+        }
+        
+        function switchMediaTab(type) {
+            // Update active tab
+            document.querySelectorAll('[data-media-type]').forEach(tab => {
+                if (tab.dataset.mediaType === type) {
+                    tab.classList.add('border-blue-600', 'text-blue-600');
+                    tab.classList.remove('border-transparent');
+                } else {
+                    tab.classList.remove('border-blue-600', 'text-blue-600');
+                    tab.classList.add('border-transparent');
+                }
+            });
+            
+            // Show/hide content
+            const dropzone = document.getElementById('dropzone');
+            const mediaGrid = document.getElementById('mediaGrid');
+            
+            if (type === 'upload') {
+                dropzone.classList.remove('hidden');
+                mediaGrid.classList.add('hidden');
+            } else {
+                dropzone.classList.add('hidden');
+                mediaGrid.classList.remove('hidden');
+                loadMedia(type);
+            }
+        }
+        
+        function loadMedia(type) {
+            // Load media from API
+            console.log('Loading media:', type);
+        }
+        
+        // Autosave
+        function initAutosave() {
+            appState.autosaveTimer = setInterval(autosave, 30000); // Every 30 seconds
+        }
+        
+        function autosave() {
+            const data = getPostData();
+            console.log('Autosaving...', data);
+            
+            // Send to API
+            fetch('/blog/api/posts/autosave', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    appState.postId = data.post_id;
+                    showNotification('Borrador guardado', 'success');
+                }
+            })
+            .catch(err => console.error('Autosave error:', err));
+        }
+        
+        function getPostData() {
+            return {
+                post_id: appState.postId,
+                title: document.getElementById('postTitle').value,
+                content: document.getElementById('editor').innerHTML,
+                excerpt: document.getElementById('postExcerpt').value,
+                slug: document.getElementById('postSlug').value,
+                category: document.getElementById('postCategory').value,
+                tags: appState.tags,
+                publishDate: document.getElementById('publishDate').value
+            };
+        }
+        
+        // Word Count & SEO
+        function updateWordCount() {
+            const content = document.getElementById('editor').innerText;
+            const words = content.trim().split(/\s+/).length;
+            // Update word count display if needed
+        }
+        
+        function updateSEOScore() {
+            // Calculate SEO score based on content
+            const title = document.getElementById('postTitle').value;
+            const content = document.getElementById('editor').innerText;
+            
+            let score = 100;
+            
+            if (!title) score -= 20;
+            if (title.length < 30) score -= 10;
+            if (content.split(/\s+/).length < 300) score -= 20;
+            
+            score = Math.max(0, score);
+            
+            const scoreEl = document.getElementById('seoScoreValue');
+            const fillEl = document.getElementById('seoScoreFill');
+            
+            scoreEl.textContent = score + '%';
+            fillEl.style.width = score + '%';
+            
+            // Update color
+            if (score >= 80) {
+                fillEl.classList.remove('bg-yellow-500', 'bg-red-500');
+                fillEl.classList.add('bg-green-600');
+            } else if (score >= 50) {
+                fillEl.classList.remove('bg-green-600', 'bg-red-500');
+                fillEl.classList.add('bg-yellow-500');
+            } else {
+                fillEl.classList.remove('bg-green-600', 'bg-yellow-500');
+                fillEl.classList.add('bg-red-500');
+            }
+        }
+        
+        // Action Buttons
+        document.getElementById('saveDraftBtn').addEventListener('click', () => {
+            autosave();
+            showNotification('Borrador guardado correctamente', 'success');
+        });
+        
+        document.getElementById('publishBtn').addEventListener('click', () => {
+            const title = document.getElementById('postTitle').value;
+            if (!title) {
+                showNotification('El título es requerido', 'error');
+                return;
+            }
+            
+            if (confirm('¿Publicar este post?')) {
+                publishPost();
+            }
+        });
+        
+        document.getElementById('previewBtn').addEventListener('click', () => {
+            const slug = document.getElementById('postSlug').value;
+            window.open('/blog/preview/' + slug, '_blank');
+        });
+        
+        function publishPost() {
+            const data = getPostData();
+            
+            fetch('/blog/api/posts/publish', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('Post publicado exitosamente', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.url;
+                    }, 1500);
+                } else {
+                    showNotification(data.error || 'Error al publicar', 'error');
+                }
+            })
+            .catch(err => {
+                console.error('Publish error:', err);
+                showNotification('Error al publicar el post', 'error');
+            });
+        }
+        
+        // Notifications
+        function showNotification(message, type = 'info') {
+            // Use Flowbite toast or custom notification
+            console.log(`[${type}] ${message}`);
+        }
+        
+        // Tool Buttons
+        document.querySelectorAll('[data-tool]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tool = btn.dataset.tool;
+                console.log('Tool clicked:', tool);
+                
+                // Update active state
+                document.querySelectorAll('[data-tool]').forEach(b => {
+                    b.classList.remove('text-white', 'bg-blue-600');
+                    b.classList.add('text-gray-700', 'hover:bg-gray-100');
+                });
+                
+                btn.classList.remove('text-gray-700', 'hover:bg-gray-100');
+                btn.classList.add('text-white', 'bg-blue-600');
+            });
+        });
+    </script>
+</body>
+</html>
