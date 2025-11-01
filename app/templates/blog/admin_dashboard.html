@@ -211,6 +211,7 @@
                                       method="POST" 
                                       onsubmit="return confirm('¿Estás seguro de eliminar este post?');"
                                       class="inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" 
                                             class="text-red-600 hover:text-red-900"
                                             title="Eliminar">

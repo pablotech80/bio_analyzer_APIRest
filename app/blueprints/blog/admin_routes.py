@@ -157,7 +157,7 @@ def admin_edit(post_id):
 @blog_bp.route('/admin/eliminar/<int:post_id>', methods=['POST'])
 @admin_required
 def admin_delete(post_id):
-    """Eliminar post"""
+    """Eliminar post (requiere CSRF token)"""
     post = BlogPost.query.get_or_404(post_id)
     title = post.title
     
