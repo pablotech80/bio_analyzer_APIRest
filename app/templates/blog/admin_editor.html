@@ -565,53 +565,93 @@
         }
     });
     
-    // Función para subir archivo
-    function uploadFile(file) {
+    // Función para subir archivo (DIRECTO A S3)
+    async function uploadFile(file) {
         // Validar tamaño
         if (file.size > fileTypes[currentType].maxSize) {
             alert(`El archivo es demasiado grande. Máximo: ${fileTypes[currentType].maxSize / (1024 * 1024)}MB`);
             return;
         }
         
-        // Crear FormData
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('csrf_token', '{{ csrf_token() }}');
-        
         // Mostrar loading
         showLoading(file.name);
         
-        // Upload
-        fetch("{{ url_for('blog.admin_upload') }}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            hideLoading();
+        try {
+            // 1. Obtener presigned URL del servidor
+            console.log('Solicitando presigned URL...');
+            const presignedResponse = await fetch("{{ url_for('blog.get_presigned_url') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                    filename: file.name,
+                    content_type: file.type,
+                    file_size: file.size
+                })
+            });
             
-            if (data.success) {
-                console.log('Upload exitoso:', data);
-                
-                // Insertar código Markdown en el editor
-                if (data.markdown) {
-                    insertMarkdown(data.markdown);
-                }
-                
-                // Mostrar archivo subido
-                showUploadedFile(data.file, data.markdown);
-            } else {
-                alert('Error: ' + (data.error || 'Error desconocido'));
+            const presignedData = await presignedResponse.json();
+            
+            if (!presignedData.success) {
+                throw new Error(presignedData.error || 'Error obteniendo presigned URL');
             }
-        })
-        .catch(error => {
+            
+            console.log('Presigned URL obtenida:', presignedData);
+            
+            // 2. Subir archivo directamente a S3
+            console.log('Subiendo a S3...');
+            const formData = new FormData();
+            
+            // Agregar campos de S3
+            Object.keys(presignedData.fields).forEach(key => {
+                formData.append(key, presignedData.fields[key]);
+            });
+            
+            // Agregar archivo al final
+            formData.append('file', file);
+            
+            const s3Response = await fetch(presignedData.upload_url, {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (!s3Response.ok) {
+                throw new Error(`Error subiendo a S3: ${s3Response.status}`);
+            }
+            
+            console.log('✅ Archivo subido a S3');
+            
+            // 3. Generar markdown según tipo de archivo
+            let markdown;
+            if (file.type.startsWith('image/')) {
+                markdown = `![${file.name}](${presignedData.file_url})`;
+            } else if (file.type.startsWith('video/')) {
+                markdown = `![video:${file.name}](${presignedData.file_url})`;
+            } else if (file.type.startsWith('audio/')) {
+                markdown = `![audio:${file.name}](${presignedData.file_url})`;
+            } else {
+                markdown = `[${file.name}](${presignedData.file_url})`;
+            }
+            
+            // 4. Insertar en el editor
+            insertMarkdown(markdown);
+            
+            // 5. Mostrar éxito
+            hideLoading();
+            showUploadedFile({
+                filename: presignedData.filename,
+                file_url: presignedData.file_url,
+                file_type: file.type.split('/')[0],
+                file_size: file.size
+            }, markdown);
+            
+        } catch (error) {
             hideLoading();
             console.error('Error:', error);
             alert('Error al subir archivo: ' + error.message);
-        });
+        }
         
         // Limpiar input
         dropzoneFile.value = '';
