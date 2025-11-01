@@ -25,4 +25,4 @@ fi
 # Iniciar gunicorn
 echo ""
 echo "🌐 Paso 2: Iniciando servidor Gunicorn..."
-exec gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 60 run:app
+exec gunicorn --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 300 run:app
