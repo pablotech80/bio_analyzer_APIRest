@@ -14,6 +14,7 @@ from app.utils.markdown_utils import (
     render_markdown
 )
 from app.utils.file_upload import save_uploaded_file, delete_file
+from app.services.storage_service import get_storage_service
 from app import db
 from datetime import datetime
 from functools import wraps
@@ -156,7 +157,7 @@ def admin_edit(post_id):
 @blog_bp.route('/admin/eliminar/<int:post_id>', methods=['POST'])
 @admin_required
 def admin_delete(post_id):
-    """Eliminar post"""
+    """Eliminar post (requiere CSRF token)"""
     post = BlogPost.query.get_or_404(post_id)
     title = post.title
     
@@ -186,21 +187,76 @@ def admin_preview(post_id):
 @blog_bp.route('/admin/upload', methods=['POST'])
 @admin_required
 def admin_upload():
-    """Upload de archivos multimedia (imágenes, videos, audios)"""
+    """
+    Upload de archivos multimedia CORREGIDO
+    
+    Maneja correctamente FileStorage con PIL y S3
+    
+    Form data:
+    - file: archivo (imagen, video o audio)
+    - title: título opcional
+    - alt_text: texto alternativo opcional
+    
+    Response:
+    {
+        "success": true,
+        "file": {
+            "id": 123,
+            "url": "https://...",
+            "filename": "image.webp",
+            ...
+        },
+        "markdown": "![alt text](url)"
+    }
+    """
+    print("\n" + "="*50)
+    print("=== INICIO UPLOAD ===")
+    print("="*50)
+    
     try:
-        # Verificar que se envió un archivo
+        # 1. VERIFICAR QUE SE ENVIÓ UN ARCHIVO
+        print(f"Files en request: {request.files}")
+        
         if 'file' not in request.files:
-            return jsonify({'error': 'No se envió ningún archivo'}), 400
+            print("❌ No hay 'file' en request.files")
+            return jsonify({
+                'success': False,
+                'error': 'No se envió ningún archivo'
+            }), 400
         
         file = request.files['file']
+        print(f"Archivo recibido: {file.filename}")
+        print(f"Content-Type: {file.content_type}")
         
         if file.filename == '':
-            return jsonify({'error': 'No se seleccionó ningún archivo'}), 400
+            print("❌ Filename está vacío")
+            return jsonify({
+                'success': False,
+                'error': 'Archivo sin nombre'
+            }), 400
         
-        # Guardar archivo
-        file_info = save_uploaded_file(file)
+        # 2. OBTENER SERVICIO DE ALMACENAMIENTO
+        from flask import current_app
+        storage = get_storage_service(current_app)
         
-        # Crear registro en base de datos
+        if storage is None:
+            print("❌ StorageService no inicializado")
+            return jsonify({
+                'success': False,
+                'error': 'Servicio de almacenamiento no disponible'
+            }), 500
+        
+        print(f"S3 configurado: {storage.use_s3}")
+        
+        # 3. GUARDAR ARCHIVO (aquí se hace toda la magia)
+        # El StorageService maneja correctamente PIL y S3
+        file_info = storage.save_file(file)
+        
+        print(f"✅ Archivo guardado exitosamente")
+        print(f"   URL: {file_info['file_url']}")
+        print(f"   Storage: {file_info.get('storage', 'unknown')}")
+        
+        # 4. CREAR REGISTRO EN BASE DE DATOS
         media_file = MediaFile(
             filename=file_info['filename'],
             file_path=file_info['file_path'],
@@ -208,25 +264,50 @@ def admin_upload():
             file_type=file_info['file_type'],
             mime_type=file_info['mime_type'],
             file_size=file_info['file_size'],
-            width=file_info['width'],
-            height=file_info['height'],
-            duration=file_info['duration'],
+            width=file_info.get('width'),
+            height=file_info.get('height'),
+            duration=file_info.get('duration'),
+            title=request.form.get('title'),
+            alt_text=request.form.get('alt_text'),
             uploaded_by=current_user.id
         )
         
         db.session.add(media_file)
         db.session.commit()
         
-        return jsonify({
+        print(f"✅ MediaFile creado en BD con ID: {media_file.id}")
+        
+        # 5. RESPUESTA
+        response_data = {
             'success': True,
             'file': media_file.to_dict(),
             'markdown': media_file.markdown_embed
-        }), 200
+        }
         
+        print("="*50)
+        print("=== UPLOAD EXITOSO ===")
+        print("="*50 + "\n")
+        
+        return jsonify(response_data), 200
+    
     except ValueError as e:
-        return jsonify({'error': str(e)}), 400
+        # Error de validación (tipo de archivo no soportado, etc.)
+        print(f"❌ ValueError en upload: {e}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 400
+    
     except Exception as e:
-        return jsonify({'error': f'Error al subir archivo: {str(e)}'}), 500
+        # Error inesperado
+        print(f"❌ Exception en upload: {e}")
+        import traceback
+        traceback.print_exc()
+        
+        return jsonify({
+            'success': False,
+            'error': f'Error al subir archivo: {str(e)}'
+        }), 500
 
 
 @blog_bp.route('/admin/media')
@@ -296,3 +377,365 @@ def admin_media_delete(media_id):
     
     flash(f'Archivo "{media_file.filename}" eliminado exitosamente.', 'success')
     return redirect(url_for('blog.admin_media'))
+
+
+# ============================================================================
+# RUTA ADICIONAL: Test de upload
+# ============================================================================
+
+@blog_bp.route('/admin/test-upload')
+@admin_required
+def admin_test_upload():
+    """Página de prueba para verificar el upload"""
+    html = '''
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Test Upload - CoachBodyFit360</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                padding: 20px;
+            }
+            .container {
+                max-width: 900px;
+                margin: 0 auto;
+            }
+            .card {
+                background: white;
+                border-radius: 16px;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+                overflow: hidden;
+                margin-bottom: 20px;
+            }
+            .card-header {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 30px;
+                text-align: center;
+            }
+            .card-header h1 {
+                font-size: 32px;
+                margin-bottom: 10px;
+            }
+            .card-header p {
+                opacity: 0.9;
+                font-size: 16px;
+            }
+            .card-body {
+                padding: 40px;
+            }
+            .upload-zone {
+                border: 3px dashed #cbd5e0;
+                border-radius: 12px;
+                padding: 40px;
+                text-align: center;
+                background: #f7fafc;
+                transition: all 0.3s;
+                cursor: pointer;
+            }
+            .upload-zone:hover {
+                border-color: #667eea;
+                background: #edf2f7;
+            }
+            .upload-zone.dragover {
+                border-color: #667eea;
+                background: #e6fffa;
+            }
+            .upload-icon {
+                font-size: 48px;
+                margin-bottom: 20px;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            .form-group label {
+                display: block;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #2d3748;
+            }
+            .form-control {
+                width: 100%;
+                padding: 12px 16px;
+                border: 2px solid #e2e8f0;
+                border-radius: 8px;
+                font-size: 16px;
+                transition: border-color 0.3s;
+            }
+            .form-control:focus {
+                outline: none;
+                border-color: #667eea;
+            }
+            .btn {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white;
+                padding: 14px 32px;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s, box-shadow 0.2s;
+                width: 100%;
+            }
+            .btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            }
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+                transform: none;
+            }
+            .result {
+                margin-top: 30px;
+                padding: 20px;
+                border-radius: 12px;
+                animation: slideIn 0.3s;
+            }
+            @keyframes slideIn {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .success {
+                background: #d1fae5;
+                border-left: 4px solid #10b981;
+                color: #065f46;
+            }
+            .error {
+                background: #fee2e2;
+                border-left: 4px solid #ef4444;
+                color: #991b1b;
+            }
+            .loading {
+                background: #dbeafe;
+                border-left: 4px solid #3b82f6;
+                color: #1e40af;
+            }
+            .result h3 {
+                margin-bottom: 15px;
+                font-size: 20px;
+            }
+            .result-item {
+                margin: 10px 0;
+                padding: 8px 0;
+                border-bottom: 1px solid rgba(0,0,0,0.1);
+            }
+            .result-item:last-child {
+                border-bottom: none;
+            }
+            .result-item strong {
+                display: inline-block;
+                min-width: 120px;
+            }
+            .result-item a {
+                color: #667eea;
+                text-decoration: none;
+                word-break: break-all;
+            }
+            .result-item a:hover {
+                text-decoration: underline;
+            }
+            .preview-image {
+                max-width: 100%;
+                margin-top: 20px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            }
+            code {
+                background: #2d3748;
+                color: #68d391;
+                padding: 12px;
+                border-radius: 8px;
+                display: block;
+                margin-top: 10px;
+                font-family: 'Courier New', monospace;
+                overflow-x: auto;
+            }
+            .spinner {
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid #667eea;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                animation: spin 1s linear infinite;
+                margin: 20px auto;
+            }
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <h1>🚀 Test de Upload S3</h1>
+                    <p>Prueba el sistema de almacenamiento de archivos multimedia</p>
+                </div>
+                
+                <div class="card-body">
+                    <form id="uploadForm">
+                        <div class="upload-zone" id="uploadZone">
+                            <div class="upload-icon">📁</div>
+                            <h3>Arrastra un archivo aquí</h3>
+                            <p style="margin: 10px 0; color: #718096;">o haz click para seleccionar</p>
+                            <input type="file" id="fileInput" accept="image/*,video/*,audio/*" style="display: none;">
+                            <p style="font-size: 14px; color: #a0aec0; margin-top: 10px;">
+                                Soportado: Imágenes, Videos, Audios
+                            </p>
+                        </div>
+                        
+                        <div class="form-group" style="margin-top: 30px;">
+                            <label for="titleInput">📝 Título (opcional)</label>
+                            <input type="text" id="titleInput" class="form-control" placeholder="Ej: Logo de CoachBodyFit360">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="altTextInput">🏷️ Texto Alternativo (opcional)</label>
+                            <input type="text" id="altTextInput" class="form-control" placeholder="Descripción para accesibilidad">
+                        </div>
+                        
+                        <button type="submit" class="btn" id="submitBtn">
+                            ⬆️ Subir Archivo
+                        </button>
+                    </form>
+                    
+                    <div id="result" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('fileInput');
+            const uploadForm = document.getElementById('uploadForm');
+            const resultDiv = document.getElementById('result');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Click en zona de upload
+            uploadZone.addEventListener('click', () => fileInput.click());
+            
+            // Drag & Drop
+            uploadZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+            
+            uploadZone.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+            
+            uploadZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) {
+                    fileInput.files = e.dataTransfer.files;
+                    updateFileName();
+                }
+            });
+            
+            // Actualizar nombre de archivo
+            fileInput.addEventListener('change', updateFileName);
+            
+            function updateFileName() {
+                if (fileInput.files[0]) {
+                    const fileName = fileInput.files[0].name;
+                    const fileSize = (fileInput.files[0].size / 1024 / 1024).toFixed(2);
+                    uploadZone.innerHTML = `
+                        <div class="upload-icon">✅</div>
+                        <h3>${fileName}</h3>
+                        <p style="color: #718096; margin-top: 10px;">${fileSize} MB</p>
+                        <p style="font-size: 14px; color: #a0aec0; margin-top: 10px;">
+                            Click para cambiar archivo
+                        </p>
+                    `;
+                }
+            }
+            
+            // Submit form
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                if (!fileInput.files[0]) {
+                    alert('❌ Selecciona un archivo primero');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('csrf_token', '{{ csrf_token() }}');
+                
+                const title = document.getElementById('titleInput').value;
+                const altText = document.getElementById('altTextInput').value;
+                
+                if (title) formData.append('title', title);
+                if (altText) formData.append('alt_text', altText);
+                
+                // Mostrar loading
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'result loading';
+                resultDiv.innerHTML = `
+                    <div class="spinner"></div>
+                    <h3 style="text-align: center;">Subiendo archivo...</h3>
+                `;
+                submitBtn.disabled = true;
+                
+                try {
+                    const response = await fetch('/blog/admin/upload', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        resultDiv.className = 'result success';
+                        resultDiv.innerHTML = `
+                            <h3>✅ ¡Archivo subido exitosamente!</h3>
+                            <div class="result-item"><strong>ID:</strong> ${data.file.id}</div>
+                            <div class="result-item"><strong>Nombre:</strong> ${data.file.filename}</div>
+                            <div class="result-item">
+                                <strong>URL:</strong> 
+                                <a href="${data.file.file_url}" target="_blank">${data.file.file_url}</a>
+                            </div>
+                            <div class="result-item"><strong>Tipo:</strong> ${data.file.file_type}</div>
+                            <div class="result-item"><strong>Tamaño:</strong> ${data.file.file_size_human || 'N/A'}</div>
+                            ${data.file.width ? `<div class="result-item"><strong>Dimensiones:</strong> ${data.file.width}x${data.file.height}px</div>` : ''}
+                            <div class="result-item">
+                                <strong>Markdown:</strong>
+                                <code>${data.markdown}</code>
+                            </div>
+                            ${data.file.file_type === 'image' ? `
+                                <img src="${data.file.file_url}" alt="${data.file.alt_text || data.file.filename}" class="preview-image">
+                            ` : ''}
+                        `;
+                    } else {
+                        resultDiv.className = 'result error';
+                        resultDiv.innerHTML = `
+                            <h3>❌ Error al subir archivo</h3>
+                            <p>${data.error}</p>
+                        `;
+                    }
+                } catch (error) {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Error de conexión</h3>
+                        <p>${error.message}</p>
+                    `;
+                } finally {
+                    submitBtn.disabled = false;
+                }
+            });
+        </script>
+    </body>
+    </html>
+    '''
+    return html

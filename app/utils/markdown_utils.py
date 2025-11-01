@@ -19,6 +19,7 @@ MARKDOWN_EXTENSIONS = [
     'tables',  # Tablas
     'nl2br',  # Newline to <br>
     'sane_lists',  # Listas más inteligentes
+    'md_in_html',  # Permite HTML dentro de Markdown
     TocExtension(toc_depth='2-3'),  # Tabla de contenidos
 ]
 
@@ -31,11 +32,15 @@ ALLOWED_TAGS = [
     'blockquote', 'code', 'pre',
     'table', 'thead', 'tbody', 'tr', 'th', 'td',
     'div', 'span',
+    'video', 'audio', 'source',  # Multimedia
 ]
 
 ALLOWED_ATTRIBUTES = {
     'a': ['href', 'title', 'target', 'rel'],
     'img': ['src', 'alt', 'title', 'width', 'height'],
+    'video': ['controls', 'width', 'height', 'poster', 'preload', 'autoplay', 'loop', 'muted'],
+    'audio': ['controls', 'preload', 'autoplay', 'loop', 'muted'],
+    'source': ['src', 'type'],
     'code': ['class'],
     'pre': ['class'],
     'div': ['class'],

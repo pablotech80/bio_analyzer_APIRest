@@ -100,7 +100,9 @@ class MediaFile(db.Model):
             alt = self.alt_text or self.title or self.filename
             return f"![{alt}]({self.file_url})"
         elif self.is_video:
-            return f'<video controls width="100%">\n  <source src="{self.file_url}" type="{self.mime_type}">\n</video>'
+            title = self.title or "Video"
+            return f"![video:{title}]({self.file_url})"
         elif self.is_audio:
-            return f'<audio controls>\n  <source src="{self.file_url}" type="{self.mime_type}">\n</audio>'
+            title = self.title or "Audio"
+            return f"![audio:{title}]({self.file_url})"
         return f"[{self.filename}]({self.file_url})"

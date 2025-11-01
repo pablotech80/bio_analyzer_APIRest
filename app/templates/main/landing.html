@@ -2031,6 +2031,66 @@
         </div>
     </section>
 
+    <!-- ============================================================================
+         SECCIÓN DE BLOG
+         ============================================================================ -->
+    {% if recent_posts %}
+    <section class="py-5 bg-light">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="display-6 fw-bold">Últimas Publicaciones del Blog</h2>
+                        <a href="{{ url_for('blog.index') }}" class="btn btn-outline-primary">Ver todo el blog</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                {% for post in recent_posts %}
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm overflow-hidden" style="transition: transform 0.3s ease;">
+                        <a href="{{ url_for('blog.post', slug=post.slug) }}" class="text-decoration-none">
+                            <div class="row g-0">
+                                <!-- Imagen -->
+                                <div class="col-md-3">
+                                    {% if post.featured_image %}
+                                    <img src="{{ post.featured_image }}" 
+                                         class="img-fluid w-100 h-100" 
+                                         alt="{{ post.title }}"
+                                         style="object-fit: cover; min-height: 200px; max-height: 200px;">
+                                    {% else %}
+                                    <div class="w-100 h-100 d-flex align-items-center justify-content-center" 
+                                         style="background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); min-height: 200px;">
+                                        <i class="bi bi-image" style="font-size: 3rem; color: rgba(255,255,255,0.5);"></i>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- Contenido -->
+                                <div class="col-md-9">
+                                    <div class="card-body p-4">
+                                        <h5 class="card-title fw-bold mb-2" style="color: #1f2937; font-size: 1.5rem;">
+                                            {{ post.title }}
+                                        </h5>
+                                        <p class="card-text text-muted mb-3">
+                                            {{ post.excerpt or (post.content[:150] + '...') }}
+                                        </p>
+                                        <div class="d-flex gap-3 text-muted small">
+                                            <span><i class="bi bi-clock me-1"></i> {{ post.reading_time }} min</span>
+                                            <span><i class="bi bi-eye me-1"></i> {{ post.views_count }} vistas</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
 
     
 

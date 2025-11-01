@@ -152,5 +152,60 @@
 
             </div>
         </div>
+        
+        <!-- Sección de Blog -->
+        <div class="row mt-5 pt-5">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="display-6">Últimas Publicaciones del Blog</h2>
+                    <a href="{{ url_for('blog.index') }}" class="btn btn-outline-primary">Ver todo el blog</a>
+                </div>
+                
+                <div class="row g-4">
+                    {% if recent_posts %}
+                        {% for post in recent_posts %}
+                        <div class="col-12">
+                            <a href="{{ url_for('blog.post', slug=post.slug) }}" 
+                               class="flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-full hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 transition-all text-decoration-none d-flex">
+                                <!-- Imagen -->
+                                {% if post.featured_image %}
+                                <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" 
+                                     style="width: 192px; height: 192px; object-fit: cover; border-radius: 0.5rem 0 0 0.5rem;"
+                                     src="{{ post.featured_image }}" 
+                                     alt="{{ post.title }}">
+                                {% else %}
+                                <div style="width: 192px; height: 192px; border-radius: 0.5rem 0 0 0.5rem; background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                    <svg style="width: 64px; height: 64px; color: rgba(255,255,255,0.5);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Contenido -->
+                                <div class="flex flex-col justify-between p-4 leading-normal" style="padding: 1.5rem;">
+                                    <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white" style="margin-bottom: 0.5rem; font-size: 1.5rem; font-weight: 700; color: #1f2937;">
+                                        {{ post.title }}
+                                    </h5>
+                                    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400" style="margin-bottom: 1rem; color: #4b5563;">
+                                        {{ post.excerpt or post.content[:150] + '...' }}
+                                    </p>
+                                    <div class="d-flex align-items-center gap-3 text-muted" style="font-size: 0.875rem;">
+                                        <span><i class="fas fa-clock me-1"></i> {{ post.reading_time }} min</span>
+                                        <span><i class="fas fa-eye me-1"></i> {{ post.views_count }} vistas</span>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle"></i> No hay posts publicados aún.
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}

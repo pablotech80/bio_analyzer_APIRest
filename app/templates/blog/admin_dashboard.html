@@ -146,19 +146,12 @@
                     {% for post in posts %}
                     <tr class="hover:bg-gray-50">
                         <td class="px-6 py-4">
-                            <div class="flex items-center">
-                                {% if post.featured_image %}
-                                <img src="{{ post.featured_image }}" alt="" class="h-10 w-10 rounded object-cover">
-                                {% else %}
-                                <div class="h-10 w-10 rounded bg-gradient-to-br from-red-500 to-orange-500"></div>
-                                {% endif %}
-                                <div class="ml-4">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        {{ post.title[:50] }}{% if post.title|length > 50 %}...{% endif %}
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        {{ post.reading_time }} min lectura
-                                    </div>
+                            <div>
+                                <div class="text-sm font-medium text-gray-900">
+                                    {{ post.title[:50] }}{% if post.title|length > 50 %}...{% endif %}
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    {{ post.reading_time }} min lectura
                                 </div>
                             </div>
                         </td>
@@ -211,6 +204,7 @@
                                       method="POST" 
                                       onsubmit="return confirm('¿Estás seguro de eliminar este post?');"
                                       class="inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                     <button type="submit" 
                                             class="text-red-600 hover:text-red-900"
                                             title="Eliminar">

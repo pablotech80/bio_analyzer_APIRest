@@ -94,5 +94,5 @@ class BlogPostForm(FlaskForm):
     # Estado
     is_published = BooleanField(
         'Publicar',
-        default=False
+        default=True  # Publicar por defecto
     )
