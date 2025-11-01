@@ -19,6 +19,7 @@ MARKDOWN_EXTENSIONS = [
     'tables',  # Tablas
     'nl2br',  # Newline to <br>
     'sane_lists',  # Listas más inteligentes
+    'md_in_html',  # Permite HTML dentro de Markdown
     TocExtension(toc_depth='2-3'),  # Tabla de contenidos
 ]
 

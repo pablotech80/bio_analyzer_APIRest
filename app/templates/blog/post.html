@@ -116,15 +116,6 @@
         </div>
     </div>
     
-    <!-- Featured Image -->
-    {% if post.featured_image %}
-    <div class="mb-8">
-        <img src="{{ post.featured_image }}" 
-             alt="{{ post.title }}" 
-             class="w-full rounded-lg shadow-lg">
-    </div>
-    {% endif %}
-    
     <!-- Content -->
     <div class="prose prose-lg max-w-none">
         {{ content_html|safe }}
