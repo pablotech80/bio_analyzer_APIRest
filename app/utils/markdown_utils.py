@@ -61,15 +61,41 @@ def render_markdown(content):
     if not content:
         return ''
     
+    # Procesar videos de YouTube ANTES de markdown
+    # Detectar: ![video:titulo](https://www.youtube.com/watch?v=ID) o ![video:titulo](https://youtube.com/embed/ID)
+    def replace_youtube(match):
+        title = match.group(1)
+        url = match.group(2)
+        
+        # Extraer video ID
+        video_id = None
+        if 'youtube.com/watch?v=' in url:
+            video_id = url.split('watch?v=')[1].split('&')[0]
+        elif 'youtube.com/embed/' in url:
+            video_id = url.split('embed/')[1].split('?')[0]
+        elif 'youtu.be/' in url:
+            video_id = url.split('youtu.be/')[1].split('?')[0]
+        
+        if video_id:
+            return f'<div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 2rem 0;"><iframe src="https://www.youtube.com/embed/{video_id}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>'
+        return match.group(0)
+    
+    content = re.sub(r'!\[video:([^\]]+)\]\(([^)]+youtube[^)]+)\)', replace_youtube, content)
+    
     # Convertir Markdown a HTML
     md = markdown.Markdown(extensions=MARKDOWN_EXTENSIONS)
     html = md.convert(content)
     
-    # Sanitizar HTML (seguridad)
+    # Sanitizar HTML (seguridad) - Agregar iframe a tags permitidos
+    allowed_tags = ALLOWED_TAGS + ['iframe']
+    allowed_attrs = ALLOWED_ATTRIBUTES.copy()
+    allowed_attrs['iframe'] = ['src', 'frameborder', 'allow', 'allowfullscreen', 'style']
+    allowed_attrs['div'] = ['class', 'style']
+    
     clean_html = bleach.clean(
         html,
-        tags=ALLOWED_TAGS,
-        attributes=ALLOWED_ATTRIBUTES,
+        tags=allowed_tags,
+        attributes=allowed_attrs,
         strip=True
     )
     
