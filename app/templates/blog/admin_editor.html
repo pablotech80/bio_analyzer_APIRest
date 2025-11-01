@@ -390,15 +390,33 @@
     const previewDiv = document.getElementById('preview');
     
     if (contentTextarea && previewDiv) {
+        // Función para renderizar con manejo de errores de imágenes
+        function renderPreview(content) {
+            const html = marked.parse(content);
+            previewDiv.innerHTML = html;
+            
+            // Agregar manejo de errores a las imágenes
+            previewDiv.querySelectorAll('img').forEach(img => {
+                img.onerror = function() {
+                    this.style.border = '2px dashed #ef4444';
+                    this.style.padding = '10px';
+                    this.alt = '❌ Error al cargar imagen: ' + this.src;
+                };
+                img.onload = function() {
+                    console.log('✅ Imagen cargada:', this.src);
+                };
+            });
+        }
+        
         // Renderizar preview inicial si hay contenido
         if (contentTextarea.value) {
-            previewDiv.innerHTML = marked.parse(contentTextarea.value);
+            renderPreview(contentTextarea.value);
         }
         
         // Actualizar preview mientras escribes
         contentTextarea.addEventListener('input', function() {
             if (this.value) {
-                previewDiv.innerHTML = marked.parse(this.value);
+                renderPreview(this.value);
             } else {
                 previewDiv.innerHTML = '<p class="text-gray-400 italic">El preview aparecerá aquí...</p>';
             }

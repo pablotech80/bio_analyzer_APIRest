@@ -13,10 +13,10 @@ def landing():
     seo_data = get_landing_seo_data()
     
     # Obtener últimos 3 posts del blog (con manejo de errores)
-    latest_posts = []
+    recent_posts = []
     try:
         from app.models.blog_post import BlogPost
-        latest_posts = BlogPost.query.filter_by(is_published=True)\
+        recent_posts = BlogPost.query.filter_by(is_published=True)\
             .order_by(BlogPost.published_at.desc())\
             .limit(3)\
             .all()
@@ -24,7 +24,7 @@ def landing():
         # Si la tabla no existe o hay error, continuar sin posts
         print(f"Warning: No se pudieron cargar posts del blog: {e}")
     
-    return render_template("main/landing.html", seo=seo_data, latest_posts=latest_posts)
+    return render_template("main/landing.html", seo=seo_data, recent_posts=recent_posts)
 
 
 @main_bp.route("/avisos-legales")

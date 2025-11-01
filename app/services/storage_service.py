@@ -244,6 +244,11 @@ class StorageService:
 			folder = 'blog' if 'image' in content_type else 'media'
 			s3_key = f"{folder}/{filename}"
 
+			# Obtener tamaño ANTES del upload
+			file_buffer.seek(0, 2)  # Ir al final
+			file_size = file_buffer.tell()
+			file_buffer.seek(0)  # Volver al inicio
+
 			# Upload a S3
 			self.s3_client.upload_fileobj(
 				file_buffer,
@@ -259,7 +264,7 @@ class StorageService:
 			if self.cloudfront_domain:
 				file_url = f"https://{self.cloudfront_domain}/{s3_key}"
 			else:
-				region = os.environ.get('AWS_REGION', 'us-east-1')
+				region = os.environ.get('AWS_REGION', 'eu-north-1')
 				file_url = f"https://{self.s3_bucket}.s3.{region}.amazonaws.com/{s3_key}"
 
 			print(f"✅ Archivo subido: {file_url}")
@@ -270,7 +275,7 @@ class StorageService:
 				'file_url': file_url,
 				'file_type': self._detect_file_type(content_type),
 				'mime_type': content_type,
-				'file_size': file_buffer.tell(),  # Tamaño actual del buffer
+				'file_size': file_size,
 				'width': width,
 				'height': height,
 				'storage': 's3'

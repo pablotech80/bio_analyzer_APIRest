@@ -34,67 +34,60 @@
             {% endif %}
             
             {% if posts %}
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-6">
                 {% for post in posts %}
-                <article class="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden border border-gray-200">
-                    <!-- Featured Image -->
+                <a href="{{ url_for('blog.post', slug=post.slug) }}" 
+                   class="flex flex-col bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-full hover:bg-gray-50 transition-all">
+                    <!-- Imagen -->
                     {% if post.featured_image %}
-                    <a href="{{ url_for('blog.post', slug=post.slug) }}">
-                        <img src="{{ post.featured_image }}" 
-                             alt="{{ post.title }}" 
-                             class="w-full h-48 object-cover">
-                    </a>
+                    <img class="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg" 
+                         src="{{ post.featured_image }}" 
+                         alt="{{ post.title }}">
                     {% else %}
-                    <div class="w-full h-48 bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+                    <div class="w-full h-96 md:h-auto md:w-48 rounded-t-lg md:rounded-none md:rounded-s-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center flex-shrink-0">
                         <svg class="w-16 h-16 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                     </div>
                     {% endif %}
                     
-                    <div class="p-6">
+                    <!-- Contenido -->
+                    <div class="flex flex-col justify-between p-4 leading-normal">
                         <!-- Category Badge -->
-                        <div class="mb-3">
-                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                        <div class="mb-2">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 uppercase">
                                 {{ post.category|title }}
                             </span>
                         </div>
                         
                         <!-- Title -->
-                        <h3 class="text-xl font-bold text-gray-900 mb-2 hover:text-red-500 transition-colors">
-                            <a href="{{ url_for('blog.post', slug=post.slug) }}">
-                                {{ post.title }}
-                            </a>
-                        </h3>
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-blue-600 hover:text-blue-700">
+                            {{ post.title }}
+                        </h5>
                         
                         <!-- Excerpt -->
-                        <p class="text-gray-600 mb-4 line-clamp-3">
+                        <p class="mb-3 font-normal text-gray-700 line-clamp-2">
                             {{ post.excerpt or post.content[:150] + '...' }}
                         </p>
                         
                         <!-- Meta Info -->
-                        <div class="flex items-center justify-between text-sm text-gray-500">
-                            <div class="flex items-center space-x-4">
-                                <span class="flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                    </svg>
-                                    {{ post.reading_time }} min
-                                </span>
-                                <span class="flex items-center">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                    </svg>
-                                    {{ post.views_count }}
-                                </span>
-                            </div>
-                            <span class="text-xs">
-                                {{ post.published_at.strftime('%d %b %Y') if post.published_at else 'Draft' }}
+                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ post.reading_time }} min
+                            </span>
+                            <span class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+                                    <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+                                </svg>
+                                {{ post.views_count }} vistas
                             </span>
                         </div>
                     </div>
-                </article>
+                </a>
                 {% endfor %}
             </div>
             
