@@ -219,8 +219,21 @@ def edit_nutrition_plan(plan_id):
             plan.fats_grams = int(request.form.get("fats_grams")) if request.form.get("fats_grams") else None
             plan.supplements = request.form.get("supplements")
             plan.notes = request.form.get("notes")
-            plan.start_date = datetime.strptime(request.form.get("start_date"), "%Y-%m-%d").date() if request.form.get("start_date") else None
-            plan.end_date = datetime.strptime(request.form.get("end_date"), "%Y-%m-%d").date() if request.form.get("end_date") else None
+            
+            # Manejo seguro de fechas vacías
+            start_date_str = request.form.get("start_date", "").strip()
+            end_date_str = request.form.get("end_date", "").strip()
+            
+            try:
+                plan.start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date() if start_date_str else None
+            except (ValueError, TypeError):
+                plan.start_date = None
+                
+            try:
+                plan.end_date = datetime.strptime(end_date_str, "%Y-%m-%d").date() if end_date_str else None
+            except (ValueError, TypeError):
+                plan.end_date = None
+                
             plan.analysis_id = int(request.form.get("analysis_id")) if request.form.get("analysis_id") else None
             plan.is_active = request.form.get("is_active") == "on"
             
