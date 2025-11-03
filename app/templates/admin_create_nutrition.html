@@ -126,21 +126,21 @@
                             <input type="date" name="end_date" class="form-control">
                         </div>
                     </div>
-
                     <!-- Análisis Relacionado -->
                     {% if analyses %}
                     <div class="mb-3">
                         <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
-                        <select name="analysis_id" class="form-select">
-                            <option value="">-- Sin análisis relacionado --</option>
-                            {% for analysis in analyses %}
-                            <option value="{{ analysis.id }}">
-                                {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
-                                Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
-                                IMC: {{ '%.1f'|format(analysis.bmi) }}
-                            </option>
-                            {% endfor %}
-                    </div>
+                            <select name="analysis_id" class="form-select">
+                                <option value="">-- Sin análisis relacionado --</option>
+                                {% for analysis in analyses %}
+                                <option value="{{ analysis.id }}">
+                                    {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
+                                    Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
+                                    IMC: {{ '%.1f'|format(analysis.bmi) }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     {% endif %}
                 </div>
 
