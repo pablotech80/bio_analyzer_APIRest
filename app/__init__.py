@@ -142,6 +142,16 @@ def create_app(config_name="development"):
         """Convierte Markdown a HTML seguro"""
         if not text:
             return ""
+        
+        # Si es una lista (JSON antiguo), convertir a texto formateado
+        if isinstance(text, list):
+            import json
+            text = json.dumps(text, indent=2, ensure_ascii=False)
+        
+        # Si no es string en este punto, convertir a string
+        if not isinstance(text, str):
+            text = str(text)
+        
         html = mistune.html(text)
         return Markup(html)
     
