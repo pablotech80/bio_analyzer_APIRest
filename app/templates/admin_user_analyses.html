@@ -4,11 +4,41 @@
 
 {% block content %}
 <div class="container my-5">
+    <!-- Toast Container para notificaciones -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                <div class="toast align-items-center text-white bg-{{ 'success' if category == 'success' else 'danger' }} border-0 show" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <strong>
+                                {% if category == 'success' %}✅{% else %}❌{% endif %}
+                            </strong>
+                            {{ message }}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h2 class="mb-1">👤 {{ user.first_name }} {{ user.last_name }}</h2>
-            <p class="text-muted mb-0">{{ user.email }}</p>
+            <p class="text-muted mb-0">
+                {{ user.email }}
+                {% if user.gender %}
+                    <span class="badge bg-secondary ms-2">
+                        {% if user.gender == 'male' %}👨 Hombre
+                        {% elif user.gender == 'female' %}👩 Mujer
+                        {% else %}⚧ Otro{% endif %}
+                    </span>
+                {% endif %}
+            </p>
         </div>
         <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary rounded-pill">
             <i class="bi bi-arrow-left me-1"></i>Volver a usuarios
@@ -184,4 +214,15 @@
 
 <!-- Bootstrap Icons CDN -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<script>
+    // Inicializar toasts de Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+        const toastElList = document.querySelectorAll('.toast');
+        toastElList.forEach(function(toastEl) {
+            const toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        });
+    });
+</script>
 {% endblock %}

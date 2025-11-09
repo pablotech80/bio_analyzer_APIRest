@@ -67,7 +67,12 @@ def users():
             'needs_attention': analyses_without_plans > 0
         })
     
-    return render_template("admin_users.html", users_data=users_data)
+    return render_template(
+        "admin_users.html", 
+        users_data=users_data,
+        current_gender=gender,
+        current_last_name=last_name
+    )
 
 
 @admin_bp.route("/users/<int:user_id>/analyses")

@@ -4,22 +4,63 @@
 
 {% block content %}
 <div class="container my-5">
-    <h2>👥 Usuarios registrados</h2>
-    <form method="get" class="row g-3 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>👥 Usuarios registrados</h2>
+        <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
+            <i class="bi bi-arrow-clockwise"></i> Actualizar
+        </button>
+    </div>
+    
+    <!-- Filtros -->
+    <form method="get" class="row g-3 mb-4" id="filterForm">
         <div class="col-md-3">
-            <select name="gender" class="form-select">
+            <label class="form-label small text-muted">Género</label>
+            <select name="gender" class="form-select" id="genderFilter">
                 <option value="">Todos los géneros</option>
-                <option value="male" {% if request.args.get('gender') == 'male' %}selected{% endif %}>Hombre</option>
-                <option value="female" {% if request.args.get('gender') == 'female' %}selected{% endif %}>Mujer</option>
+                <option value="male" {% if request.args.get('gender') == 'male' %}selected{% endif %}>👨 Hombre</option>
+                <option value="female" {% if request.args.get('gender') == 'female' %}selected{% endif %}>👩 Mujer</option>
+                <option value="other" {% if request.args.get('gender') == 'other' %}selected{% endif %}>⚧ Otro</option>
             </select>
         </div>
-        <div class="col-md-3">
-            <input type="text" name="last_name" class="form-control" placeholder="Filtrar por apellido" value="{{ request.args.get('last_name', '') }}">
+        <div class="col-md-4">
+            <label class="form-label small text-muted">Apellido</label>
+            <input type="text" name="last_name" class="form-control" placeholder="Buscar por apellido..." value="{{ request.args.get('last_name', '') }}" id="lastNameFilter">
         </div>
-        <div class="col-md-3">
-            <button type="submit" class="btn btn-primary">Filtrar</button>
+        <div class="col-md-3 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+            <a href="{{ url_for('admin.users') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Limpiar
+            </a>
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <span class="badge bg-secondary" style="font-size: 0.9rem;">
+                {{ users_data|length }} usuario(s)
+            </span>
         </div>
     </form>
+    
+    <!-- Filtros activos -->
+    {% if current_gender or current_last_name %}
+    <div class="alert alert-info alert-dismissible fade show mb-3" role="alert">
+        <strong><i class="bi bi-funnel-fill"></i> Filtros activos:</strong>
+        {% if current_gender %}
+            <span class="badge bg-primary ms-2">
+                Género: 
+                {% if current_gender == 'male' %}👨 Hombre
+                {% elif current_gender == 'female' %}👩 Mujer
+                {% else %}⚧ Otro{% endif %}
+            </span>
+        {% endif %}
+        {% if current_last_name %}
+            <span class="badge bg-primary ms-2">Apellido: "{{ current_last_name }}"</span>
+        {% endif %}
+        <a href="{{ url_for('admin.users') }}" class="btn btn-sm btn-outline-secondary ms-3">
+            <i class="bi bi-x-circle"></i> Limpiar filtros
+        </a>
+    </div>
+    {% endif %}
     {% if users_data %}
         <table class="table table-hover">
             <thead class="table-light">
@@ -35,10 +76,15 @@
             </thead>
             <tbody>
                 {% for data in users_data %}
-                <tr {% if data.needs_attention %}class="table-warning"{% endif %}>
+                <tr {% if data.needs_attention %}class="table-warning"{% endif %} data-user-id="{{ data.user.id }}">
                     <td>
                         <strong>{{ data.user.first_name }} {{ data.user.last_name }}</strong>
-                        <br><small class="text-muted">{{ data.user.gender }}</small>
+                        <br><small class="text-muted">
+                            {% if data.user.gender == 'male' %}👨 Hombre
+                            {% elif data.user.gender == 'female' %}👩 Mujer
+                            {% elif data.user.gender == 'other' %}⚧ Otro
+                            {% else %}Sin especificar{% endif %}
+                        </small>
                     </td>
                     <td>{{ data.user.email }}</td>
                     <td>
@@ -66,7 +112,71 @@
             </tbody>
         </table>
     {% else %}
-        <div class="alert alert-info">No hay usuarios que coincidan con el filtro.</div>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i> No hay usuarios que coincidan con el filtro.
+        </div>
     {% endif %}
 </div>
+
+<style>
+    .table-warning {
+        --bs-table-bg: #fff3cd !important;
+        animation: pulse-warning 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-warning {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.85; }
+    }
+    
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    tr[data-user-id]:hover {
+        background-color: rgba(0, 123, 255, 0.05) !important;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    // Filtrado en tiempo real sin recargar página
+    document.addEventListener('DOMContentLoaded', function() {
+        const genderFilter = document.getElementById('genderFilter');
+        const lastNameFilter = document.getElementById('lastNameFilter');
+        
+        // Auto-submit al cambiar género
+        if (genderFilter) {
+            genderFilter.addEventListener('change', function() {
+                document.getElementById('filterForm').submit();
+            });
+        }
+        
+        // Búsqueda en tiempo real por apellido (con debounce)
+        if (lastNameFilter) {
+            let timeout = null;
+            lastNameFilter.addEventListener('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    if (lastNameFilter.value.length >= 2 || lastNameFilter.value.length === 0) {
+                        document.getElementById('filterForm').submit();
+                    }
+                }, 500);
+            });
+        }
+        
+        // Click en fila para ir al dashboard
+        document.querySelectorAll('tr[data-user-id]').forEach(function(row) {
+            row.style.cursor = 'pointer';
+            row.addEventListener('click', function(e) {
+                // No navegar si se hace click en un botón
+                if (e.target.tagName !== 'A' && e.target.tagName !== 'BUTTON') {
+                    const userId = this.getAttribute('data-user-id');
+                    window.location.href = `/admin/users/${userId}/analyses`;
+                }
+            });
+        });
+    });
+</script>
 {% endblock %}
