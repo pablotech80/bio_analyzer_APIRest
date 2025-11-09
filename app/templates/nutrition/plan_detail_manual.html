@@ -1,13 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}{{ plan.title }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Estilos para contenido Markdown */
+    .markdown-content {
+        line-height: 1.6;
+        color: #333;
+    }
+    
+    .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .markdown-content h1 { font-size: 1.75rem; border-bottom: 2px solid #e9ecef; padding-bottom: 0.5rem; }
+    .markdown-content h2 { font-size: 1.5rem; }
+    .markdown-content h3 { font-size: 1.25rem; }
+    
+    .markdown-content p {
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content ul, .markdown-content ol {
+        margin-bottom: 1rem;
+        padding-left: 2rem;
+    }
+    
+    .markdown-content li {
+        margin-bottom: 0.5rem;
+    }
+    
+    .markdown-content strong {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+    
+    .markdown-content em {
+        font-style: italic;
+        color: #555;
+    }
+    
+    .markdown-content code {
+        background: #f8f9fa;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+        color: #e83e8c;
+    }
+    
+    .markdown-content pre {
+        background: #f8f9fa;
+        padding: 1rem;
+        border-radius: 5px;
+        overflow-x: auto;
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content pre code {
+        background: none;
+        padding: 0;
+        color: #333;
+    }
+    
+    .markdown-content blockquote {
+        border-left: 4px solid #3498db;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        color: #555;
+        font-style: italic;
+        background: #f8f9fa;
+        padding: 0.75rem 1rem;
+        border-radius: 0 5px 5px 0;
+    }
+    
+    .markdown-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 1rem;
+    }
+    
+    .markdown-content table th,
+    .markdown-content table td {
+        border: 1px solid #dee2e6;
+        padding: 0.75rem;
+        text-align: left;
+    }
+    
+    .markdown-content table th {
+        background: #f8f9fa;
+        font-weight: 600;
+    }
+    
+    .markdown-content hr {
+        margin: 2rem 0;
+        border: 0;
+        border-top: 2px solid #e9ecef;
+    }
+    
+    .markdown-content a {
+        color: #3498db;
+        text-decoration: none;
+    }
+    
+    .markdown-content a:hover {
+        text-decoration: underline;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid" style="background: #f8f9fa;">
+    <div class="container py-4">
+        <div class="row">
+            <div class="col-12">
+                <!-- Header Profesional -->
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h1 class="h4 mb-2 fw-bold text-dark">{{ plan.title }}</h1>
+                            <div class="text-muted small">
+                                <span>Creado: {{ plan.created_at.strftime('%d/%m/%Y') }}</span>
+                                {% if plan.start_date and plan.end_date %}
+                                <span class="mx-2">|</span>
+                                <span>Vigencia: {{ plan.start_date.strftime('%d/%m/%Y') }} - {{ plan.end_date.strftime('%d/%m/%Y') }}</span>
+                                {% endif %}
+                                {% if plan.is_active %}
+                                <span class="badge bg-success ms-2">Activo</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            {% if current_user.is_admin %}
+                            <!-- Botones Admin -->
+                            <a class="btn btn-sm btn-warning" href="{{ url_for('admin.edit_nutrition_plan', plan_id=plan.id) }}" title="Editar plan">
+                                <i class="bi bi-pencil-square"></i> Editar
+                            </a>
+                            <form method="POST" action="{{ url_for('admin.delete_nutrition_plan', plan_id=plan.id) }}" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este plan nutricional?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar plan">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </button>
+                            </form>
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
+                                ← Volver
+                            </a>
+                            {% else %}
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('nutrition.my_plans') }}">
+                                ← Mis Planes
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Objetivo y Descripción -->
+                {% if plan.goal or plan.description %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    {% if plan.goal %}
+                    <div class="mb-3">
+                        <h6 class="text-uppercase text-muted small mb-2">Objetivo</h6>
+                        <p class="mb-0 fw-medium">{{ plan.goal }}</p>
+                    </div>
+                    {% endif %}
+                    {% if plan.description %}
+                    <div>
+                        <h6 class="text-uppercase text-muted small mb-2">Descripción</h6>
+                        <div class="markdown-content">{{ plan.description | markdown }}</div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Requerimientos Nutricionales -->
+                {% if plan.daily_calories or plan.protein_grams or plan.carbs_grams or plan.fats_grams %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">Requerimientos Nutricionales Diarios</h5>
+                    
+                    <div class="row g-3">
+                        {% if plan.daily_calories %}
                         <div class="col-md-3 col-6">
                             <div class="text-center p-3 border rounded">
                                 <div class="text-muted small mb-1">Calorías</div>
-                                <div class="h4 mb-0 fw-bold">{{ plan.daily_calories if plan.daily_calories is not none else 'N/A' }}</div>
+                                <div class="h4 mb-0 fw-bold">{{ plan.daily_calories }}</div>
                                 <div class="text-muted small">kcal</div>
                             </div>
                         </div>
                         {% endif %}
-
-                        {% if plan.protein_grams is not none %}
+                        
+                        {% if plan.protein_grams %}
                         <div class="col-md-3 col-6">
                             <div class="text-center p-3 border rounded">
                                 <div class="text-muted small mb-1">Proteínas</div>
@@ -15,17 +200,9 @@
                                 <div class="text-muted small">gramos</div>
                             </div>
                         </div>
-                        {% else %}
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Proteínas</div>
-                                <div class="h4 mb-0 fw-bold text-success">N/A</div>
-                                <div class="text-muted small">gramos</div>
-                            </div>
-                        </div>
                         {% endif %}
-
-                        {% if plan.carbs_grams is not none %}
+                        
+                        {% if plan.carbs_grams %}
                         <div class="col-md-3 col-6">
                             <div class="text-center p-3 border rounded">
                                 <div class="text-muted small mb-1">Carbohidratos</div>
@@ -33,17 +210,9 @@
                                 <div class="text-muted small">gramos</div>
                             </div>
                         </div>
-                        {% else %}
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Carbohidratos</div>
-                                <div class="h4 mb-0 fw-bold text-warning">N/A</div>
-                                <div class="text-muted small">gramos</div>
-                            </div>
-                        </div>
                         {% endif %}
-
-                        {% if plan.fats_grams is not none %}
+                        
+                        {% if plan.fats_grams %}
                         <div class="col-md-3 col-6">
                             <div class="text-center p-3 border rounded">
                                 <div class="text-muted small mb-1">Grasas</div>
@@ -51,12 +220,52 @@
                                 <div class="text-muted small">gramos</div>
                             </div>
                         </div>
-                        {% else %}
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Grasas</div>
-                                <div class="h4 mb-0 fw-bold text-info">N/A</div>
-                                <div class="text-muted small">gramos</div>
-                            </div>
-                        </div>
                         {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Plan de Comidas -->
+                {% if plan.meals %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">
+                        <i class="bi bi-egg-fried me-2" style="color: #E67E22;"></i>
+                        Plan de Comidas
+                    </h5>
+                    
+                    <div class="markdown-content">{{ plan.meals | markdown }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Suplementación -->
+                {% if plan.supplements %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">Suplementación Recomendada</h5>
+                    <div class="markdown-content">{{ plan.supplements | markdown }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Notas del Entrenador -->
+                {% if plan.notes %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h5 class="mb-4 pb-2 border-bottom">Indicaciones del Entrenador</h5>
+                    <div class="markdown-content">{{ plan.notes | markdown }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Análisis Relacionado -->
+                {% if plan.analysis %}
+                <div class="bg-white shadow-sm rounded p-4 mb-3">
+                    <h6 class="text-uppercase text-muted small mb-3">Análisis Biométrico Relacionado</h6>
+                    <p class="mb-2">Este plan está basado en tu análisis del {{ plan.analysis.created_at.strftime('%d/%m/%Y') }}</p>
+                    <a href="{{ url_for('bioanalyze.result', analysis_id=plan.analysis.id) }}" 
+                       class="btn btn-sm btn-outline-primary">
+                        Ver Análisis Completo →
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
