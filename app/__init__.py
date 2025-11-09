@@ -79,20 +79,19 @@ def create_app(config_name="development"):
     # ========================================================================
     # IMPORTANTE: SQLAlchemy necesita que los modelos estén importados
     # ANTES de db.create_all() para que se registren en db.metadata
-    
     with app.app_context():
         # Importar TODOS los modelos para registrarlos en db.metadata
         from app.models import (
             User, Role, Permission,              # Autenticación
             BiometricAnalysis, ContactMessage,   # Core
+            Notification,                        # Notificaciones
             NutritionPlan, TrainingPlan,         # Planes
-            BlogPost, MediaFile                  # Blog (CRÍTICO)
+            BlogPost, MediaFile                  # Blog y Media
         )
     
     # ========================================================================
     # INICIALIZAR STORAGE SERVICE (S3)
     # ========================================================================
-    from app.services.storage_service import get_storage_service
     storage = get_storage_service(app)
 
     # Configurar Flask-Login

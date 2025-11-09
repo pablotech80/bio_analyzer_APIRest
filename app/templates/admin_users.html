@@ -120,9 +120,20 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="{{ url_for('admin.user_analyses', user_id=data.user.id) }}" class="btn btn-sm btn-primary">
-                            Ver Dashboard
-                        </a>
+                        <div class="d-flex gap-1">
+                            <a href="{{ url_for('admin.user_analyses', user_id=data.user.id) }}" 
+                               class="btn btn-sm btn-primary" title="Ver dashboard">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('admin.delete_user', user_id=data.user.id) }}" 
+                                  class="d-inline" 
+                                  onsubmit="return confirm('⚠️ ¿ESTÁS SEGURO?\n\nEsto eliminará permanentemente:\n- Usuario: {{ data.user.first_name }} {{ data.user.last_name }}\n- {{ data.total_analyses }} análisis\n- {{ data.total_nutrition_plans }} planes de nutrición\n- {{ data.total_training_plans }} planes de entrenamiento\n\nEsta acción NO se puede deshacer.');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar usuario">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 {% endfor %}

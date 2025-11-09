@@ -8,6 +8,7 @@ from app.models.biometric_analysis import BiometricAnalysis
 from app.models.nutrition_plan import NutritionPlan
 from app.models.training_plan import TrainingPlan
 from app.models.user import User
+from app.models.notification import Notification
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -356,6 +357,87 @@ def delete_training_plan(plan_id):
         flash("✅ Plan de entrenamiento eliminado correctamente", "success")
     except Exception as e:
         flash(f"❌ Error al eliminar plan: {str(e)}", "danger")
+        db.session.rollback()
+    
+    return redirect(url_for("admin.user_analyses", user_id=user_id))
+
+
+@admin_bp.route("/users/<int:user_id>/delete", methods=["POST"])
+@login_required
+def delete_user(user_id):
+    """Eliminar usuario y todos sus datos relacionados"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    # No permitir eliminar al propio admin
+    if user_id == current_user.id:
+        flash("❌ No puedes eliminar tu propia cuenta de administrador", "danger")
+        return redirect(url_for("admin.users"))
+    
+    user = User.query.get_or_404(user_id)
+    user_name = f"{user.first_name} {user.last_name}"
+    
+    try:
+        # Eliminar en cascada: análisis, planes, mensajes
+        BiometricAnalysis.query.filter_by(user_id=user.id).delete()
+        NutritionPlan.query.filter_by(user_id=user.id).delete()
+        TrainingPlan.query.filter_by(user_id=user.id).delete()
+        
+        # Eliminar usuario
+        db.session.delete(user)
+        db.session.commit()
+        
+        flash(f"✅ Usuario {user_name} y todos sus datos han sido eliminados correctamente", "success")
+    except Exception as e:
+        flash(f"❌ Error al eliminar usuario: {str(e)}", "danger")
+        db.session.rollback()
+    
+    return redirect(url_for("admin.users"))
+
+
+@admin_bp.route("/users/<int:user_id>/notify-plans", methods=["POST"])
+@login_required
+def notify_user_plans(user_id):
+    """Enviar notificación al usuario de que sus planes están disponibles"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    user = User.query.get_or_404(user_id)
+    
+    # Obtener planes activos
+    nutrition_plans = NutritionPlan.query.filter_by(user_id=user.id, is_active=True).all()
+    training_plans = TrainingPlan.query.filter_by(user_id=user.id, is_active=True).all()
+    
+    if len(nutrition_plans) == 0 and len(training_plans) == 0:
+        flash("⚠️ Este usuario no tiene planes activos para notificar", "warning")
+        return redirect(url_for("admin.user_analyses", user_id=user_id))
+    
+    try:
+        # Crear notificación en la base de datos
+        message_parts = []
+        if len(nutrition_plans) > 0:
+            message_parts.append(f"✅ {len(nutrition_plans)} plan(es) de nutrición")
+        if len(training_plans) > 0:
+            message_parts.append(f"✅ {len(training_plans)} plan(es) de entrenamiento")
+        
+        notification = Notification(
+            user_id=user.id,
+            title="🎉 ¡Tus planes están listos!",
+            message=f"Hola {user.first_name},\n\nTu entrenador ha preparado tus planes personalizados:\n\n" + "\n".join(message_parts) + "\n\nPuedes verlos en tu dashboard.",
+            notification_type="success",
+            nutrition_plan_id=nutrition_plans[0].id if nutrition_plans else None,
+            training_plan_id=training_plans[0].id if training_plans else None
+        )
+        
+        db.session.add(notification)
+        db.session.commit()
+        
+        # Aquí puedes agregar envío de email si lo deseas
+        # send_email(user.email, notification.title, notification.message)
+        
+        flash(f"✅ Notificación creada para {user.email} sobre sus {len(nutrition_plans)} plan(es) de nutrición y {len(training_plans)} plan(es) de entrenamiento", "success")
+    except Exception as e:
+        flash(f"❌ Error al crear notificación: {str(e)}", "danger")
         db.session.rollback()
     
     return redirect(url_for("admin.user_analyses", user_id=user_id))

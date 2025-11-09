@@ -47,19 +47,29 @@
 
     <!-- Botones de Acción Rápida -->
     <div class="row g-3 mb-4">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="{{ url_for('admin.create_nutrition_plan', user_id=user.id) }}" 
                class="btn btn-success w-100 rounded-pill py-3">
                 <i class="bi bi-egg-fried me-2"></i>
                 <strong>Crear Plan Nutricional</strong>
             </a>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <a href="{{ url_for('admin.create_training_plan', user_id=user.id) }}" 
                class="btn btn-primary w-100 rounded-pill py-3">
                 <i class="bi bi-lightning-charge-fill me-2"></i>
                 <strong>Crear Plan de Entrenamiento</strong>
             </a>
+        </div>
+        <div class="col-md-4">
+            <form method="POST" action="{{ url_for('admin.notify_user_plans', user_id=user.id) }}" class="w-100">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="btn btn-warning w-100 rounded-pill py-3" 
+                        onclick="return confirm('¿Enviar notificación a {{ user.email }} sobre sus planes disponibles?');">
+                    <i class="bi bi-bell-fill me-2"></i>
+                    <strong>Notificar Planes Listos</strong>
+                </button>
+            </form>
         </div>
     </div>
 
