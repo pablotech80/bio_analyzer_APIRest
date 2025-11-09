@@ -448,12 +448,17 @@ def notify_user_plans(user_id):
             
             # Enviar email al usuario
             from app.services.email_service import send_plans_ready_email
+            import logging
+            logger = logging.getLogger(__name__)
+            
+            logger.info(f"🔔 Intentando enviar email a {user.email}")
             email_sent = send_plans_ready_email(user, len(nutrition_plans), len(training_plans))
+            logger.info(f"📧 Resultado del envío: {email_sent}")
             
             if email_sent:
                 flash(f"✅ Notificación creada y email enviado a {user.email} sobre sus {len(nutrition_plans)} plan(es) de nutrición y {len(training_plans)} plan(es) de entrenamiento", "success")
             else:
-                flash(f"✅ Notificación creada para {user.email} (Email no enviado: servidor no configurado)", "warning")
+                flash(f"⚠️ Notificación creada para {user.email} pero el email NO se envió (revisa logs de Railway)", "warning")
         except Exception as db_error:
             # Si falla (tabla no existe), solo mostrar mensaje sin guardar en BD
             db.session.rollback()
