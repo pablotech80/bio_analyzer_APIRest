@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %}CoachBodyFit360 - 20 Años de Experiencia en Fitness + IA
-    
+{% block title %}CoachBodyFit360 - 20 Años de Experiencia en Fitness + IA{% endblock %}
 
+{% block content %}
     <!-- ============================================================================
          BOTÓN CONTACTO FLOTANTE
          ============================================================================ -->
@@ -316,33 +316,6 @@
             margin: 0 auto;
         }
 
-        /* ============================================================================
-           LOS 4 PILARES - 3D CAROUSEL FUNCIONAL
-           ============================================================================ */
-        .pillars-section {
-            background: var(--primary-black);
-            padding: 5rem 0;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .pillars-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(231, 76, 60, 0.1) 0%, transparent 70%);
-            animation: pulseBackground 4s ease-in-out infinite alternate;
-            pointer-events: none;
-        }
-
-        @keyframes pulseBackground {
-            0% { opacity: 0.3; }
-            100% { opacity: 0.6; }
-        }
-
         /* ============================================
            TÍTULO CON GRADIENTE ANIMADO
            ============================================ */
@@ -367,102 +340,6 @@
             50% { background-position: 100% 50%; }
         }
 
-        /* ============================================
-           CAROUSEL 3D - CONTENEDOR PRINCIPAL
-           ============================================ */
-        .carousel-3d-wrapper {
-            display: block;
-            position: relative;
-            width: 100%;
-            min-height: 360px;
-            margin: 2rem 0;
-        }
-
-        .carousel-3d-scene {
-            width: 100%;
-            height: 360px;
-            perspective: 900px;
-            perspective-origin: 50% 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-
-        .carousel-3d {
-            width: 200px;
-            height: 270px;
-            position: relative;
-            transform-style: preserve-3d !important;
-            animation: autoRotate 20s linear infinite;
-            transform-origin: center center;
-            /* Forzar contexto 3D */
-            -webkit-transform-style: preserve-3d !important;
-        }
-
-        @keyframes autoRotate {
-            from { transform: rotateY(0deg); }
-            to { transform: rotateY(360deg); }
-        }
-
-        .carousel-3d:hover {
-            animation-play-state: paused;
-        }
-
-        /* ============================================
-           TARJETAS 3D - POSICIONAMIENTO CRÍTICO
-           ============================================ */
-        .carousel-3d .pillar-card {
-            position: absolute !important;
-            width: 200px;
-            height: 270px;
-            left: 0;
-            top: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 1.3rem 1rem;
-            
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-            
-            transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-            backface-visibility: hidden !important;
-            -webkit-backface-visibility: hidden !important;
-            transform-style: preserve-3d !important;
-        }
-
-        /* POSICIONAMIENTO EN CÍRCULO - CRÍTICO - NO MODIFICAR */
-        .carousel-3d .pillar-card:nth-child(1) {
-            transform: rotateY(0deg) translateZ(250px) !important;
-        }
-
-        .carousel-3d .pillar-card:nth-child(2) {
-            transform: rotateY(90deg) translateZ(250px) !important;
-        }
-
-        .carousel-3d .pillar-card:nth-child(3) {
-            transform: rotateY(180deg) translateZ(250px) !important;
-        }
-
-        .carousel-3d .pillar-card:nth-child(4) {
-            transform: rotateY(270deg) translateZ(250px) !important;
-        }
-
-        /* HOVER */
-        .carousel-3d .pillar-card:hover {
-            background: rgba(255, 255, 255, 0.12);
-            border-color: var(--primary-red);
-            box-shadow: 
-                0 20px 60px rgba(231, 76, 60, 0.6),
-                0 0 40px rgba(230, 126, 34, 0.4);
-        }
 
         /* ============================================
            ICONOS Y TEXTO
@@ -491,37 +368,6 @@
             color: rgba(255, 255, 255, 0.8);
             line-height: 1.5;
             font-size: 0.8rem;
-        }
-
-        /* ============================================
-           CONTROLES
-           ============================================ */
-        .carousel-controls {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .carousel-control-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid var(--primary-red);
-            color: var(--white);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: all 0.3s ease;
-        }
-
-        .carousel-control-btn:hover {
-            background: var(--primary-red);
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(231, 76, 60, 0.6);
         }
 
         /* ============================================
@@ -574,10 +420,6 @@
            RESPONSIVE
            ============================================ */
         @media (max-width: 991px) {
-            .carousel-3d-wrapper {
-                display: none !important;
-            }
-            
             .pillars-grid-mobile {
                 display: block !important;
             }

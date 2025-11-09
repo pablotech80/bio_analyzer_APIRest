@@ -116,8 +116,8 @@
                             {% for analysis in analyses %}
                             <option value="{{ analysis.id }}" {% if plan.analysis_id == analysis.id %}selected{% endif %}>
                                 {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
-                                Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
-                                IMC: {{ '%.1f'|format(analysis.bmi) }}
+                                Peso: {{ '%.1f'|format(analysis.weight) if analysis.weight is not none else 'N/A' }}kg - 
+                                IMC: {{ '%.1f'|format(analysis.bmi) if analysis.bmi is not none else 'N/A' }}
                             </option>
                             {% endfor %}
                         </select>
