@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tus planes están listos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px 10px 0 0;
+        }
+        .content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        .plan-box {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 4px solid #28a745;
+            border-radius: 5px;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #E74C3C 0%, #E67E22 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎉 ¡Tus planes están listos!</h1>
+    </div>
+    
+    <div class="content">
+        <p>Hola <strong>{{ user.first_name }}</strong>,</p>
+        
+        <p>¡Buenas noticias! Tu entrenador ha preparado tus planes personalizados:</p>
+        
+        {% if nutrition_plans_count > 0 %}
+        <div class="plan-box">
+            ✅ <strong>{{ nutrition_plans_count }}</strong> plan(es) de nutrición personalizado(s)
+        </div>
+        {% endif %}
+        
+        {% if training_plans_count > 0 %}
+        <div class="plan-box">
+            ✅ <strong>{{ training_plans_count }}</strong> plan(es) de entrenamiento personalizado(s)
+        </div>
+        {% endif %}
+        
+        <p>Puedes ver tus planes y comenzar tu transformación ahora mismo:</p>
+        
+        <center>
+            <a href="https://app.coachbodyfit360.com" class="button">
+                Ver mis planes 💪
+            </a>
+        </center>
+        
+        <p style="margin-top: 30px;">¡A por ello! Recuerda que la constancia es la clave del éxito.</p>
+        
+        <p>Saludos,<br>
+        <strong>Tu equipo de CoachBodyFit360</strong></p>
+    </div>
+    
+    <div class="footer">
+        <p>CoachBodyFit360 - Tu entrenador personal con IA</p>
+        <p>Si tienes alguna pregunta, responde a este email.</p>
+    </div>
+</body>
+</html>

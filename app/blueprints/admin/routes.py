@@ -446,14 +446,18 @@ def notify_user_plans(user_id):
             db.session.add(notification)
             db.session.commit()
             
-            flash(f"✅ Notificación creada para {user.email} sobre sus {len(nutrition_plans)} plan(es) de nutrición y {len(training_plans)} plan(es) de entrenamiento", "success")
+            # Enviar email al usuario
+            from app.services.email_service import send_plans_ready_email
+            email_sent = send_plans_ready_email(user, len(nutrition_plans), len(training_plans))
+            
+            if email_sent:
+                flash(f"✅ Notificación creada y email enviado a {user.email} sobre sus {len(nutrition_plans)} plan(es) de nutrición y {len(training_plans)} plan(es) de entrenamiento", "success")
+            else:
+                flash(f"✅ Notificación creada para {user.email} (Email no enviado: servidor no configurado)", "warning")
         except Exception as db_error:
             # Si falla (tabla no existe), solo mostrar mensaje sin guardar en BD
             db.session.rollback()
             flash(f"⚠️ Planes listos para {user.email}: {', '.join(message_parts)}. (Notificación en BD pendiente de migración)", "warning")
-        
-        # Aquí puedes agregar envío de email si lo deseas
-        # send_email(user.email, notification.title, notification.message)
         
     except Exception as e:
         flash(f"❌ Error al procesar notificación: {str(e)}", "danger")

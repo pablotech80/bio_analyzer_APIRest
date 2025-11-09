@@ -9,6 +9,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flasgger import Swagger
+from flask_mail import Mail
 
 # Inicializar extensiones
 db = SQLAlchemy()
@@ -19,6 +20,7 @@ jwt = JWTManager()
 csrf = CSRFProtect()
 cors = CORS() # <--- 2. INICIALIZA CORS
 swagger = Swagger() # <--- 3. INICIALIZA Swagger
+mail = Mail() # <--- 4. INICIALIZA Mail
 
 def create_app(config_name="development"):
     app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -36,6 +38,7 @@ def create_app(config_name="development"):
     bcrypt.init_app(app)
     jwt.init_app(app)
     csrf.init_app(app)
+    mail.init_app(app)
     # NO llames a cors.init_app(app) sin 'resources' aquí
 
     # ---> 4. CONFIGURA CORS ANTES de Flasgger <---
@@ -115,6 +118,7 @@ def create_app(config_name="development"):
     from app.blueprints.main import main_bp
     from app.blueprints.nutrition import nutrition_bp
     from app.blueprints.training import training_bp
+    from app.blueprints.notifications import notifications_bp
 
     app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp, url_prefix = "/auth")
@@ -125,6 +129,7 @@ def create_app(config_name="development"):
     app.register_blueprint(api_bp, url_prefix = "/api/v1")
     app.register_blueprint(contact_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(notifications_bp)
 
     # Registrar error handlers
     from app.middleware.error_handlers import register_error_handlers
