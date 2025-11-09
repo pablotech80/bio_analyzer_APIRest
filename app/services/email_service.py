@@ -5,8 +5,18 @@ from flask import render_template, current_app
 from flask_mail import Message
 from app import mail
 import logging
+from threading import Thread
 
 logger = logging.getLogger(__name__)
+
+
+def send_async_email(app, msg):
+    """Enviar email en thread separado"""
+    with app.app_context():
+        try:
+            mail.send(msg)
+        except Exception as e:
+            logger.error(f"Error al enviar email async: {str(e)}")
 
 
 def send_notification_email(user, notification):
@@ -43,9 +53,9 @@ def send_notification_email(user, notification):
             notification=notification
         )
         
-        # Enviar
-        mail.send(msg)
-        logger.info(f"Email enviado a {user.email}: {notification.title}")
+        # Enviar en thread separado (no bloquea la respuesta)
+        Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
+        logger.info(f"Email programado para envío a {user.email}: {notification.title}")
         return True
         
     except Exception as e:
@@ -102,8 +112,9 @@ Tu entrenador personal con IA
             training_plans_count=training_plans_count
         )
         
-        mail.send(msg)
-        logger.info(f"Email de planes listos enviado a {user.email}")
+        # Enviar en thread separado (no bloquea la respuesta)
+        Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
+        logger.info(f"Email de planes listos programado para {user.email}")
         return True
         
     except Exception as e:
