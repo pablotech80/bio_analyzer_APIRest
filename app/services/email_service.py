@@ -57,10 +57,17 @@ def send_notification_email(user, notification):
             notification=notification
         )
         
-        # Enviar en thread separado (no bloquea la respuesta)
-        Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
-        logger.info(f"Email programado para envío a {user.email}: {notification.title}")
-        return True
+        # Enviar de forma síncrona (más confiable en Railway)
+        try:
+            logger.info(f"Enviando email a {user.email}: {notification.title}")
+            mail.send(msg)
+            logger.info(f"✅ Email enviado exitosamente a {user.email}")
+            return True
+        except Exception as send_error:
+            logger.error(f"❌ Error al enviar email a {user.email}: {str(send_error)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return False
         
     except Exception as e:
         logger.error(f"Error al enviar email a {user.email}: {str(e)}")
@@ -122,10 +129,17 @@ Tu entrenador personal con IA
             training_plans_count=training_plans_count
         )
 
-        # Enviar en thread separado (no bloquea la respuesta)
-        Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
-        logger.info(f"Email de planes listos programado para {user.email}")
-        return True
+        # Enviar de forma síncrona (más confiable en Railway)
+        try:
+            logger.info(f"Enviando email de planes listos a {user.email}")
+            mail.send(msg)
+            logger.info(f"✅ Email de planes listos enviado exitosamente a {user.email}")
+            return True
+        except Exception as send_error:
+            logger.error(f"❌ Error al enviar email de planes listos a {user.email}: {str(send_error)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return False
         
     except Exception as e:
         logger.error(f"Error al enviar email a {user.email}: {str(e)}")
