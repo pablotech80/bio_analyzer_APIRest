@@ -75,7 +75,7 @@
                     <!-- Comidas en Markdown -->
                     <div class="mb-3">
                         <label class="form-label"><strong>Comidas (Markdown)</strong></label>
-                        <textarea name="meals_text" class="form-control" style="font-size: 14px; min-height: 300px; resize: vertical; font-family: 'Courier New', monospace;">{{ plan.meals if plan.meals else '' }}</textarea>
+                        <textarea name="meals_text" class="form-control" style="font-size: 14px; min-height: 300px; resize: vertical; font-family: 'Courier New', monospace;">{% if plan.meals %}{% if plan.meals is string %}{{ plan.meals }}{% else %}{{ plan.meals | tojson(indent=2) }}{% endif %}{% endif %}</textarea>
                         <small class="text-muted">
                             Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
                         </small>

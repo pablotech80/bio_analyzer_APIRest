@@ -70,7 +70,7 @@
                     <!-- Entrenamientos en Markdown -->
                     <div class="mb-3">
                         <label class="form-label"><strong>Entrenamientos (Markdown)</strong></label>
-                        <textarea name="workouts_text" class="form-control" style="font-size: 14px; min-height: 400px; resize: vertical; font-family: 'Courier New', monospace;">{{ plan.workouts if plan.workouts else '' }}</textarea>
+                        <textarea name="workouts_text" class="form-control" style="font-size: 14px; min-height: 400px; resize: vertical; font-family: 'Courier New', monospace;">{% if plan.workouts %}{% if plan.workouts is string %}{{ plan.workouts }}{% else %}{{ plan.workouts | tojson(indent=2) }}{% endif %}{% endif %}</textarea>
                         <small class="text-muted">
                             Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
                         </small>

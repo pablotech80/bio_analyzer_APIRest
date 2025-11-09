@@ -93,13 +93,30 @@
                         <br><small class="text-danger">{{ data.analyses_without_plans }} sin planes</small>
                         {% endif %}
                     </td>
-                    <td><span class="badge bg-success">{{ data.total_nutrition_plans }}</span></td>
-                    <td><span class="badge bg-info">{{ data.total_training_plans }}</span></td>
+                    <td>
+                        <span class="badge bg-success">{{ data.total_nutrition_plans }}</span>
+                        {% if data.active_nutrition_plans > 0 %}
+                        <br><small class="text-success">✓ {{ data.active_nutrition_plans }} activo(s)</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge bg-info">{{ data.total_training_plans }}</span>
+                        {% if data.active_training_plans > 0 %}
+                        <br><small class="text-info">✓ {{ data.active_training_plans }} activo(s)</small>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if data.needs_attention %}
                         <span class="badge bg-warning text-dark">⚠️ Requiere atención</span>
+                        {% if data.active_nutrition_plans == 0 %}
+                        <br><small class="text-danger">Sin plan nutrición activo</small>
+                        {% endif %}
+                        {% if data.active_training_plans == 0 %}
+                        <br><small class="text-danger">Sin plan entrenamiento activo</small>
+                        {% endif %}
                         {% else %}
                         <span class="badge bg-success">✓ Al día</span>
+                        <br><small class="text-success">Planes activos completos</small>
                         {% endif %}
                     </td>
                     <td>

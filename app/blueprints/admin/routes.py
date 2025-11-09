@@ -32,7 +32,15 @@ def users():
         # Contar análisis totales
         total_analyses = BiometricAnalysis.query.filter_by(user_id=user.id).count()
         
-        # Obtener IDs de análisis con planes
+        # Contar planes totales
+        total_nutrition_plans = NutritionPlan.query.filter_by(user_id=user.id).count()
+        total_training_plans = TrainingPlan.query.filter_by(user_id=user.id).count()
+        
+        # Contar planes activos
+        active_nutrition_plans = NutritionPlan.query.filter_by(user_id=user.id, is_active=True).count()
+        active_training_plans = TrainingPlan.query.filter_by(user_id=user.id, is_active=True).count()
+        
+        # Obtener IDs de análisis con planes vinculados
         nutrition_analysis_ids = set(
             plan.analysis_id for plan in 
             NutritionPlan.query.filter_by(user_id=user.id).filter(
@@ -46,7 +54,7 @@ def users():
             ).all()
         )
         
-        # Contar análisis sin ningún plan
+        # Contar análisis sin ningún plan vinculado
         analyses_without_plans = 0
         if total_analyses > 0:
             all_analyses = BiometricAnalysis.query.filter_by(user_id=user.id).all()
@@ -54,9 +62,14 @@ def users():
                 if analysis.id not in nutrition_analysis_ids and analysis.id not in training_analysis_ids:
                     analyses_without_plans += 1
         
-        # Contar planes totales
-        total_nutrition_plans = NutritionPlan.query.filter_by(user_id=user.id).count()
-        total_training_plans = TrainingPlan.query.filter_by(user_id=user.id).count()
+        # Determinar si requiere atención:
+        # - Si tiene análisis pero NO tiene planes activos de nutrición Y entrenamiento
+        # - O si tiene análisis sin planes vinculados
+        needs_attention = False
+        if total_analyses > 0:
+            # Si no tiene ambos planes activos, requiere atención
+            if active_nutrition_plans == 0 or active_training_plans == 0:
+                needs_attention = True
         
         users_data.append({
             'user': user,
@@ -64,7 +77,9 @@ def users():
             'analyses_without_plans': analyses_without_plans,
             'total_nutrition_plans': total_nutrition_plans,
             'total_training_plans': total_training_plans,
-            'needs_attention': analyses_without_plans > 0
+            'active_nutrition_plans': active_nutrition_plans,
+            'active_training_plans': active_training_plans,
+            'needs_attention': needs_attention
         })
     
     return render_template(
@@ -251,9 +266,12 @@ def edit_nutrition_plan(plan_id):
             db.session.rollback()
     
     # GET: Mostrar formulario con datos actuales
-    analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
-    
-    return render_template("admin_edit_nutrition.html", user=user, plan=plan, analyses=analyses)
+    try:
+        analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
+        return render_template("admin_edit_nutrition.html", user=user, plan=plan, analyses=analyses)
+    except Exception as e:
+        flash(f"❌ Error al cargar el formulario de edición: {str(e)}", "danger")
+        return redirect(url_for("admin.user_analyses", user_id=user.id))
 
 
 @admin_bp.route("/training/<int:plan_id>/edit", methods=["GET", "POST"])
