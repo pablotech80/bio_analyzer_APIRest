@@ -378,10 +378,18 @@ def delete_user(user_id):
     user_name = f"{user.first_name} {user.last_name}"
     
     try:
-        # Eliminar en cascada: análisis, planes, mensajes
+        # Eliminar en cascada: notificaciones, análisis, planes, mensajes
+        Notification.query.filter_by(user_id=user.id).delete()
         BiometricAnalysis.query.filter_by(user_id=user.id).delete()
         NutritionPlan.query.filter_by(user_id=user.id).delete()
         TrainingPlan.query.filter_by(user_id=user.id).delete()
+        
+        # Eliminar mensajes de contacto si existen
+        try:
+            from app.models.contact_message import ContactMessage
+            ContactMessage.query.filter_by(user_id=user.id).delete()
+        except:
+            pass  # Si no existe el modelo, continuar
         
         # Eliminar usuario
         db.session.delete(user)
