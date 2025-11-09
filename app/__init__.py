@@ -92,6 +92,7 @@ def create_app(config_name="development"):
     # ========================================================================
     # INICIALIZAR STORAGE SERVICE (S3)
     # ========================================================================
+    from app.services.storage_service import get_storage_service
     storage = get_storage_service(app)
 
     # Configurar Flask-Login
