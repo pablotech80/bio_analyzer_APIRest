@@ -378,18 +378,23 @@ def delete_user(user_id):
     user_name = f"{user.first_name} {user.last_name}"
     
     try:
-        # Eliminar en cascada: notificaciones, análisis, planes, mensajes
-        Notification.query.filter_by(user_id=user.id).delete()
-        BiometricAnalysis.query.filter_by(user_id=user.id).delete()
-        NutritionPlan.query.filter_by(user_id=user.id).delete()
-        TrainingPlan.query.filter_by(user_id=user.id).delete()
+        # Eliminar notificaciones (si la tabla existe)
+        try:
+            Notification.query.filter_by(user_id=user.id).delete()
+        except Exception:
+            pass  # Tabla notifications aún no existe
         
-        # Eliminar mensajes de contacto si existen
+        # Eliminar mensajes de contacto (si existen)
         try:
             from app.models.contact_message import ContactMessage
             ContactMessage.query.filter_by(user_id=user.id).delete()
-        except:
-            pass  # Si no existe el modelo, continuar
+        except Exception:
+            pass  # Tabla contact_messages no existe
+        
+        # Eliminar en cascada: análisis, planes
+        BiometricAnalysis.query.filter_by(user_id=user.id).delete()
+        NutritionPlan.query.filter_by(user_id=user.id).delete()
+        TrainingPlan.query.filter_by(user_id=user.id).delete()
         
         # Eliminar usuario
         db.session.delete(user)
@@ -421,31 +426,37 @@ def notify_user_plans(user_id):
         return redirect(url_for("admin.user_analyses", user_id=user_id))
     
     try:
-        # Crear notificación en la base de datos
+        # Crear notificación en la base de datos (si la tabla existe)
         message_parts = []
         if len(nutrition_plans) > 0:
             message_parts.append(f"✅ {len(nutrition_plans)} plan(es) de nutrición")
         if len(training_plans) > 0:
             message_parts.append(f"✅ {len(training_plans)} plan(es) de entrenamiento")
         
-        notification = Notification(
-            user_id=user.id,
-            title="🎉 ¡Tus planes están listos!",
-            message=f"Hola {user.first_name},\n\nTu entrenador ha preparado tus planes personalizados:\n\n" + "\n".join(message_parts) + "\n\nPuedes verlos en tu dashboard.",
-            notification_type="success",
-            nutrition_plan_id=nutrition_plans[0].id if nutrition_plans else None,
-            training_plan_id=training_plans[0].id if training_plans else None
-        )
-        
-        db.session.add(notification)
-        db.session.commit()
+        try:
+            notification = Notification(
+                user_id=user.id,
+                title="🎉 ¡Tus planes están listos!",
+                message=f"Hola {user.first_name},\n\nTu entrenador ha preparado tus planes personalizados:\n\n" + "\n".join(message_parts) + "\n\nPuedes verlos en tu dashboard.",
+                notification_type="success",
+                nutrition_plan_id=nutrition_plans[0].id if nutrition_plans else None,
+                training_plan_id=training_plans[0].id if training_plans else None
+            )
+            
+            db.session.add(notification)
+            db.session.commit()
+            
+            flash(f"✅ Notificación creada para {user.email} sobre sus {len(nutrition_plans)} plan(es) de nutrición y {len(training_plans)} plan(es) de entrenamiento", "success")
+        except Exception as db_error:
+            # Si falla (tabla no existe), solo mostrar mensaje sin guardar en BD
+            db.session.rollback()
+            flash(f"⚠️ Planes listos para {user.email}: {', '.join(message_parts)}. (Notificación en BD pendiente de migración)", "warning")
         
         # Aquí puedes agregar envío de email si lo deseas
         # send_email(user.email, notification.title, notification.message)
         
-        flash(f"✅ Notificación creada para {user.email} sobre sus {len(nutrition_plans)} plan(es) de nutrición y {len(training_plans)} plan(es) de entrenamiento", "success")
     except Exception as e:
-        flash(f"❌ Error al crear notificación: {str(e)}", "danger")
+        flash(f"❌ Error al procesar notificación: {str(e)}", "danger")
         db.session.rollback()
     
     return redirect(url_for("admin.user_analyses", user_id=user_id))
