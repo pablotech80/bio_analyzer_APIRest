@@ -74,6 +74,72 @@ def send_notification_email(user, notification):
         return False
 
 
+def send_password_reset_email(user, reset_url):
+    """
+    Enviar email de recuperación de contraseña
+    
+    Args:
+        user: Usuario destinatario
+        reset_url: URL completa con token para resetear contraseña
+    
+    Returns:
+        bool: True si se envió correctamente
+    """
+    try:
+        # Verificar que el email esté configurado
+        if not current_app.config.get('MAIL_SERVER'):
+            logger.warning("MAIL_SERVER no configurado. Email no enviado.")
+            return False
+        
+        # Crear mensaje
+        msg = Message(
+            subject="🔐 Recuperación de contraseña - CoachBodyFit360",
+            recipients=[user.email],
+            sender=current_app.config.get('MAIL_DEFAULT_SENDER', 'noreply@coachbodyfit360.com')
+        )
+        
+        # Cuerpo en texto plano
+        msg.body = f"""
+Hola {user.first_name},
+
+Has solicitado recuperar tu contraseña en CoachBodyFit360.
+
+Para crear una nueva contraseña, haz clic en el siguiente enlace:
+{reset_url}
+
+Este enlace es válido por 1 hora.
+
+Si no solicitaste este cambio, ignora este email.
+
+---
+CoachBodyFit360
+Tu entrenador personal con IA
+        """
+        
+        # Cuerpo en HTML
+        msg.html = render_template(
+            'emails/password_reset.html',
+            user=user,
+            reset_url=reset_url
+        )
+        
+        # Enviar
+        try:
+            logger.info(f"Enviando email de reset de contraseña a {user.email}")
+            mail.send(msg)
+            logger.info(f"✅ Email de reset enviado exitosamente a {user.email}")
+            return True
+        except Exception as send_error:
+            logger.error(f"❌ Error al enviar email a {user.email}: {str(send_error)}")
+            import traceback
+            logger.error(traceback.format_exc())
+            return False
+        
+    except Exception as e:
+        logger.error(f"Error al enviar email de reset a {user.email}: {str(e)}")
+        return False
+
+
 def send_plans_ready_email(user, nutrition_plans_count, training_plans_count):
     """
     Enviar email cuando los planes están listos

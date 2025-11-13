@@ -202,15 +202,24 @@ def forgot_password():
         user, token = AuthService.generate_password_reset_token(form.email.data)
 
         if user:
-            # TODO: Enviar email con el token
-            # Por ahora solo mostramos el link (en producción esto sería un email)
             reset_url = url_for("auth.reset_password", token=token, _external=True)
-
-            flash(
-                f"Se han enviado instrucciones a {form.email.data} para resetear tu contraseña. "
-                f"(Demo: {reset_url})",
-                "info",
-            )
+            
+            # Enviar email de recuperación
+            from app.services.email_service import send_password_reset_email
+            email_sent = send_password_reset_email(user, reset_url)
+            
+            if email_sent:
+                flash(
+                    f"Se han enviado instrucciones a {form.email.data} para resetear tu contraseña. "
+                    f"Revisa tu bandeja de entrada y spam.",
+                    "success",
+                )
+            else:
+                flash(
+                    f"Hubo un problema al enviar el email. Por favor contacta al soporte. "
+                    f"(Link temporal: {reset_url})",
+                    "warning",
+                )
         else:
             # Por seguridad, mostramos el mismo mensaje aunque el email no exista
             flash(
