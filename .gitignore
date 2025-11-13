@@ -57,3 +57,14 @@ test_api.py
 .firebase/
 venv1/
 venv1/
+
+# Scripts de testing y utilidades con credenciales (no subir a producción)
+test_duvan_login.py
+reset_password_direct.py
+reset_password.py
+test_password_reset_railway.py
+query_railway.py
+railway_db_manager.py
+connect_railway_db.py
+get_railway_credentials.py
+quick_db_connect.sh
