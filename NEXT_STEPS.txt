@@ -1,0 +1,286 @@
+================================================================================
+COACHBODYFIT360 - MIGRACIÓN FLASK → DJANGO + AZURE
+PRÓXIMOS PASOS AL RETOMAR EL PROYECTO
+================================================================================
+
+📍 ESTADO ACTUAL (12 Enero 2026, 02:05 AM)
+================================================================================
+
+✅ FASE 1 COMPLETADA: Backend Django Core
+- Estructura modular con 6 apps Django creadas
+- Modelos de datos multi-tenant implementados
+- Sistema de permisos granular (32 permisos, 5 roles)
+- Django Admin configurado y funcional
+- Migraciones ejecutadas exitosamente
+- Base de datos poblada con datos iniciales
+- Servidor Django funcionando en puerto 8000
+
+📂 UBICACIÓN DEL PROYECTO DJANGO:
+/Users/macbookpro/bio_analyzer_APIRest/django_backend/
+
+🔐 CREDENCIALES SUPERADMIN:
+Email: admin@coachbodyfit360.com
+Password: Admin123!
+
+================================================================================
+🚀 FASE 2: API REST CON DJANGO REST FRAMEWORK
+================================================================================
+
+OBJETIVO: Crear API REST completa con DRF para consumo desde frontend
+
+TAREAS PENDIENTES:
+--------------------------------------------------------------------------------
+
+1. CREAR SERIALIZERS (apps/*/serializers.py)
+   □ UserSerializer (registro, perfil, actualización)
+   □ OrganizationSerializer (CRUD organizaciones)
+   □ MembershipSerializer (gestión de miembros)
+   □ RoleSerializer (solo lectura)
+   □ PermissionSerializer (solo lectura)
+   □ BiometricAnalysisSerializer (CRUD análisis)
+   □ NutritionPlanSerializer (CRUD planes)
+   □ TrainingPlanSerializer (CRUD planes)
+
+2. CREAR VIEWSETS (apps/*/views.py)
+   □ UserViewSet (me/, list, retrieve, update)
+   □ OrganizationViewSet (CRUD + members)
+   □ BiometricAnalysisViewSet (CRUD + filtros)
+   □ NutritionPlanViewSet (CRUD)
+   □ TrainingPlanViewSet (CRUD)
+
+3. CONFIGURAR URLS (apps/*/urls.py + core/urls.py)
+   □ Crear urls.py en cada app
+   □ Registrar routers de DRF
+   □ Incluir en core/urls.py bajo /api/v1/
+
+4. AUTENTICACIÓN JWT
+   □ Endpoints: login, logout, refresh, register
+   □ Verificación de email
+   □ Recuperación de contraseña
+
+5. PERMISOS PERSONALIZADOS
+   □ IsOwnerOrAdmin
+   □ HasOrganizationPermission
+   □ HasModulePermission (bioanalyze, nutrition, training)
+
+6. TESTS
+   □ Tests de modelos
+   □ Tests de serializers
+   □ Tests de endpoints (CRUD)
+   □ Tests de permisos
+   □ Tests de autenticación
+
+7. DOCUMENTACIÓN API
+   □ Configurar drf-spectacular
+   □ Agregar docstrings a ViewSets
+   □ Probar Swagger UI en /api/docs/
+
+================================================================================
+📋 COMANDOS ÚTILES AL RETOMAR
+================================================================================
+
+# 1. ACTIVAR ENTORNO Y NAVEGAR AL PROYECTO
+cd /Users/macbookpro/bio_analyzer_APIRest/django_backend
+
+# 2. VERIFICAR ESTADO DE MIGRACIONES
+python manage.py showmigrations
+
+# 3. EJECUTAR SERVIDOR DJANGO
+python manage.py runserver 8000
+
+# 4. ACCEDER AL ADMIN
+# http://localhost:8000/admin/
+# Login: admin@coachbodyfit360.com / Admin123!
+
+# 5. CREAR NUEVA APP (si es necesario)
+python manage.py startapp nombre_app apps/nombre_app
+
+# 6. CREAR MIGRACIONES (después de cambios en modelos)
+python manage.py makemigrations
+python manage.py migrate
+
+# 7. EJECUTAR TESTS
+python manage.py test
+
+# 8. SHELL INTERACTIVO
+python manage.py shell
+
+# 9. CREAR SUPERUSUARIO ADICIONAL
+python manage.py createsuperuser
+
+================================================================================
+📁 ESTRUCTURA DE ARCHIVOS A CREAR EN FASE 2
+================================================================================
+
+apps/
+├── users/
+│   ├── serializers.py          ← CREAR
+│   ├── views.py                ← CREAR
+│   ├── urls.py                 ← CREAR
+│   └── permissions.py          ← CREAR
+├── organizations/
+│   ├── serializers.py          ← CREAR
+│   ├── views.py                ← CREAR
+│   ├── urls.py                 ← CREAR
+│   └── permissions.py          ← CREAR
+├── bioanalyze/
+│   ├── serializers.py          ← CREAR
+│   ├── views.py                ← CREAR
+│   ├── urls.py                 ← CREAR
+│   └── permissions.py          ← CREAR
+├── nutrition/
+│   ├── serializers.py          ← CREAR
+│   ├── views.py                ← CREAR
+│   └── urls.py                 ← CREAR
+└── training/
+    ├── serializers.py          ← CREAR
+    ├── views.py                ← CREAR
+    └── urls.py                 ← CREAR
+
+core/
+└── urls.py                     ← ACTUALIZAR (incluir API routes)
+
+================================================================================
+🔧 EJEMPLO: CREAR PRIMER ENDPOINT (UserViewSet)
+================================================================================
+
+1. Crear apps/users/serializers.py:
+```python
+from rest_framework import serializers
+from .models import User
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 
+                  'phone', 'date_of_birth', 'gender', 'avatar', 'bio']
+        read_only_fields = ['id']
+```
+
+2. Crear apps/users/views.py:
+```python
+from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from .models import User
+from .serializers import UserSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+```
+
+3. Crear apps/users/urls.py:
+```python
+from rest_framework.routers import DefaultRouter
+from .views import UserViewSet
+
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
+
+urlpatterns = router.urls
+```
+
+4. Actualizar core/urls.py:
+```python
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('api/v1/', include('apps.users.urls')),  # ← AGREGAR
+]
+```
+
+5. Probar endpoint:
+GET http://localhost:8000/api/v1/users/
+
+================================================================================
+📚 RECURSOS Y DOCUMENTACIÓN
+================================================================================
+
+Django REST Framework:
+https://www.django-rest-framework.org/
+
+Django REST Framework JWT:
+https://django-rest-framework-simplejwt.readthedocs.io/
+
+drf-spectacular (OpenAPI):
+https://drf-spectacular.readthedocs.io/
+
+Django Documentation:
+https://docs.djangoproject.com/en/5.0/
+
+================================================================================
+🎯 OBJETIVOS DE FASE 2
+================================================================================
+
+AL FINALIZAR FASE 2, DEBERÍAS TENER:
+
+✓ API REST completa con todos los endpoints CRUD
+✓ Autenticación JWT funcionando
+✓ Sistema de permisos implementado
+✓ Documentación Swagger/OpenAPI generada
+✓ Tests de integración pasando
+✓ API lista para consumo desde frontend
+
+TIEMPO ESTIMADO: 2-3 semanas
+
+================================================================================
+🚢 FASE 3: DEPLOY A AZURE (Después de Fase 2)
+================================================================================
+
+TAREAS PRINCIPALES:
+- Crear Dockerfile y docker-compose.yml
+- Configurar Terraform para infraestructura Azure
+- Setup CI/CD con GitHub Actions
+- Integrar Azure OpenAI Service
+- Configurar Azure Blob Storage
+- Deploy a Azure Container Apps
+
+================================================================================
+📞 NOTAS IMPORTANTES
+================================================================================
+
+1. El proyecto Flask SIGUE FUNCIONANDO en Railway
+   - No tocar /app/ (Flask actual)
+   - Todo el trabajo Django está en /django_backend/
+
+2. Base de datos SQLite en desarrollo
+   - Archivo: django_backend/db.sqlite3
+   - En producción se usará PostgreSQL en Azure
+
+3. Variables de entorno
+   - Archivo: django_backend/.env (no está en Git)
+   - Ejemplo: django_backend/.env.example
+
+4. Migraciones
+   - Siempre ejecutar makemigrations antes de migrate
+   - Revisar las migraciones generadas antes de aplicarlas
+
+5. Admin Panel
+   - Usar para verificar datos y probar funcionalidades
+   - Cambiar contraseña de SuperAdmin en producción
+
+================================================================================
+✅ CHECKLIST ANTES DE EMPEZAR FASE 2
+================================================================================
+
+□ Servidor Django corriendo (python manage.py runserver 8000)
+□ Acceso al admin panel verificado
+□ Base de datos con datos iniciales poblada
+□ Documentación README.md leída
+□ Entorno de desarrollo configurado
+
+================================================================================
+🎉 ¡LISTO PARA CONTINUAR!
+================================================================================
+
+Cuando retomes el proyecto:
+1. Lee este archivo completo
+2. Ejecuta los comandos de verificación
+3. Comienza con la creación de serializers
+4. Sigue el ejemplo de UserViewSet
+5. Prueba cada endpoint antes de continuar
+
+¡Éxito con la Fase 2!
+
+Pablo Techera
+CoachBodyFit360 Team
