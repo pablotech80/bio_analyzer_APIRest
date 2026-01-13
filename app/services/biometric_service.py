@@ -244,6 +244,7 @@ def get_analysis_by_id(analysis_id: int) -> Optional[BiometricAnalysis]:
 def delete_analysis(analysis_id: int, user_id: int) -> Tuple[bool, Optional[str]]:
     """
     Delete a biometric analysis (with user ownership verification).
+    Eliminará en cascada todos los registros relacionados (nutrition_plans, training_plans, etc.)
 
     Args:
             analysis_id: ID of the analysis to delete
@@ -267,6 +268,22 @@ def delete_analysis(analysis_id: int, user_id: int) -> Tuple[bool, Optional[str]
         if analysis.user_id != user_id:
             return False, "Unauthorized: Analysis belongs to another user"
 
+        # Eliminar registros relacionados primero para evitar violación de clave foránea
+        try:
+            # Eliminar nutrition_plans relacionados
+            from app.models.nutrition_plan import NutritionPlan
+            NutritionPlan.query.filter_by(analysis_id=analysis_id).delete()
+            
+            # Eliminar training_plans relacionados
+            from app.models.training_plan import TrainingPlan
+            TrainingPlan.query.filter_by(analysis_id=analysis_id).delete()
+            
+            logger.info(f"Deleted related records for analysis ID={analysis_id}")
+        except Exception as related_error:
+            logger.warning(f"Error deleting related records: {str(related_error)}")
+            # Continuar con la eliminación del análisis de todas formas
+
+        # Ahora eliminar el análisis principal
         db.session.delete(analysis)
         db.session.commit()
 
