@@ -269,6 +269,117 @@ def result(analysis_id: int):
     )
 
 
+@bioanalyze_bp.route("/historial/<int:analysis_id>/editar", methods=["GET", "POST"])
+@login_required
+def edit(analysis_id: int):
+    """
+    Editar un análisis biométrico existente.
+    
+    GET: Mostrar formulario con datos actuales
+    POST: Actualizar análisis
+    """
+    from app.models import BiometricAnalysis
+    
+    # Obtener análisis y verificar propiedad
+    analysis = BiometricAnalysis.query.filter_by(id=analysis_id, user_id=current_user.id).first()
+    
+    if not analysis:
+        flash("Análisis no encontrado o sin permisos.", "danger")
+        return redirect(url_for("bioanalyze.history"))
+    
+    if request.method == "POST":
+        try:
+            # Validar y procesar datos del formulario
+            payload: AnalysisPayload = run_biometric_analysis(request.form)
+            
+            # Actualizar campos del análisis
+            analysis.weight = payload.inputs["peso"]
+            analysis.height = payload.inputs["altura"]
+            analysis.age = payload.inputs["edad"]
+            analysis.gender = "male" if payload.inputs["genero"] == "h" else "female"
+            analysis.neck = payload.inputs["cuello"]
+            analysis.waist = payload.inputs["cintura"]
+            analysis.hip = payload.inputs.get("cadera")
+            
+            # Medidas bilaterales
+            analysis.biceps_izq = float(request.form.get("biceps_izq") or 0) or None
+            analysis.biceps_der = float(request.form.get("biceps_der") or 0) or None
+            analysis.muslo_izq = float(request.form.get("muslo_izq") or 0) or None
+            analysis.muslo_der = float(request.form.get("muslo_der") or 0) or None
+            analysis.gemelo_izq = float(request.form.get("gemelo_izq") or 0) or None
+            analysis.gemelo_der = float(request.form.get("gemelo_der") or 0) or None
+            
+            # Datos de actividad
+            analysis.activity_factor = payload.inputs["factor_actividad"]
+            analysis.goal = payload.inputs["objetivo"]
+            
+            # Métricas calculadas
+            analysis.bmi = payload.results["imc"]
+            analysis.bmr = payload.results["tmb"]
+            analysis.tdee = payload.results["tdee"]
+            analysis.body_fat_percentage = payload.results["porcentaje_grasa"]
+            analysis.lean_mass = payload.results["masa_magra"]
+            analysis.fat_mass = payload.results["masa_grasa"]
+            analysis.ffmi = payload.results["ffmi"]
+            analysis.body_water = payload.results["agua_total"]
+            analysis.waist_hip_ratio = payload.results.get("rcc")
+            analysis.waist_height_ratio = payload.results["ratio_cintura_altura"]
+            analysis.metabolic_age = payload.results.get("edad_metabolica")
+            analysis.maintenance_calories = payload.results["calorias_diarias"]
+            analysis.protein_grams = payload.results["macronutrientes"].get("proteinas")
+            analysis.carbs_grams = payload.results["macronutrientes"].get("carbohidratos")
+            analysis.fats_grams = payload.results["macronutrientes"].get("grasas")
+            
+            db.session.commit()
+            
+            flash(f"Análisis #{analysis_id} actualizado exitosamente.", "success")
+            return redirect(url_for("bioanalyze.result", analysis_id=analysis_id))
+            
+        except AnalysisValidationError as exc:
+            flash(str(exc), "danger")
+            return render_template(
+                "bioanalyze/form.html",
+                form_data=request.form.to_dict(flat=True),
+                editing=True,
+                analysis_id=analysis_id
+            )
+        except Exception as exc:
+            logger.error(f"Error al actualizar análisis: {str(exc)}", exc_info=True)
+            flash(f"Error al actualizar análisis: {str(exc)}", "danger")
+            return render_template(
+                "bioanalyze/form.html",
+                form_data=request.form.to_dict(flat=True),
+                editing=True,
+                analysis_id=analysis_id
+            )
+    
+    # GET: Preparar datos del análisis para el formulario
+    form_values = {
+        'peso': analysis.weight,
+        'altura': analysis.height,
+        'edad': analysis.age,
+        'genero': 'h' if analysis.gender == 'male' else 'm',
+        'cuello': analysis.neck,
+        'cintura': analysis.waist,
+        'cadera': analysis.hip,
+        'biceps_izq': analysis.biceps_izq,
+        'biceps_der': analysis.biceps_der,
+        'muslo_izq': analysis.muslo_izq,
+        'muslo_der': analysis.muslo_der,
+        'gemelo_izq': analysis.gemelo_izq,
+        'gemelo_der': analysis.gemelo_der,
+        'factor_actividad': str(analysis.activity_factor),
+        'objetivo': analysis.goal,
+    }
+    
+    return render_template(
+        "bioanalyze/form.html",
+        form_values=form_values,
+        editing=True,
+        analysis_id=analysis_id
+    )
+
+
 @bioanalyze_bp.route("/historial/<int:analysis_id>/eliminar", methods=["POST"])
 @login_required
 def delete(analysis_id: int):

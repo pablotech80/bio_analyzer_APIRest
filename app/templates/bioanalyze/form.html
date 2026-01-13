@@ -55,11 +55,11 @@
                                 <label class="form-label" for="factor_actividad">Nivel de actividad</label>
                                 <select class="form-select" id="factor_actividad" name="factor_actividad" required>
                                     <option value="" {% if not form_values.get('factor_actividad') %}selected{% endif %}>Selecciona tu nivel</option>
-                                    <option value="1.2" {% if form_values.get('factor_actividad') == '1.2' %}selected{% endif %}>Sedentario (1.2)</option>
-                                    <option value="1.375" {% if form_values.get('factor_actividad') == '1.375' %}selected{% endif %}>Ligero (1.375)</option>
-                                    <option value="1.55" {% if form_values.get('factor_actividad') == '1.55' %}selected{% endif %}>Moderado (1.55)</option>
-                                    <option value="1.725" {% if form_values.get('factor_actividad') == '1.725' %}selected{% endif %}>Intenso (1.725)</option>
-                                    <option value="1.9" {% if form_values.get('factor_actividad') == '1.9' %}selected{% endif %}>Muy intenso (1.9)</option>
+                                    <option value="1.2" {% if form_values.get('factor_actividad') == '1.2' %}selected{% endif %}>Sedentario (1.0)</option>
+                                    <option value="1.375" {% if form_values.get('factor_actividad') == '1.375' %}selected{% endif %}>Ligero (1.2)</option>
+                                    <option value="1.55" {% if form_values.get('factor_actividad') == '1.55' %}selected{% endif %}>Moderado (1.375)</option>
+                                    <option value="1.725" {% if form_values.get('factor_actividad') == '1.725' %}selected{% endif %}>Intenso (1.5)</option>
+                                    <option value="1.9" {% if form_values.get('factor_actividad') == '1.9' %}selected{% endif %}>Muy intenso (1.7)</option>
                                 </select>
                             </div>
                         </div>

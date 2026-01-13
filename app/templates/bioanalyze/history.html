@@ -54,6 +54,10 @@
                                             <i class="fas fa-eye me-1"></i>Ver
                                         </a>
                                         <span class="mx-2">|</span>
+                                        <a href="{{ url_for('bioanalyze.edit', analysis_id=analysis.id) }}" style="color: #17a2b8; text-decoration: none; font-weight: 500;" class="me-2">
+                                            <i class="fas fa-edit me-1"></i>Editar
+                                        </a>
+                                        <span class="mx-2">|</span>
                                         <form method="post" action="{{ url_for('bioanalyze.delete', analysis_id=analysis.id) }}" class="d-inline">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <button type="submit" onclick="return confirm('¿Eliminar este análisis?');" style="background: none; border: none; color: #dc3545; font-weight: 500; cursor: pointer; padding: 0;">
@@ -81,7 +85,10 @@
                                         </div>
                                         <div class="d-flex">
                                             <a class="btn btn-primary btn-sm rounded-pill px-3 me-2" href="{{ url_for('bioanalyze.result', analysis_id=analysis.id) }}">
-                                                <i class="fas fa-eye me-2"></i>Ver informe
+                                                <i class="fas fa-eye me-2"></i>Ver
+                                            </a>
+                                            <a class="btn btn-info btn-sm rounded-pill px-3 me-2" href="{{ url_for('bioanalyze.edit', analysis_id=analysis.id) }}">
+                                                <i class="fas fa-edit me-2"></i>Editar
                                             </a>
                                             <form method="post" action="{{ url_for('bioanalyze.delete', analysis_id=analysis.id) }}" class="d-inline">
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
