@@ -41,6 +41,7 @@ class Config:
     AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
     AWS_REGION = os.environ.get("AWS_REGION", "eu-north-1")
+    S3_BUCKET = os.environ.get("S3_BUCKET")
 
     # Email (para futuro)
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
