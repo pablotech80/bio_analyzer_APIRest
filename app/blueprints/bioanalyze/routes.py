@@ -355,21 +355,21 @@ def edit(analysis_id: int):
     
     # GET: Preparar datos del análisis para el formulario
     form_data = {
-        'peso': analysis.weight,
-        'altura': analysis.height,
-        'edad': analysis.age,
+        'peso': analysis.weight or '',
+        'altura': analysis.height or '',
+        'edad': analysis.age or '',
         'genero': 'h' if analysis.gender == 'male' else 'm',
-        'cuello': analysis.neck,
-        'cintura': analysis.waist,
-        'cadera': analysis.hip,
-        'biceps_izq': analysis.biceps_izq,
-        'biceps_der': analysis.biceps_der,
-        'muslo_izq': analysis.muslo_izq,
-        'muslo_der': analysis.muslo_der,
-        'gemelo_izq': analysis.gemelo_izq,
-        'gemelo_der': analysis.gemelo_der,
-        'factor_actividad': str(analysis.activity_factor),
-        'objetivo': analysis.goal,
+        'cuello': analysis.neck or '',
+        'cintura': analysis.waist or '',
+        'cadera': analysis.hip or '',
+        'biceps_izq': analysis.biceps_izq or '',
+        'biceps_der': analysis.biceps_der or '',
+        'muslo_izq': analysis.muslo_izq or '',
+        'muslo_der': analysis.muslo_der or '',
+        'gemelo_izq': analysis.gemelo_izq or '',
+        'gemelo_der': analysis.gemelo_der or '',
+        'factor_actividad': str(analysis.activity_factor) if analysis.activity_factor else '',
+        'objetivo': analysis.goal or 'mantener peso',
     }
     
     return render_template(
