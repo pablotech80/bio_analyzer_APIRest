@@ -330,9 +330,77 @@ def edit(analysis_id: int):
             analysis.carbs_grams = payload.results["macronutrientes"].get("carbohidratos")
             analysis.fats_grams = payload.results["macronutrientes"].get("grasas")
             
+            # Procesar fotos nuevas si se subieron (opcional)
+            photos_updated = False
+            try:
+                if current_app.config.get('S3_BUCKET') and current_app.config.get('AWS_ACCESS_KEY_ID'):
+                    from app.services.s3_service import upload_to_s3
+                    
+                    if 'front_photo' in request.files and request.files['front_photo'].filename:
+                        try:
+                            front_photo = request.files['front_photo']
+                            analysis.front_photo_url = upload_to_s3(front_photo)
+                            photos_updated = True
+                            logger.info(f"Front photo updated for analysis {analysis_id}")
+                        except Exception as photo_error:
+                            logger.warning(f"Could not upload front photo: {photo_error}")
+                    
+                    if 'back_photo' in request.files and request.files['back_photo'].filename:
+                        try:
+                            back_photo = request.files['back_photo']
+                            analysis.back_photo_url = upload_to_s3(back_photo)
+                            photos_updated = True
+                            logger.info(f"Back photo updated for analysis {analysis_id}")
+                        except Exception as photo_error:
+                            logger.warning(f"Could not upload back photo: {photo_error}")
+                    
+                    if 'side_photo' in request.files and request.files['side_photo'].filename:
+                        try:
+                            side_photo = request.files['side_photo']
+                            analysis.side_photo_url = upload_to_s3(side_photo)
+                            photos_updated = True
+                            logger.info(f"Side photo updated for analysis {analysis_id}")
+                        except Exception as photo_error:
+                            logger.warning(f"Could not upload side photo: {photo_error}")
+            except Exception as e:
+                logger.error(f"Error in photo upload process: {str(e)}")
+            
+            # Regenerar interpretación de FitMaster AI con los datos actualizados
+            try:
+                from app.services.fitmaster_service import FitMasterService
+                fitmaster = FitMasterService()
+                
+                # Preparar datos para FitMaster
+                biometric_data = {
+                    "weight": analysis.weight,
+                    "height": analysis.height,
+                    "age": analysis.age,
+                    "gender": analysis.gender,
+                    "activity_level": analysis.activity_factor,
+                    "goal": analysis.goal,
+                    "bmi": analysis.bmi,
+                    "body_fat_percentage": analysis.body_fat_percentage,
+                    "lean_mass": analysis.lean_mass,
+                    "bmr": analysis.bmr,
+                    "tdee": analysis.tdee,
+                    "ffmi": analysis.ffmi,
+                }
+                
+                # Solicitar nueva interpretación
+                fitmaster_response = fitmaster.get_interpretation(biometric_data)
+                
+                if fitmaster_response:
+                    analysis.fitmaster_data = fitmaster_response
+                    logger.info(f"✓ FitMaster AI regenerado para análisis {analysis_id}")
+            except Exception as fitmaster_error:
+                logger.warning(f"No se pudo regenerar FitMaster AI: {fitmaster_error}")
+            
             db.session.commit()
             
-            flash(f"Análisis #{analysis_id} actualizado exitosamente.", "success")
+            success_msg = f"Análisis #{analysis_id} actualizado exitosamente."
+            if photos_updated:
+                success_msg += " Fotos actualizadas."
+            flash(success_msg, "success")
             return redirect(url_for("bioanalyze.result", analysis_id=analysis_id))
             
         except AnalysisValidationError as exc:
@@ -371,6 +439,10 @@ def edit(analysis_id: int):
         'gemelo_der': analysis.calf_right or '',
         'factor_actividad': str(analysis.activity_factor) if analysis.activity_factor else '',
         'objetivo': analysis.goal or 'mantener peso',
+        # URLs de fotos para indicar si existen
+        'front_photo_url': analysis.front_photo_url,
+        'back_photo_url': analysis.back_photo_url,
+        'side_photo_url': analysis.side_photo_url,
     }
     
     return render_template(

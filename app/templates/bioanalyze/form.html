@@ -136,21 +136,52 @@
                         <h2 class="h5 mb-0">Fotos para análisis (opcional)</h2>
                     </div>
                     <div class="card-body">
+                        {% if editing %}
+                        <p class="text-muted mb-3">
+                            <i class="fas fa-info-circle me-2"></i>Puedes subir nuevas fotos para reemplazar las existentes o dejar los campos vacíos para mantener las actuales.
+                        </p>
+                        {% else %}
                         <p class="text-muted mb-3">
                             <i class="fas fa-camera me-2"></i>Sube fotos frontal, de espalda y lateral para un análisis más completo.
                         </p>
+                        {% endif %}
+                        
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <label class="form-label" for="front_photo">Foto frontal</label>
+                                <label class="form-label" for="front_photo">
+                                    Foto frontal
+                                    {% if editing and form_values.get('front_photo_url') %}
+                                    <span class="badge bg-success ms-1"><i class="fas fa-check"></i> Existe</span>
+                                    {% endif %}
+                                </label>
                                 <input class="form-control" id="front_photo" name="front_photo" type="file" accept="image/jpeg,image/jpg,image/png">
+                                {% if editing and form_values.get('front_photo_url') %}
+                                <div class="form-text">Dejar vacío para mantener la foto actual</div>
+                                {% endif %}
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="back_photo">Foto espalda</label>
+                                <label class="form-label" for="back_photo">
+                                    Foto espalda
+                                    {% if editing and form_values.get('back_photo_url') %}
+                                    <span class="badge bg-success ms-1"><i class="fas fa-check"></i> Existe</span>
+                                    {% endif %}
+                                </label>
                                 <input class="form-control" id="back_photo" name="back_photo" type="file" accept="image/jpeg,image/jpg,image/png">
+                                {% if editing and form_values.get('back_photo_url') %}
+                                <div class="form-text">Dejar vacío para mantener la foto actual</div>
+                                {% endif %}
                             </div>
                             <div class="col-md-4">
-                                <label class="form-label" for="side_photo">Foto lateral</label>
+                                <label class="form-label" for="side_photo">
+                                    Foto lateral
+                                    {% if editing and form_values.get('side_photo_url') %}
+                                    <span class="badge bg-success ms-1"><i class="fas fa-check"></i> Existe</span>
+                                    {% endif %}
+                                </label>
                                 <input class="form-control" id="side_photo" name="side_photo" type="file" accept="image/jpeg,image/jpg,image/png">
+                                {% if editing and form_values.get('side_photo_url') %}
+                                <div class="form-text">Dejar vacío para mantener la foto actual</div>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
