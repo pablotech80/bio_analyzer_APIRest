@@ -50,19 +50,19 @@
                                     <td>{{ analysis.gemelo_izq and ('%.1f'|format(analysis.gemelo_izq)) or '—' }}</td>
                                     <td>{{ analysis.gemelo_der and ('%.1f'|format(analysis.gemelo_der)) or '—' }}</td>
                                     <td class="text-end">
-                                        <a href="{{ url_for('bioanalyze.result', analysis_id=analysis.id) }}" style="color: #E67E22; text-decoration: none; font-weight: 500;" class="me-2">
-                                            <i class="fas fa-eye me-1"></i>Ver
-                                        </a>
-                                        <span class="mx-2">|</span>
-                                        <a href="{{ url_for('bioanalyze.edit', analysis_id=analysis.id) }}" style="color: #17a2b8; text-decoration: none; font-weight: 500;" class="me-2">
-                                            <i class="fas fa-edit me-1"></i>Editar
-                                        </a>
-                                        <span class="mx-2">|</span>
-                                        <form method="post" action="{{ url_for('bioanalyze.delete', analysis_id=analysis.id) }}" class="d-inline">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <button type="submit" onclick="return confirm('¿Eliminar este análisis?');" style="background: none; border: none; color: #dc3545; font-weight: 500; cursor: pointer; padding: 0;">
-                                                <i class="fas fa-trash me-1"></i>Eliminar
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('bioanalyze.result', analysis_id=analysis.id) }}" class="btn btn-outline-primary" title="Ver análisis completo">
+                                                <i class="fas fa-eye"></i> Ver
+                                            </a>
+                                            <a href="{{ url_for('bioanalyze.edit', analysis_id=analysis.id) }}" class="btn btn-outline-info" title="Editar análisis">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <button type="button" class="btn btn-outline-danger" onclick="if(confirm('¿Estás seguro de eliminar este análisis?')) { document.getElementById('delete-form-{{ analysis.id }}').submit(); }" title="Eliminar análisis">
+                                                <i class="fas fa-trash-alt"></i> Eliminar
                                             </button>
+                                        </div>
+                                        <form id="delete-form-{{ analysis.id }}" method="post" action="{{ url_for('bioanalyze.delete', analysis_id=analysis.id) }}" class="d-none">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                         </form>
                                     </td>
                                 </tr>
