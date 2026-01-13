@@ -65,11 +65,29 @@ def permission_required(permission_name):
 def admin_required(f):
     """
     Decorador para requerir rol de administrador.
+    
+    Verifica tanto el rol "admin" como el flag is_admin.
 
     Uso:
             @admin_required
     """
-    return role_required("admin")(f)
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated:
+            flash("Debes iniciar sesión para acceder a esta página.", "warning")
+            return redirect(url_for("auth.login"))
+        
+        # Permitir acceso si tiene flag is_admin O rol admin
+        has_admin_flag = getattr(current_user, 'is_admin', False)
+        has_admin_role = current_user.role and current_user.role.name == "admin"
+        
+        if not (has_admin_flag or has_admin_role):
+            flash("No tienes permisos para acceder a esta página.", "danger")
+            abort(403)
+        
+        return f(*args, **kwargs)
+    
+    return decorated_function
 
 
 def verified_email_required(f):
