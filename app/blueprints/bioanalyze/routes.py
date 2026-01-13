@@ -301,13 +301,13 @@ def edit(analysis_id: int):
             analysis.waist = payload.inputs["cintura"]
             analysis.hip = payload.inputs.get("cadera")
             
-            # Medidas bilaterales
-            analysis.biceps_izq = float(request.form.get("biceps_izq") or 0) or None
-            analysis.biceps_der = float(request.form.get("biceps_der") or 0) or None
-            analysis.muslo_izq = float(request.form.get("muslo_izq") or 0) or None
-            analysis.muslo_der = float(request.form.get("muslo_der") or 0) or None
-            analysis.gemelo_izq = float(request.form.get("gemelo_izq") or 0) or None
-            analysis.gemelo_der = float(request.form.get("gemelo_der") or 0) or None
+            # Medidas bilaterales (mapear español del form → inglés del modelo)
+            analysis.biceps_left = float(request.form.get("biceps_izq") or 0) or None
+            analysis.biceps_right = float(request.form.get("biceps_der") or 0) or None
+            analysis.thigh_left = float(request.form.get("muslo_izq") or 0) or None
+            analysis.thigh_right = float(request.form.get("muslo_der") or 0) or None
+            analysis.calf_left = float(request.form.get("gemelo_izq") or 0) or None
+            analysis.calf_right = float(request.form.get("gemelo_der") or 0) or None
             
             # Datos de actividad
             analysis.activity_factor = payload.inputs["factor_actividad"]
@@ -354,6 +354,7 @@ def edit(analysis_id: int):
             )
     
     # GET: Preparar datos del análisis para el formulario
+    # Mapear inglés del modelo → español del form
     form_data = {
         'peso': analysis.weight or '',
         'altura': analysis.height or '',
@@ -362,12 +363,12 @@ def edit(analysis_id: int):
         'cuello': analysis.neck or '',
         'cintura': analysis.waist or '',
         'cadera': analysis.hip or '',
-        'biceps_izq': analysis.biceps_izq or '',
-        'biceps_der': analysis.biceps_der or '',
-        'muslo_izq': analysis.muslo_izq or '',
-        'muslo_der': analysis.muslo_der or '',
-        'gemelo_izq': analysis.gemelo_izq or '',
-        'gemelo_der': analysis.gemelo_der or '',
+        'biceps_izq': analysis.biceps_left or '',
+        'biceps_der': analysis.biceps_right or '',
+        'muslo_izq': analysis.thigh_left or '',
+        'muslo_der': analysis.thigh_right or '',
+        'gemelo_izq': analysis.calf_left or '',
+        'gemelo_der': analysis.calf_right or '',
         'factor_actividad': str(analysis.activity_factor) if analysis.activity_factor else '',
         'objetivo': analysis.goal or 'mantener peso',
     }
