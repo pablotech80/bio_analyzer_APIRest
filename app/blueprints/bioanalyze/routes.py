@@ -354,7 +354,7 @@ def edit(analysis_id: int):
             )
     
     # GET: Preparar datos del análisis para el formulario
-    form_values = {
+    form_data = {
         'peso': analysis.weight,
         'altura': analysis.height,
         'edad': analysis.age,
@@ -374,7 +374,7 @@ def edit(analysis_id: int):
     
     return render_template(
         "bioanalyze/form.html",
-        form_values=form_values,
+        form_data=form_data,
         editing=True,
         analysis_id=analysis_id
     )
