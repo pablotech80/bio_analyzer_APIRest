@@ -88,6 +88,16 @@ class ProductionConfig(Config):
 
     # Logging
     SQLALCHEMY_ECHO = False
+    
+    # Permitir cookies sin HTTPS si FORCE_HTTPS está en False (para debugging)
+    # En producción normal, Railway maneja SSL automáticamente
+    FORCE_HTTPS = os.environ.get("FORCE_HTTPS", "true").lower() == "true"
+    
+    if not FORCE_HTTPS:
+        # Modo debug para producción - solo usar si hay problemas con SSL
+        SESSION_COOKIE_SECURE = False
+        REMEMBER_COOKIE_SECURE = False
+        JWT_COOKIE_SECURE = False
 
 
 class TestingConfig(Config):

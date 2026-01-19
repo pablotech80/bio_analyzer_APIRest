@@ -40,9 +40,16 @@ class AuthService:
         default_role = Role.query.filter_by(name="client").first()
         if not default_role:
             # Si no existe el rol, crearlo (esto debería estar en init_db)
-            default_role = Role(name="client", description="Usuario cliente estándar")
-            db.session.add(default_role)
-            db.session.flush()
+            current_app.logger.warning("Rol 'client' no existe, creándolo automáticamente")
+            try:
+                default_role = Role(name="client", description="Usuario cliente estándar")
+                db.session.add(default_role)
+                db.session.flush()
+                current_app.logger.info("Rol 'client' creado exitosamente")
+            except Exception as e:
+                current_app.logger.error(f"Error al crear rol 'client': {str(e)}")
+                db.session.rollback()
+                raise ValueError("Error al configurar el rol de usuario. Contacta al administrador.")
 
         # Crear nuevo usuario
         user = User(
@@ -54,8 +61,14 @@ class AuthService:
         )
         user.password = password  # Se hasheará automáticamente
 
-        db.session.add(user)
-        db.session.commit()
+        try:
+            db.session.add(user)
+            db.session.commit()
+            current_app.logger.info(f"Usuario guardado en BD: {username} ({email})")
+        except Exception as e:
+            db.session.rollback()
+            current_app.logger.error(f"Error al guardar usuario en BD: {str(e)}", exc_info=True)
+            raise ValueError(f"Error al guardar en la base de datos: {str(e)}")
 
         # Generar token de verificación
         verification_token = AuthService.generate_email_verification_token(user)

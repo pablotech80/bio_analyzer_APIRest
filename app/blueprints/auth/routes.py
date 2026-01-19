@@ -63,12 +63,21 @@ def register():
                 return redirect(url_for("bioanalyze.history"))
 
         except ValueError as e:
+            from flask import current_app
+            current_app.logger.error(f"Error de validación en registro: {str(e)}")
             flash(str(e), "danger")
         except Exception as e:
+            from flask import current_app
+            current_app.logger.error(f"Error crítico en registro: {str(e)}", exc_info=True)
             flash(
-                "Ocurrió un error al crear la cuenta. Por favor intenta nuevamente.",
+                f"Ocurrió un error al crear la cuenta: {str(e)}. Por favor contacta al soporte.",
                 "danger",
             )
+    else:
+        # Log form validation errors
+        if form.errors:
+            from flask import current_app
+            current_app.logger.warning(f"Errores de validación en formulario de registro: {form.errors}")
 
     return render_template("auth/register.html", form=form)
 
