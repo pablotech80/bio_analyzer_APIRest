@@ -168,82 +168,64 @@
     <div class="container py-2 py-md-4">
         <div class="row">
             <div class="col-12">
-                <!-- Header Compacto Mobile-First -->
-                <div class="bg-white shadow-sm rounded p-3 mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="flex-grow-1 me-2">
-                            <h1 class="h5 mb-1 fw-bold text-dark text-truncate">{{ plan.title }}</h1>
-                            <div class="text-muted small d-flex flex-wrap align-items-center gap-1">
-                                <span>{{ plan.created_at.strftime('%d/%m/%Y') }}</span>
+                <!-- Header Minimalista -->
+                <div class="bg-white p-3 mb-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h1 class="h6 mb-1 fw-bold">{{ plan.title }}</h1>
+                            <div class="small text-muted">
+                                {{ plan.created_at.strftime('%d/%m/%Y') }}
                                 {% if plan.is_active %}
-                                <span class="badge bg-success">Activo</span>
+                                <span class="badge bg-success ms-1">Activo</span>
                                 {% endif %}
                             </div>
+                            {% if plan.start_date and plan.end_date %}
+                            <div class="small text-muted mt-1">
+                                {{ plan.start_date.strftime('%d/%m') }} - {{ plan.end_date.strftime('%d/%m/%Y') }}
+                            </div>
+                            {% endif %}
                         </div>
                         
-                        <!-- Menú Burger Minimalista -->
+                        <!-- Menú Burger 3 Rayas -->
                         <div class="dropdown">
-                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-list fs-3"></i>
+                            <button class="btn p-0 border-0 bg-transparent" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-list fs-2 text-dark"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                            <ul class="dropdown-menu dropdown-menu-end">
                                 {% if current_user.is_admin %}
-                                <li>
-                                    <a class="dropdown-item py-2" href="{{ url_for('admin.edit_nutrition_plan', plan_id=plan.id) }}">
-                                        <i class="bi bi-pencil me-2"></i>Editar
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.edit_nutrition_plan', plan_id=plan.id) }}"><i class="bi bi-pencil me-2"></i>Editar</a></li>
                                 <li>
                                     <form method="POST" action="{{ url_for('admin.toggle_nutrition_plan', plan_id=plan.id) }}" class="m-0">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                        <button type="submit" class="dropdown-item py-2">
-                                            <i class="bi bi-{{ 'pause-circle' if plan.is_active else 'play-circle' }} me-2"></i>{{ 'Desactivar' if plan.is_active else 'Activar' }}
-                                        </button>
+                                        <button type="submit" class="dropdown-item"><i class="bi bi-{{ 'pause-circle' if plan.is_active else 'play-circle' }} me-2"></i>{{ 'Desactivar' if plan.is_active else 'Activar' }}</button>
                                     </form>
                                 </li>
+                                <li><a class="dropdown-item" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}"><i class="bi bi-arrow-left me-2"></i>Volver</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item py-2" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
-                                        <i class="bi bi-arrow-left me-2"></i>Volver
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider my-1"></li>
-                                <li>
-                                    <form method="POST" action="{{ url_for('admin.delete_nutrition_plan', plan_id=plan.id) }}" onsubmit="return confirm('¿Eliminar este plan?');">
+                                    <form method="POST" action="{{ url_for('admin.delete_nutrition_plan', plan_id=plan.id) }}" onsubmit="return confirm('¿Eliminar?');">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                        <button type="submit" class="dropdown-item py-2 text-danger">
-                                            <i class="bi bi-trash me-2"></i>Eliminar
-                                        </button>
+                                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i>Eliminar</button>
                                     </form>
                                 </li>
                                 {% else %}
-                                <li>
-                                    <a class="dropdown-item py-2" href="{{ url_for('nutrition.my_plans') }}">
-                                        <i class="bi bi-arrow-left me-2"></i>Mis Planes
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="{{ url_for('nutrition.my_plans') }}"><i class="bi bi-arrow-left me-2"></i>Mis Planes</a></li>
                                 {% endif %}
                             </ul>
                         </div>
                     </div>
-                    
-                    <!-- Info adicional colapsable -->
-                    {% if plan.start_date and plan.end_date %}
-                    <div class="mt-2 pt-2 border-top small text-muted">
-                        <i class="bi bi-calendar3 me-1"></i>{{ plan.start_date.strftime('%d/%m') }} - {{ plan.end_date.strftime('%d/%m/%Y') }}
-                    </div>
-                    {% endif %}
                 </div>
 
-                <!-- Accordion de Secciones del Plan -->
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <div class="accordion" id="nutritionPlanAccordion">
+                <!-- Secciones del Plan -->
+                <div class="bg-white mb-2">
+                    <div class="accordion accordion-flush" id="nutritionPlanAccordion">
                         
                         <!-- 1. Descripción -->
                         {% if plan.description %}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingDescription">
-                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
-                                    <i class="bi bi-file-text me-2"></i><strong>Descripción del Plan</strong>
+                                <button class="accordion-button collapsed bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription">
+                                    Descripción del Plan
                                 </button>
                             </h2>
                             <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription">
@@ -258,8 +240,8 @@
                         {% if plan.goal %}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingGoal">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGoal" aria-expanded="false" aria-controls="collapseGoal">
-                                    <i class="bi bi-bullseye me-2"></i><strong>Objetivo</strong>
+                                <button class="accordion-button collapsed bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGoal">
+                                    Objetivo
                                 </button>
                             </h2>
                             <div id="collapseGoal" class="accordion-collapse collapse" aria-labelledby="headingGoal">
@@ -274,8 +256,8 @@
                         {% if plan.daily_calories or plan.protein_grams or plan.carbs_grams or plan.fats_grams %}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingMacros">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMacros" aria-expanded="false" aria-controls="collapseMacros">
-                                    <i class="bi bi-calculator me-2"></i><strong>Requerimientos Nutricionales Diarios</strong>
+                                <button class="accordion-button collapsed bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMacros">
+                                    Requerimientos Nutricionales Diarios
                                 </button>
                             </h2>
                             <div id="collapseMacros" class="accordion-collapse collapse" aria-labelledby="headingMacros">
@@ -330,8 +312,8 @@
                         {% if plan.meals %}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingMeals">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMeals" aria-expanded="false" aria-controls="collapseMeals">
-                                    <i class="bi bi-egg-fried me-2"></i><strong>Plan de Comidas</strong> <span class="badge bg-success ms-2">Principal</span>
+                                <button class="accordion-button bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMeals">
+                                    Plan de Comidas <span class="badge bg-success ms-2">Principal</span>
                                 </button>
                             </h2>
                             <div id="collapseMeals" class="accordion-collapse collapse" aria-labelledby="headingMeals">
@@ -346,8 +328,8 @@
                         {% if plan.supplements %}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingSupplements">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSupplements" aria-expanded="false" aria-controls="collapseSupplements">
-                                    <i class="bi bi-capsule me-2"></i><strong>Suplementación Recomendada</strong>
+                                <button class="accordion-button collapsed bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSupplements">
+                                    Suplementación Recomendada
                                 </button>
                             </h2>
                             <div id="collapseSupplements" class="accordion-collapse collapse" aria-labelledby="headingSupplements">
@@ -362,8 +344,8 @@
                         {% if plan.notes %}
                         <div class="accordion-item">
                             <h2 class="accordion-header" id="headingNotes">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNotes" aria-expanded="false" aria-controls="collapseNotes">
-                                    <i class="bi bi-chat-left-text me-2"></i><strong>Indicaciones del Entrenador</strong>
+                                <button class="accordion-button collapsed bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNotes">
+                                    Indicaciones del Entrenador
                                 </button>
                             </h2>
                             <div id="collapseNotes" class="accordion-collapse collapse" aria-labelledby="headingNotes">
