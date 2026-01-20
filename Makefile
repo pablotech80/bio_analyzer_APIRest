@@ -13,12 +13,15 @@ collectstatic:
 
 # Testing
 test:
-	python -m pytest
+	pytest
+
+coverage:
+	pytest --cov=.
 
 # Linting
 lint:
-	black .
-	isort .
+	black --check .
+	isort --check .
 	flake8
 
 # Database
@@ -33,4 +36,5 @@ venv:
 # CI/CD
 ci:
 	make lint
+	make test
 	make test
