@@ -26,115 +26,221 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- Título -->
-                    <div class="mb-3">
+                    <!-- Título (siempre visible) -->
+                    <div class="mb-4">
                         <label class="form-label"><strong>Título del Plan *</strong></label>
-                        <input type="text" name="title" class="form-control" required 
+                        <input type="text" name="title" class="form-control form-control-lg" required 
                                value="{{ plan.title }}" placeholder="Ej: Rutina Hipertrofia 4 días - PPL">
                         <small class="text-muted">Nombre descriptivo del plan</small>
                     </div>
 
-                    <!-- Descripción -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Descripción (Markdown)</strong></label>
-                        <textarea name="description" class="form-control" rows="3" style="font-family: 'Courier New', monospace;" 
-                                  placeholder="Descripción general del plan en formato Markdown">{{ plan.description or '' }}</textarea>
-                    </div>
-
-                    <!-- Objetivo -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Objetivo</strong></label>
-                        <input type="text" name="goal" class="form-control" 
-                               value="{{ plan.goal or '' }}" placeholder="Ej: Hipertrofia muscular, Fuerza, Resistencia">
-                    </div>
-
-                    <!-- Configuración -->
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label"><strong>Frecuencia</strong></label>
-                            <input type="text" name="frequency" class="form-control" 
-                                   value="{{ plan.frequency or '' }}" placeholder="Ej: 4 días/semana">
+                    <!-- Accordion de Secciones -->
+                    <div class="accordion" id="trainingPlanAccordion">
+                        
+                        <!-- 1. Descripción -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingDescription">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
+                                    <i class="bi bi-file-text me-2"></i><strong>1. Descripción General</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Descripción (Markdown)</strong></label>
+                                    <textarea name="description" class="form-control" rows="3" style="font-family: 'Courier New', monospace;" 
+                                              placeholder="Descripción general del plan en formato Markdown">{{ plan.description or '' }}</textarea>
+                                    <small class="text-muted">Explica brevemente en qué consiste el plan</small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label"><strong>Tipo de Rutina</strong></label>
-                            <input type="text" name="routine_type" class="form-control" 
-                                   value="{{ plan.routine_type or '' }}" placeholder="Ej: Push/Pull/Legs">
+
+                        <!-- 2. Objetivo -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingGoal">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGoal" aria-expanded="false" aria-controls="collapseGoal">
+                                    <i class="bi bi-bullseye me-2"></i><strong>2. Objetivo</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseGoal" class="accordion-collapse collapse" aria-labelledby="headingGoal" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Objetivo del Plan</strong></label>
+                                    <input type="text" name="goal" class="form-control" 
+                                           value="{{ plan.goal or '' }}" placeholder="Ej: Hipertrofia muscular, Fuerza, Resistencia, Pérdida de grasa">
+                                    <small class="text-muted">Meta principal que se busca alcanzar</small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label"><strong>Duración (semanas)</strong></label>
-                            <input type="number" name="duration_weeks" class="form-control" 
-                                   value="{{ plan.duration_weeks or '' }}" placeholder="8">
+
+                        <!-- 3. Frecuencia y Configuración -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFrequency">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFrequency" aria-expanded="false" aria-controls="collapseFrequency">
+                                    <i class="bi bi-calendar-week me-2"></i><strong>3. Frecuencia y Configuración</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseFrequency" class="accordion-collapse collapse" aria-labelledby="headingFrequency" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label"><strong>Frecuencia</strong></label>
+                                            <input type="text" name="frequency" class="form-control" 
+                                                   value="{{ plan.frequency or '' }}" placeholder="Ej: 4 días/semana">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label"><strong>Tipo de Rutina</strong></label>
+                                            <input type="text" name="routine_type" class="form-control" 
+                                                   value="{{ plan.routine_type or '' }}" placeholder="Ej: Push/Pull/Legs">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label class="form-label"><strong>Duración (semanas)</strong></label>
+                                            <input type="number" name="duration_weeks" class="form-control" 
+                                                   value="{{ plan.duration_weeks or '' }}" placeholder="8">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Entrenamientos en Markdown -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Entrenamientos (Markdown)</strong></label>
-                        <textarea name="workouts_text" class="form-control" style="font-size: 14px; min-height: 400px; resize: vertical; font-family: 'Courier New', monospace;">{% if plan.workouts is string %}{{ plan.workouts }}{% elif plan.workouts %}{{ plan.workouts | tojson(indent=2) }}{% endif %}</textarea>
-                        <small class="text-muted">
-                            Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
-                        </small>
-                    </div>
-
-                    <!-- Calentamiento -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Calentamiento (Markdown)</strong></label>
-                        <textarea name="warm_up" class="form-control" rows="4" style="font-family: 'Courier New', monospace;" 
-                                  placeholder="## Calentamiento&#10;&#10;- 5 min cardio ligero&#10;- Movilidad articular 5 min&#10;- Series de aproximación con peso ligero">{{ plan.warm_up or '' }}</textarea>
-                    </div>
-
-                    <!-- Enfriamiento -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Enfriamiento (Markdown)</strong></label>
-                        <textarea name="cool_down" class="form-control" rows="4" style="font-family: 'Courier New', monospace;" 
-                                  placeholder="## Enfriamiento&#10;&#10;- Estiramientos estáticos 10 min&#10;- Foam roller grupos trabajados&#10;- Respiración profunda 3 min">{{ plan.cool_down or '' }}</textarea>
-                    </div>
-
-                    <!-- Notas -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Notas del Entrenador (Markdown)</strong></label>
-                        <textarea name="notes" class="form-control" rows="5" style="font-family: 'Courier New', monospace;" 
-                                  placeholder="## Indicaciones Importantes&#10;&#10;- Progresar peso cada semana si completas todas las reps&#10;- Descanso adecuado entre sesiones&#10;- **Técnica perfecta** antes de aumentar peso&#10;&#10;> 💪 **Recuerda:** La constancia es clave">{{ plan.notes or '' }}</textarea>
-                    </div>
-
-                    <!-- Fechas -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label"><strong>Fecha de Inicio</strong></label>
-                            <input type="date" name="start_date" class="form-control" value="{{ plan.start_date.strftime('%Y-%m-%d') if plan.start_date else '' }}">
+                        <!-- 4. Calentamiento -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingWarmup">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWarmup" aria-expanded="false" aria-controls="collapseWarmup">
+                                    <i class="bi bi-fire me-2"></i><strong>4. Calentamiento</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseWarmup" class="accordion-collapse collapse" aria-labelledby="headingWarmup" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Calentamiento (Markdown)</strong></label>
+                                    <textarea name="warm_up" class="form-control" rows="6" style="font-family: 'Courier New', monospace;" 
+                                              placeholder="## Calentamiento&#10;&#10;- 5 min cardio ligero&#10;- Movilidad articular 5 min&#10;- Series de aproximación con peso ligero">{{ plan.warm_up or '' }}</textarea>
+                                    <small class="text-muted">Rutina de calentamiento antes de entrenar</small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label"><strong>Fecha de Fin</strong></label>
-                            <input type="date" name="end_date" class="form-control" value="{{ plan.end_date.strftime('%Y-%m-%d') if plan.end_date else '' }}">
-                        </div>
-                    </div>
 
-                    <!-- Análisis Relacionado -->
-                    {% if analyses %}
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
-                        <select name="analysis_id" class="form-select">
-                            <option value="">-- Sin análisis relacionado --</option>
-                            {% for analysis in analyses %}
-                            <option value="{{ analysis.id }}" {% if plan.analysis_id == analysis.id %}selected{% endif %}>
-                                {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
-                                Peso: {{ '%.1f'|format(analysis.weight) if analysis.weight is not none else 'N/A' }}kg - 
-                                Masa Magra: {{ '%.1f'|format(analysis.lean_mass) if analysis.lean_mass is not none else 'N/A' }}kg
-                            </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    {% endif %}
-
-                    <!-- Estado Activo -->
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if plan.is_active %}checked{% endif %}>
-                            <label class="form-check-label" for="is_active">
-                                <strong>Plan Activo</strong>
-                            </label>
-                            <small class="text-muted d-block">Los planes inactivos no se mostrarán al usuario</small>
+                        <!-- 5. Bloque de Entrenamiento (Principal) -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingWorkouts">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWorkouts" aria-expanded="false" aria-controls="collapseWorkouts">
+                                    <i class="bi bi-lightning-charge-fill me-2"></i><strong>5. Bloque de Entrenamiento</strong> <span class="badge bg-primary ms-2">Principal</span>
+                                </button>
+                            </h2>
+                            <div id="collapseWorkouts" class="accordion-collapse collapse" aria-labelledby="headingWorkouts" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Entrenamientos (Markdown)</strong></label>
+                                    <textarea name="workouts_text" class="form-control" style="font-size: 14px; min-height: 400px; resize: vertical; font-family: 'Courier New', monospace;">{% if plan.workouts is string %}{{ plan.workouts }}{% elif plan.workouts %}{{ plan.workouts | tojson(indent=2) }}{% endif %}</textarea>
+                                    <small class="text-muted">
+                                        Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
+                                    </small>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- 6. Enfriamiento -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingCooldown">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCooldown" aria-expanded="false" aria-controls="collapseCooldown">
+                                    <i class="bi bi-wind me-2"></i><strong>6. Enfriamiento</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseCooldown" class="accordion-collapse collapse" aria-labelledby="headingCooldown" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Enfriamiento (Markdown)</strong></label>
+                                    <textarea name="cool_down" class="form-control" rows="6" style="font-family: 'Courier New', monospace;" 
+                                              placeholder="## Enfriamiento&#10;&#10;- Estiramientos estáticos 10 min&#10;- Foam roller grupos trabajados&#10;- Respiración profunda 3 min">{{ plan.cool_down or '' }}</textarea>
+                                    <small class="text-muted">Rutina de enfriamiento y estiramientos</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. Notas del Entrenador -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingNotes">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNotes" aria-expanded="false" aria-controls="collapseNotes">
+                                    <i class="bi bi-chat-left-text me-2"></i><strong>7. Notas del Entrenador</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseNotes" class="accordion-collapse collapse" aria-labelledby="headingNotes" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Notas y Recomendaciones (Markdown)</strong></label>
+                                    <textarea name="notes" class="form-control" rows="6" style="font-family: 'Courier New', monospace;" 
+                                              placeholder="## Indicaciones Importantes&#10;&#10;- Progresar peso cada semana si completas todas las reps&#10;- Descanso adecuado entre sesiones&#10;- **Técnica perfecta** antes de aumentar peso&#10;&#10;> 💪 **Recuerda:** La constancia es clave">{{ plan.notes or '' }}</textarea>
+                                    <small class="text-muted">Consejos, advertencias y recomendaciones personalizadas</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 8. Fechas de Vigencia -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingDates">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDates" aria-expanded="false" aria-controls="collapseDates">
+                                    <i class="bi bi-calendar-range me-2"></i><strong>8. Fechas de Inicio y Fin</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseDates" class="accordion-collapse collapse" aria-labelledby="headingDates" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label"><strong>Fecha de Inicio</strong></label>
+                                            <input type="date" name="start_date" class="form-control" value="{{ plan.start_date.strftime('%Y-%m-%d') if plan.start_date else '' }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label"><strong>Fecha de Fin</strong></label>
+                                            <input type="date" name="end_date" class="form-control" value="{{ plan.end_date.strftime('%Y-%m-%d') if plan.end_date else '' }}">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Define el período de vigencia del plan</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 9. Análisis Relacionado -->
+                        {% if analyses %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingAnalysis">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnalysis" aria-expanded="false" aria-controls="collapseAnalysis">
+                                    <i class="bi bi-graph-up me-2"></i><strong>9. Análisis Biométrico Relacionado</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseAnalysis" class="accordion-collapse collapse" aria-labelledby="headingAnalysis" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
+                                    <select name="analysis_id" class="form-select">
+                                        <option value="">-- Sin análisis relacionado --</option>
+                                        {% for analysis in analyses %}
+                                        <option value="{{ analysis.id }}" {% if plan.analysis_id == analysis.id %}selected{% endif %}>
+                                            {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
+                                            Peso: {{ '%.1f'|format(analysis.weight) if analysis.weight is not none else 'N/A' }}kg - 
+                                            Masa Magra: {{ '%.1f'|format(analysis.lean_mass) if analysis.lean_mass is not none else 'N/A' }}kg
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">Vincula este plan con un análisis biométrico específico</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- 10. Estado del Plan -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingStatus">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStatus" aria-expanded="false" aria-controls="collapseStatus">
+                                    <i class="bi bi-toggle-on me-2"></i><strong>10. Estado del Plan</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseStatus" class="accordion-collapse collapse" aria-labelledby="headingStatus" data-bs-parent="#trainingPlanAccordion">
+                                <div class="accordion-body">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" name="is_active" id="is_active" {% if plan.is_active %}checked{% endif %}>
+                                        <label class="form-check-label" for="is_active">
+                                            <strong>Plan Activo</strong>
+                                        </label>
+                                    </div>
+                                    <small class="text-muted">Los planes inactivos no se mostrarán al usuario</small>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
