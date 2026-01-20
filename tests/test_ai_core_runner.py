@@ -49,9 +49,10 @@ class TestAiCoreRunner(unittest.TestCase):
         out = runner.run(spec, {"age": 30, "height_cm": 180, "weight_kg": 80})
         self.assertEqual(out.message, "repaired")
         self.assertEqual(provider.calls, 2)
-        self.assertEqual(len(emitter.events), 1)
-        self.assertEqual(emitter.events[0].outcome, "repaired")
-        self.assertEqual(emitter.events[0].reason_code, "repaired")
+        self.assertEqual(len(emitter.events), 2)
+        self.assertEqual(emitter.events[0].outcome, "repair_attempt")
+        self.assertEqual(emitter.events[1].outcome, "repaired")
+        self.assertEqual(emitter.events[1].reason_code, "repaired")
 
     def test_injection_blocked_fallback(self):
         provider = SequenceProvider(["{\"message\": \"should_not_be_called\"}"])

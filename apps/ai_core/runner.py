@@ -54,6 +54,7 @@ class AgentSpec:
 class ReasonCode:
     OK = "ok"
     REPAIRED = "repaired"
+    REPAIR_ATTEMPT = "repair_attempt"
     BLOCKED_INJECTION = "blocked_injection"
     BLOCKED_BUDGET_INPUT = "blocked_budget_input"
     BLOCKED_BUDGET_OUTPUT = "blocked_budget_output"
@@ -164,8 +165,14 @@ class AgentRunner:
             return output_obj
         except AgentSchemaError as exc:
             # 5) Repair attempt (1 retry)
-            repaired = self._attempt_repair(spec=spec, input_obj=input_obj, bad_output=result.text, error=str(exc))
-            if repaired is not None:
+            repaired, repair_tokens = self._attempt_repair(
+                spec=spec,
+                input_obj=input_obj,
+                bad_output=result.text,
+                error=str(exc),
+                trace_id=trace_id,
+            )
+            if repaired is not None and repair_tokens is not None:
                 self._emit(
                     spec=spec,
                     trace_id=trace_id,
@@ -173,8 +180,8 @@ class AgentRunner:
                     model_name=spec.model_name,
                     outcome="repaired",
                     reason_code=ReasonCode.REPAIRED,
-                    tokens=None,
-                    meta={"note": "repair_attempt_success"},
+                    tokens=self._sum_tokens(result, repair_tokens),
+                    meta={"note": "repair_attempt_success", "repair_calls": 2},
                 )
                 return repaired
 
@@ -190,8 +197,14 @@ class AgentRunner:
             )
 
     def _attempt_repair(
-        self, *, spec: AgentSpec, input_obj: BaseModel, bad_output: str, error: str
-    ) -> Optional[BaseModel]:
+        self,
+        *,
+        spec: AgentSpec,
+        input_obj: BaseModel,
+        bad_output: str,
+        error: str,
+        trace_id: str,
+    ) -> tuple[Optional[BaseModel], Optional[LLMResult]]:
         repair_system = spec.build_system_prompt()
         expected_schema = schema_json(spec.output_model)
         repair_user = (
@@ -203,6 +216,7 @@ class AgentRunner:
             "Now produce the corrected JSON:"
         )
 
+        repair_started = time.perf_counter()
         try:
             repaired = self.provider.complete(
                 model=spec.model_name,
@@ -210,10 +224,53 @@ class AgentRunner:
                 user=repair_user,
                 max_tokens=spec.budget.max_tokens,
             )
+
+            # Emit repair telemetry with its own latency/tokens.
+            repair_latency_ms = int((time.perf_counter() - repair_started) * 1000)
+            self.emitter.emit(
+                TelemetryEvent(
+                    ts_unix=now_unix(),
+                    trace_id=trace_id,
+                    agent_name=spec.name,
+                    agent_version=spec.version,
+                    model_name=spec.model_name,
+                    latency_ms=repair_latency_ms,
+                    outcome=ReasonCode.REPAIR_ATTEMPT,
+                    reason_code=ReasonCode.REPAIR_ATTEMPT,
+                    prompt_tokens=repaired.prompt_tokens,
+                    completion_tokens=repaired.completion_tokens,
+                    total_tokens=repaired.total_tokens,
+                    estimated_cost_usd=repaired.estimated_cost_usd,
+                    meta={"phase": "repair"},
+                )
+            )
+
             enforce_budget_output(repaired.text, spec.budget)
-            return validate_model_from_json(spec.output_model, repaired.text)
+            return validate_model_from_json(spec.output_model, repaired.text), repaired
         except Exception:
-            return None
+            return None, None
+
+    @staticmethod
+    def _sum_tokens(first: LLMResult, second: LLMResult) -> LLMResult:
+        """Best-effort token aggregation (if values are present)."""
+
+        def add(a: Optional[int], b: Optional[int]) -> Optional[int]:
+            if a is None and b is None:
+                return None
+            return (a or 0) + (b or 0)
+
+        def addf(a: Optional[float], b: Optional[float]) -> Optional[float]:
+            if a is None and b is None:
+                return None
+            return (a or 0.0) + (b or 0.0)
+
+        return LLMResult(
+            text=second.text,
+            prompt_tokens=add(first.prompt_tokens, second.prompt_tokens),
+            completion_tokens=add(first.completion_tokens, second.completion_tokens),
+            total_tokens=add(first.total_tokens, second.total_tokens),
+            estimated_cost_usd=addf(first.estimated_cost_usd, second.estimated_cost_usd),
+        )
 
     def _emit_and_fallback(
         self,

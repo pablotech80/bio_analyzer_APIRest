@@ -56,6 +56,10 @@ run:
 test:
 	$(VENV_NAME)/bin/pytest
 
+# Ejecutar pruebas del legado Flask (aisladas)
+flask-test:
+	$(VENV_NAME)/bin/pytest tests_flask
+
 # Formatear código (repara estilo automáticamente)
 format:
 	$(VENV_NAME)/bin/isort .
