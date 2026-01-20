@@ -162,7 +162,8 @@ def create_nutrition_plan(user_id):
     
     # GET: Mostrar formulario
     analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
-    return render_template("admin_create_nutrition.html", user=user, analyses=analyses)
+    latest_analysis = analyses[0] if analyses else None
+    return render_template("admin_create_nutrition.html", user=user, analyses=analyses, latest_analysis=latest_analysis)
 
 
 @admin_bp.route("/users/<int:user_id>/training/create", methods=["GET", "POST"])
@@ -269,7 +270,8 @@ def edit_nutrition_plan(plan_id):
     # GET: Mostrar formulario con datos actuales
     try:
         analyses = BiometricAnalysis.query.filter_by(user_id=user.id).order_by(BiometricAnalysis.created_at.desc()).all()
-        return render_template("admin_edit_nutrition.html", user=user, plan=plan, analyses=analyses)
+        latest_analysis = analyses[0] if analyses else None
+        return render_template("admin_edit_nutrition.html", user=user, plan=plan, analyses=analyses, latest_analysis=latest_analysis)
     except Exception as e:
         flash(f"❌ Error al cargar el formulario de edición: {str(e)}", "danger")
         return redirect(url_for("admin.user_analyses", user_id=user.id))

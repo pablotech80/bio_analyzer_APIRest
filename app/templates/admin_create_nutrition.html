@@ -34,6 +34,133 @@
                         <small class="text-muted">Nombre descriptivo del plan</small>
                     </div>
 
+                    <!-- Datos Biométricos del Usuario -->
+                    {% if latest_analysis %}
+                    <div class="alert alert-info mb-4" style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 2px solid #1976d2;">
+                        <h6 class="alert-heading mb-3">
+                            <i class="bi bi-activity me-2"></i><strong>Datos Biométricos Recientes</strong>
+                            <span class="badge bg-primary ms-2">{{ latest_analysis.created_at.strftime('%d/%m/%Y') }}</span>
+                        </h6>
+                        
+                        <div class="row g-3 mb-3">
+                            <!-- Datos básicos -->
+                            <div class="col-md-2 col-6">
+                                <div class="text-center p-2 bg-white rounded shadow-sm">
+                                    <small class="text-muted d-block">Peso</small>
+                                    <strong class="text-primary">{{ '%.1f'|format(latest_analysis.weight) }} kg</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <div class="text-center p-2 bg-white rounded shadow-sm">
+                                    <small class="text-muted d-block">Altura</small>
+                                    <strong class="text-primary">{{ '%.0f'|format(latest_analysis.height) }} cm</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <div class="text-center p-2 bg-white rounded shadow-sm">
+                                    <small class="text-muted d-block">IMC</small>
+                                    <strong class="text-primary">{{ '%.1f'|format(latest_analysis.bmi) }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <div class="text-center p-2 bg-white rounded shadow-sm">
+                                    <small class="text-muted d-block">% Grasa</small>
+                                    <strong class="text-primary">{{ '%.1f'|format(latest_analysis.body_fat_percentage) }}%</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <div class="text-center p-2 bg-white rounded shadow-sm">
+                                    <small class="text-muted d-block">TMB</small>
+                                    <strong class="text-success" id="display-bmr">{{ '%.0f'|format(latest_analysis.bmr) }}</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-6">
+                                <div class="text-center p-2 bg-white rounded shadow-sm">
+                                    <small class="text-muted d-block">TDEE</small>
+                                    <strong class="text-success" id="display-tdee">{{ '%.0f'|format(latest_analysis.tdee) }}</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Calculadora de Macros -->
+                        <div class="bg-white p-3 rounded shadow-sm">
+                            <h6 class="mb-3"><i class="bi bi-calculator me-2"></i><strong>Calculadora de Macronutrientes</strong></h6>
+                            
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label class="form-label"><strong>Objetivo Nutricional</strong></label>
+                                    <select id="calc-goal" class="form-select">
+                                        <option value="deficit">Déficit Calórico (-20%)</option>
+                                        <option value="maintenance" selected>Mantenimiento (0%)</option>
+                                        <option value="surplus">Superávit Calórico (+15%)</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label"><strong>Distribución de Macros</strong></label>
+                                    <select id="calc-distribution" class="form-select">
+                                        <option value="balanced" selected>Balanceada (30/40/30)</option>
+                                        <option value="high-protein">Alta Proteína (40/30/30)</option>
+                                        <option value="low-carb">Baja en Carbos (40/20/40)</option>
+                                        <option value="keto">Cetogénica (30/5/65)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary btn-sm mb-3" onclick="calculateMacros()">
+                                <i class="bi bi-calculator-fill me-1"></i>Calcular Macros
+                            </button>
+
+                            <div id="macro-results" class="row g-2" style="display:none;">
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center p-2 border rounded bg-light">
+                                        <small class="text-muted d-block">Calorías</small>
+                                        <strong class="text-dark" id="calc-calories">0</strong>
+                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyCalorias()">
+                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center p-2 border rounded bg-light">
+                                        <small class="text-muted d-block">Proteínas (g)</small>
+                                        <strong class="text-success" id="calc-protein">0</strong>
+                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyProteinas()">
+                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center p-2 border rounded bg-light">
+                                        <small class="text-muted d-block">Carbos (g)</small>
+                                        <strong class="text-warning" id="calc-carbs">0</strong>
+                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyCarbos()">
+                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-6">
+                                    <div class="text-center p-2 border rounded bg-light">
+                                        <small class="text-muted d-block">Grasas (g)</small>
+                                        <strong class="text-info" id="calc-fats">0</strong>
+                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyGrasas()">
+                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="base-tdee" value="{{ latest_analysis.tdee }}">
+                        <input type="hidden" id="user-weight" value="{{ latest_analysis.weight }}">
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mb-4">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Sin datos biométricos:</strong> El usuario no tiene análisis biométricos registrados. 
+                        Se recomienda crear un análisis antes de diseñar el plan nutricional.
+                    </div>
+                    {% endif %}
+
                     <!-- Accordion de Secciones -->
                     <div class="accordion" id="nutritionPlanAccordion">
                         
@@ -356,5 +483,94 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Calculadora de Macronutrientes
+function calculateMacros() {
+    const baseTdee = parseFloat(document.getElementById('base-tdee').value);
+    const userWeight = parseFloat(document.getElementById('user-weight').value);
+    const goal = document.getElementById('calc-goal').value;
+    const distribution = document.getElementById('calc-distribution').value;
+    
+    if (!baseTdee || !userWeight) {
+        alert('No hay datos biométricos disponibles para calcular');
+        return;
+    }
+    
+    // Ajustar calorías según objetivo
+    let targetCalories = baseTdee;
+    if (goal === 'deficit') {
+        targetCalories = baseTdee * 0.8; // -20%
+    } else if (goal === 'surplus') {
+        targetCalories = baseTdee * 1.15; // +15%
+    }
+    
+    // Distribuciones de macros (proteína/carbos/grasas)
+    const distributions = {
+        'balanced': { protein: 0.30, carbs: 0.40, fats: 0.30 },
+        'high-protein': { protein: 0.40, carbs: 0.30, fats: 0.30 },
+        'low-carb': { protein: 0.40, carbs: 0.20, fats: 0.40 },
+        'keto': { protein: 0.30, carbs: 0.05, fats: 0.65 }
+    };
+    
+    const dist = distributions[distribution];
+    
+    // Calcular gramos de cada macro (4 cal/g proteína, 4 cal/g carbos, 9 cal/g grasas)
+    const proteinGrams = Math.round((targetCalories * dist.protein) / 4);
+    const carbsGrams = Math.round((targetCalories * dist.carbs) / 4);
+    const fatsGrams = Math.round((targetCalories * dist.fats) / 9);
+    
+    // Mostrar resultados
+    document.getElementById('calc-calories').textContent = Math.round(targetCalories) + ' kcal';
+    document.getElementById('calc-protein').textContent = proteinGrams + ' g';
+    document.getElementById('calc-carbs').textContent = carbsGrams + ' g';
+    document.getElementById('calc-fats').textContent = fatsGrams + ' g';
+    
+    document.getElementById('macro-results').style.display = 'flex';
+}
+
+function applyCalorias() {
+    const value = document.getElementById('calc-calories').textContent.replace(' kcal', '');
+    document.querySelector('input[name="daily_calories"]').value = value;
+    showAppliedFeedback('Calorías aplicadas');
+}
+
+function applyProteinas() {
+    const value = document.getElementById('calc-protein').textContent.replace(' g', '');
+    document.querySelector('input[name="protein_grams"]').value = value;
+    showAppliedFeedback('Proteínas aplicadas');
+}
+
+function applyCarbos() {
+    const value = document.getElementById('calc-carbs').textContent.replace(' g', '');
+    document.querySelector('input[name="carbs_grams"]').value = value;
+    showAppliedFeedback('Carbohidratos aplicados');
+}
+
+function applyGrasas() {
+    const value = document.getElementById('calc-fats').textContent.replace(' g', '');
+    document.querySelector('input[name="fats_grams"]').value = value;
+    showAppliedFeedback('Grasas aplicadas');
+}
+
+function showAppliedFeedback(message) {
+    // Scroll suave al accordion de macros
+    document.getElementById('collapseMacros').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    
+    // Abrir el accordion de macros si está cerrado
+    const macrosCollapse = new bootstrap.Collapse(document.getElementById('collapseMacros'), {
+        show: true
+    });
+    
+    // Mostrar feedback visual
+    const toast = document.createElement('div');
+    toast.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+    toast.style.zIndex = '9999';
+    toast.innerHTML = '<i class="bi bi-check-circle me-2"></i>' + message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.remove();
+    }, 2000);
+}
 </script>
 {% endblock %}
