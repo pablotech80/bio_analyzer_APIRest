@@ -2,7 +2,7 @@
 # usamos setuptools para la construccion y el empaquetado del proyecto.
 
 [build-system]
-requires = ["setuptools~=72.1.0", "setuptools-scm~=7.1.0", "wheel~=0.44.0"]
+requires = ["setuptools~=72.1.0", "wheel~=0.44.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -10,7 +10,7 @@ name = "body_analyzer"
 version = "0.1.0"
 dynamic = ["readme"]
 authors = [
-    { name = "©2024 Pablo Techera", email = "ptecherasosa@icloud.com" },
+    { name = "2024 Pablo Techera", email = "ptecherasosa@icloud.com" },
 ]
 description = "Development of a REST API for body composition analysis."
 requires-python = ">=3.11"
@@ -24,21 +24,12 @@ classifiers = [
 ]
 
 dependencies = [
-    "blinker>=1.8",
-    "Flask~=3.0",
-    "Flask-SQLAlchemy~=3.1",
-    "Flask-Migrate~=4.1",
-    "Flask-Login~=0.6",
-    "Flask-Bcrypt~=1.0",
-    "Flask-JWT-Extended~=4.6",
-    "Flask-WTF~=1.2",
-    "WTForms~=3.1",
-    "prometheus-client~=0.21",
-    "prometheus-flask-exporter~=0.23",
-    "requests~=2.32",
-    "openai>=2.2",
+    "Django~=5.0",
+    "djangorestframework~=3.15",
+    "psycopg2-binary~=2.9",
     "python-dotenv~=1.0",
-    "gunicorn>=21.2"
+    "openai>=2.2",
+    "pydantic~=2.7"
 ]
 
 # tool define de donde se va a obtener la descripción del proyecto en este caso del fichero README.md
