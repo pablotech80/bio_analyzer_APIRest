@@ -110,6 +110,33 @@
     .markdown-content a:hover {
         text-decoration: underline;
     }
+    
+    /* Estilos para accordion */
+    .accordion-button:not(.collapsed) {
+        background-color: #e7f3ff;
+        color: #0d6efd;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(0,0,0,.125);
+    }
+    
+    .accordion-item {
+        border: 1px solid rgba(0,0,0,.125);
+        margin-bottom: 0.5rem;
+        border-radius: 0.375rem !important;
+        overflow: hidden;
+    }
+    
+    .accordion-button {
+        font-size: 1rem;
+        padding: 1rem 1.25rem;
+    }
+    
+    .accordion-body {
+        padding: 1.5rem;
+    }
 </style>
 {% endblock %}
 
@@ -158,99 +185,151 @@
                     </div>
                 </div>
 
-                <!-- Objetivo -->
-                {% if plan.goal or plan.description %}
+                <!-- Accordion de Secciones del Plan -->
                 <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    {% if plan.goal %}
-                    <div class="mb-3">
-                        <h6 class="text-uppercase text-muted small mb-2">Objetivo</h6>
-                        <p class="mb-0 fw-medium">{{ plan.goal }}</p>
-                    </div>
-                    {% endif %}
-                    {% if plan.description %}
-                    <div>
-                        <h6 class="text-uppercase text-muted small mb-2">Descripción</h6>
-                        <div class="markdown-content">{{ plan.description | markdown }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-                {% endif %}
-
-                <!-- Configuración -->
-                {% if plan.frequency or plan.routine_type or plan.duration_weeks %}
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <h5 class="mb-4 pb-2 border-bottom">Configuración del Plan</h5>
-                    <div class="row g-3">
-                        {% if plan.frequency %}
-                        <div class="col-md-4">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Frecuencia</div>
-                                <div class="h4 mb-0 fw-bold text-primary">{{ plan.frequency }}</div>
-                            </div>
-                        </div>
-                        {% endif %}
+                    <div class="accordion" id="planAccordion">
                         
-                        {% if plan.routine_type %}
-                        <div class="col-md-4">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Tipo</div>
-                                <div class="h4 mb-0 fw-bold text-primary">{{ plan.routine_type }}</div>
+                        <!-- 1. Descripción -->
+                        {% if plan.description %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingDescription">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
+                                    <i class="bi bi-file-text me-2"></i><strong>Descripción del Plan</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.description | markdown }}</div>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
-                        
-                        {% if plan.duration_weeks %}
-                        <div class="col-md-4">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Duración</div>
-                                <div class="h4 mb-0 fw-bold text-primary">{{ plan.duration_weeks }} semanas</div>
+
+                        <!-- 2. Objetivo -->
+                        {% if plan.goal %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingGoal">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGoal" aria-expanded="false" aria-controls="collapseGoal">
+                                    <i class="bi bi-bullseye me-2"></i><strong>Objetivo</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseGoal" class="accordion-collapse collapse" aria-labelledby="headingGoal">
+                                <div class="accordion-body">
+                                    <p class="mb-0 fw-medium fs-5">{{ plan.goal }}</p>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
-                    </div>
-                </div>
-                {% endif %}
 
-                <!-- Entrenamientos -->
-                {% if plan.workouts %}
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="bi bi-lightning-charge-fill me-2" style="color: #3498db;"></i>
-                        Plan de Entrenamientos
-                    </h5>
-                    
-                    <div class="markdown-content">{{ plan.workouts | markdown }}</div>
-                </div>
-                {% endif %}
-
-                <!-- Calentamiento y Enfriamiento -->
-                <div class="row g-3 mb-3">
-                    {% if plan.warm_up %}
-                    <div class="col-md-6">
-                        <div class="bg-white shadow-sm rounded p-4 h-100">
-                            <h5 class="mb-3 pb-2 border-bottom">Calentamiento</h5>
-                            <div class="markdown-content">{{ plan.warm_up | markdown }}</div>
+                        <!-- 3. Configuración -->
+                        {% if plan.frequency or plan.routine_type or plan.duration_weeks %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingConfig">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseConfig" aria-expanded="false" aria-controls="collapseConfig">
+                                    <i class="bi bi-calendar-week me-2"></i><strong>Configuración del Plan</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseConfig" class="accordion-collapse collapse" aria-labelledby="headingConfig">
+                                <div class="accordion-body">
+                                    <div class="row g-3">
+                                        {% if plan.frequency %}
+                                        <div class="col-md-4">
+                                            <div class="text-center p-3 border rounded">
+                                                <div class="text-muted small mb-1">Frecuencia</div>
+                                                <div class="h4 mb-0 fw-bold text-primary">{{ plan.frequency }}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if plan.routine_type %}
+                                        <div class="col-md-4">
+                                            <div class="text-center p-3 border rounded">
+                                                <div class="text-muted small mb-1">Tipo</div>
+                                                <div class="h4 mb-0 fw-bold text-primary">{{ plan.routine_type }}</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if plan.duration_weeks %}
+                                        <div class="col-md-4">
+                                            <div class="text-center p-3 border rounded">
+                                                <div class="text-muted small mb-1">Duración</div>
+                                                <div class="h4 mb-0 fw-bold text-primary">{{ plan.duration_weeks }} semanas</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    {% endif %}
-                    
-                    {% if plan.cool_down %}
-                    <div class="col-md-6">
-                        <div class="bg-white shadow-sm rounded p-4 h-100">
-                            <h5 class="mb-3 pb-2 border-bottom">Enfriamiento</h5>
-                            <div class="markdown-content">{{ plan.cool_down | markdown }}</div>
-                        </div>
-                    </div>
-                    {% endif %}
-                </div>
+                        {% endif %}
 
-                <!-- Notas del Entrenador -->
-                {% if plan.notes %}
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <h5 class="mb-3 pb-2 border-bottom">Indicaciones del Entrenador</h5>
-                    <div class="markdown-content">{{ plan.notes | markdown }}</div>
+                        <!-- 4. Calentamiento -->
+                        {% if plan.warm_up %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingWarmup">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWarmup" aria-expanded="false" aria-controls="collapseWarmup">
+                                    <i class="bi bi-fire me-2"></i><strong>Calentamiento</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseWarmup" class="accordion-collapse collapse" aria-labelledby="headingWarmup">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.warm_up | markdown }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- 5. Plan de Entrenamientos (Principal) -->
+                        {% if plan.workouts %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingWorkouts">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWorkouts" aria-expanded="false" aria-controls="collapseWorkouts">
+                                    <i class="bi bi-lightning-charge-fill me-2"></i><strong>Plan de Entrenamientos</strong> <span class="badge bg-primary ms-2">Principal</span>
+                                </button>
+                            </h2>
+                            <div id="collapseWorkouts" class="accordion-collapse collapse" aria-labelledby="headingWorkouts">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.workouts | markdown }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- 6. Enfriamiento -->
+                        {% if plan.cool_down %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingCooldown">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCooldown" aria-expanded="false" aria-controls="collapseCooldown">
+                                    <i class="bi bi-wind me-2"></i><strong>Enfriamiento</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseCooldown" class="accordion-collapse collapse" aria-labelledby="headingCooldown">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.cool_down | markdown }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- 7. Indicaciones del Entrenador -->
+                        {% if plan.notes %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingNotes">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNotes" aria-expanded="false" aria-controls="collapseNotes">
+                                    <i class="bi bi-chat-left-text me-2"></i><strong>Indicaciones del Entrenador</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseNotes" class="accordion-collapse collapse" aria-labelledby="headingNotes">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.notes | markdown }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                    </div>
                 </div>
-                {% endif %}
 
                 <!-- Análisis Relacionado -->
                 {% if plan.analysis %}
