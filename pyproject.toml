@@ -53,8 +53,9 @@ extended = [
 where = ["."]
 include = ["app"]
 
-[tool.pytest.ini.options]
+[tool.pytest.ini_options]
 addopts = "-v"
+testpaths = ["tests"]
 
 # Black - Code formatter
 [tool.black]
