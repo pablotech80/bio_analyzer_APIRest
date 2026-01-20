@@ -44,7 +44,7 @@
                                     <i class="bi bi-file-text me-2"></i><strong>1. Descripción General</strong>
                                 </button>
                             </h2>
-                            <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription">
                                 <div class="accordion-body">
                                     <label class="form-label"><strong>Descripción (Markdown)</strong></label>
                                     <textarea name="description" class="form-control" rows="3" style="font-family: 'Courier New', monospace;" 
@@ -61,7 +61,7 @@
                                     <i class="bi bi-bullseye me-2"></i><strong>2. Objetivo</strong>
                                 </button>
                             </h2>
-                            <div id="collapseGoal" class="accordion-collapse collapse" aria-labelledby="headingGoal" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseGoal" class="accordion-collapse collapse" aria-labelledby="headingGoal">
                                 <div class="accordion-body">
                                     <label class="form-label"><strong>Objetivo del Plan</strong></label>
                                     <input type="text" name="goal" class="form-control" 
@@ -78,7 +78,7 @@
                                     <i class="bi bi-calendar-week me-2"></i><strong>3. Frecuencia y Configuración</strong>
                                 </button>
                             </h2>
-                            <div id="collapseFrequency" class="accordion-collapse collapse" aria-labelledby="headingFrequency" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseFrequency" class="accordion-collapse collapse" aria-labelledby="headingFrequency">
                                 <div class="accordion-body">
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
@@ -108,11 +108,17 @@
                                     <i class="bi bi-fire me-2"></i><strong>4. Calentamiento</strong>
                                 </button>
                             </h2>
-                            <div id="collapseWarmup" class="accordion-collapse collapse" aria-labelledby="headingWarmup" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseWarmup" class="accordion-collapse collapse" aria-labelledby="headingWarmup">
                                 <div class="accordion-body">
                                     <label class="form-label"><strong>Calentamiento (Markdown)</strong></label>
-                                    <textarea name="warm_up" class="form-control" rows="6" style="font-family: 'Courier New', monospace;" 
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary preview-toggle" data-target="warmup-preview">
+                                            <i class="bi bi-eye me-1"></i>Ver Preview
+                                        </button>
+                                    </div>
+                                    <textarea name="warm_up" id="warmup-textarea" class="form-control markdown-input" rows="6" style="font-family: 'Courier New', monospace;" 
                                               placeholder="## Calentamiento&#10;&#10;- 5 min cardio ligero&#10;- Movilidad articular 5 min&#10;- Series de aproximación con peso ligero"></textarea>
+                                    <div id="warmup-preview" class="markdown-preview border rounded p-3 mt-2 bg-light" style="display:none;"></div>
                                     <small class="text-muted">Rutina de calentamiento antes de entrenar</small>
                                 </div>
                             </div>
@@ -125,10 +131,18 @@
                                     <i class="bi bi-lightning-charge-fill me-2"></i><strong>5. Bloque de Entrenamiento</strong> <span class="badge bg-primary ms-2">Principal</span>
                                 </button>
                             </h2>
-                            <div id="collapseWorkouts" class="accordion-collapse collapse" aria-labelledby="headingWorkouts" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseWorkouts" class="accordion-collapse collapse" aria-labelledby="headingWorkouts">
                                 <div class="accordion-body">
                                     <label class="form-label"><strong>Entrenamientos (Markdown)</strong></label>
-                                    <textarea name="workouts_text" class="form-control" style="font-size: 14px; min-height: 400px; resize: vertical; font-family: 'Courier New', monospace;" 
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-sm btn-outline-primary preview-toggle" data-target="workouts-preview">
+                                            <i class="bi bi-eye me-1"></i>Ver Preview
+                                        </button>
+                                        <a href="/static/MARKDOWN_GUIDE.md" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
+                                            <i class="bi bi-question-circle me-1"></i>Guía Markdown
+                                        </a>
+                                    </div>
+                                    <textarea name="workouts_text" id="workouts-textarea" class="form-control markdown-input" style="font-size: 14px; min-height: 400px; resize: vertical; font-family: 'Courier New', monospace;" 
                                               placeholder='## Lunes - Push (Pecho, Hombros, Tríceps)
 
 **1. Press Banca**
@@ -150,9 +164,8 @@
 - 4 series x Max reps
 - Descanso: 90 segundos
 '></textarea>
-                                    <small class="text-muted">
-                                        Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
-                                    </small>
+                                    <div id="workouts-preview" class="markdown-preview border rounded p-3 mt-2 bg-light" style="display:none; max-height: 500px; overflow-y: auto;"></div>
+                                    <small class="text-muted">Este es el contenido principal del plan de entrenamiento</small>
                                 </div>
                             </div>
                         </div>
@@ -164,11 +177,17 @@
                                     <i class="bi bi-wind me-2"></i><strong>6. Enfriamiento</strong>
                                 </button>
                             </h2>
-                            <div id="collapseCooldown" class="accordion-collapse collapse" aria-labelledby="headingCooldown" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseCooldown" class="accordion-collapse collapse" aria-labelledby="headingCooldown">
                                 <div class="accordion-body">
                                     <label class="form-label"><strong>Enfriamiento (Markdown)</strong></label>
-                                    <textarea name="cool_down" class="form-control" rows="6" style="font-family: 'Courier New', monospace;" 
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary preview-toggle" data-target="cooldown-preview">
+                                            <i class="bi bi-eye me-1"></i>Ver Preview
+                                        </button>
+                                    </div>
+                                    <textarea name="cool_down" id="cooldown-textarea" class="form-control markdown-input" rows="6" style="font-family: 'Courier New', monospace;" 
                                               placeholder="## Enfriamiento&#10;&#10;- Estiramientos estáticos 10 min&#10;- Foam roller grupos trabajados&#10;- Respiración profunda 3 min"></textarea>
+                                    <div id="cooldown-preview" class="markdown-preview border rounded p-3 mt-2 bg-light" style="display:none;"></div>
                                     <small class="text-muted">Rutina de enfriamiento y estiramientos</small>
                                 </div>
                             </div>
@@ -181,11 +200,17 @@
                                     <i class="bi bi-chat-left-text me-2"></i><strong>7. Notas del Entrenador</strong>
                                 </button>
                             </h2>
-                            <div id="collapseNotes" class="accordion-collapse collapse" aria-labelledby="headingNotes" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseNotes" class="accordion-collapse collapse" aria-labelledby="headingNotes">
                                 <div class="accordion-body">
                                     <label class="form-label"><strong>Notas y Recomendaciones (Markdown)</strong></label>
-                                    <textarea name="notes" class="form-control" rows="6" style="font-family: 'Courier New', monospace;" 
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary preview-toggle" data-target="notes-preview">
+                                            <i class="bi bi-eye me-1"></i>Ver Preview
+                                        </button>
+                                    </div>
+                                    <textarea name="notes" id="notes-textarea" class="form-control markdown-input" rows="6" style="font-family: 'Courier New', monospace;" 
                                               placeholder="## Indicaciones Importantes&#10;&#10;- Progresar peso cada semana si completas todas las reps&#10;- Descanso adecuado entre sesiones&#10;- **Técnica perfecta** antes de aumentar peso&#10;&#10;> 💪 **Recuerda:** La constancia es clave"></textarea>
+                                    <div id="notes-preview" class="markdown-preview border rounded p-3 mt-2 bg-light" style="display:none;"></div>
                                     <small class="text-muted">Consejos, advertencias y recomendaciones personalizadas</small>
                                 </div>
                             </div>
@@ -198,7 +223,7 @@
                                     <i class="bi bi-calendar-range me-2"></i><strong>8. Fechas de Inicio y Fin</strong>
                                 </button>
                             </h2>
-                            <div id="collapseDates" class="accordion-collapse collapse" aria-labelledby="headingDates" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseDates" class="accordion-collapse collapse" aria-labelledby="headingDates">
                                 <div class="accordion-body">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
@@ -223,7 +248,7 @@
                                     <i class="bi bi-graph-up me-2"></i><strong>9. Análisis Biométrico Relacionado</strong>
                                 </button>
                             </h2>
-                            <div id="collapseAnalysis" class="accordion-collapse collapse" aria-labelledby="headingAnalysis" data-bs-parent="#trainingPlanAccordion">
+                            <div id="collapseAnalysis" class="accordion-collapse collapse" aria-labelledby="headingAnalysis">
                                 <div class="accordion-body">
                                     <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
                                     <select name="analysis_id" class="form-select">
@@ -273,4 +298,86 @@
 </div>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<!-- Marked.js para renderizar Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+    .markdown-preview {
+        min-height: 100px;
+    }
+    .markdown-preview h1, .markdown-preview h2, .markdown-preview h3 {
+        color: #6f42c1;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.3em;
+    }
+    .markdown-preview ul, .markdown-preview ol {
+        padding-left: 1.5em;
+    }
+    .markdown-preview blockquote {
+        border-left: 4px solid #6f42c1;
+        padding-left: 1em;
+        margin-left: 0;
+        color: #6c757d;
+        background: #f8f9fa;
+        padding: 0.5em 1em;
+    }
+    .markdown-preview hr {
+        border-top: 2px solid #6f42c1;
+        opacity: 0.3;
+    }
+    .markdown-preview strong {
+        color: #495057;
+    }
+    .accordion-button:not(.collapsed) {
+        background-color: #e7e0f4;
+        color: #6f42c1;
+    }
+    .preview-toggle.active {
+        background-color: #6f42c1;
+        color: white;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar marked
+    marked.setOptions({
+        breaks: true,
+        gfm: true
+    });
+    
+    // Preview toggles
+    document.querySelectorAll('.preview-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const preview = document.getElementById(targetId);
+            const textareaId = targetId.replace('-preview', '-textarea');
+            const textarea = document.getElementById(textareaId);
+            
+            if (preview.style.display === 'none') {
+                preview.style.display = 'block';
+                preview.innerHTML = marked.parse(textarea.value || '<em>Escribe algo para ver la preview...</em>');
+                this.classList.add('active');
+                this.innerHTML = '<i class="bi bi-eye-slash me-1"></i>Ocultar Preview';
+            } else {
+                preview.style.display = 'none';
+                this.classList.remove('active');
+                this.innerHTML = '<i class="bi bi-eye me-1"></i>Ver Preview';
+            }
+        });
+    });
+    
+    // Actualizar preview en tiempo real cuando se escribe
+    document.querySelectorAll('.markdown-input').forEach(function(textarea) {
+        textarea.addEventListener('input', function() {
+            const previewId = this.id.replace('-textarea', '-preview');
+            const preview = document.getElementById(previewId);
+            if (preview && preview.style.display !== 'none') {
+                preview.innerHTML = marked.parse(this.value || '<em>Escribe algo para ver la preview...</em>');
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
