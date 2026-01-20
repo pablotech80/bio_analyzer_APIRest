@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any, Dict, Optional
 
 from pydantic import Field
 
@@ -8,12 +8,15 @@ from apps.ai_core.schemas import StrictModel
 
 
 class FitMasterInput(StrictModel):
-    age: int = Field(..., ge=0, le=120)
-    height_cm: float = Field(..., gt=0, le=250)
-    weight_kg: float = Field(..., gt=0, le=500)
+    inputs: Dict[str, Any]
+    results: Dict[str, Any]
+    interpretations: Dict[str, Any]
     goal: Optional[str] = None
     notes: Optional[str] = None
+    history_summary: Optional[Dict[str, Any]] = None
 
 
 class FitMasterOutput(StrictModel):
-    message: str
+    interpretation: str
+    nutrition_plan: Optional[Dict[str, Any]] = None
+    training_plan: Optional[Dict[str, Any]] = None

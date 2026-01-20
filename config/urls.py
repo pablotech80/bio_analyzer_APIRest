@@ -12,4 +12,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("health/", health),
     path("bioanalyze/", include("apps.bioanalyze.urls")),
+    path("fitmaster/", include("apps.fitmaster.urls")),
 ]

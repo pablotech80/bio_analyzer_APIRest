@@ -20,15 +20,21 @@ def build_fitmaster_spec(*, model_name: str = "dummy") -> AgentSpec:
         return SYSTEM_PROMPT
 
     def build_user_prompt(input_obj: FitMasterInput) -> str:
-        # Keep prompt minimal for scaffold. Actual prompt will be refined later.
         return (
-            "Return ONLY valid JSON with keys exactly matching the schema. "
-            "Do not include markdown.\n\n"
-            f"Input:\n{input_obj.model_dump_json(exclude_none=True)}"
+            "Return ONLY valid JSON matching the required schema (no markdown).\n\n"
+            "Use the provided biometrics (inputs/results/interpretations) to produce:"
+            "\n- interpretation (professional summary)"
+            "\n- nutrition_plan (structured recommendations)"
+            "\n- training_plan (structured recommendations)\n\n"
+            f"Data:\n{input_obj.model_dump_json(exclude_none=True)}"
         )
 
     def fallback_output(reason: str) -> FitMasterOutput:
-        return FitMasterOutput(message=f"FitMaster fallback ({reason})")
+        return FitMasterOutput(
+            interpretation=f"No se pudo generar el análisis FitMaster. ({reason})",
+            nutrition_plan=None,
+            training_plan=None,
+        )
 
     return AgentSpec(
         name="fitmaster",
