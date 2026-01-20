@@ -110,6 +110,33 @@
     .markdown-content a:hover {
         text-decoration: underline;
     }
+    
+    /* Estilos para accordion */
+    .accordion-button:not(.collapsed) {
+        background-color: #d1f4e0;
+        color: #198754;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: none;
+        border-color: rgba(0,0,0,.125);
+    }
+    
+    .accordion-item {
+        border: 1px solid rgba(0,0,0,.125);
+        margin-bottom: 0.5rem;
+        border-radius: 0.375rem !important;
+        overflow: hidden;
+    }
+    
+    .accordion-button {
+        font-size: 1rem;
+        padding: 1rem 1.25rem;
+    }
+    
+    .accordion-body {
+        padding: 1.5rem;
+    }
 </style>
 {% endblock %}
 
@@ -158,100 +185,148 @@
                     </div>
                 </div>
 
-                <!-- Objetivo y Descripción -->
-                {% if plan.goal or plan.description %}
+                <!-- Accordion de Secciones del Plan -->
                 <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    {% if plan.goal %}
-                    <div class="mb-3">
-                        <h6 class="text-uppercase text-muted small mb-2">Objetivo</h6>
-                        <p class="mb-0 fw-medium">{{ plan.goal }}</p>
-                    </div>
-                    {% endif %}
-                    {% if plan.description %}
-                    <div>
-                        <h6 class="text-uppercase text-muted small mb-2">Descripción</h6>
-                        <div class="markdown-content">{{ plan.description | markdown }}</div>
-                    </div>
-                    {% endif %}
-                </div>
-                {% endif %}
-
-                <!-- Requerimientos Nutricionales -->
-                {% if plan.daily_calories or plan.protein_grams or plan.carbs_grams or plan.fats_grams %}
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <h5 class="mb-4 pb-2 border-bottom">Requerimientos Nutricionales Diarios</h5>
-                    
-                    <div class="row g-3">
-                        {% if plan.daily_calories %}
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Calorías</div>
-                                <div class="h4 mb-0 fw-bold">{{ plan.daily_calories }}</div>
-                                <div class="text-muted small">kcal</div>
-                            </div>
-                        </div>
-                        {% endif %}
+                    <div class="accordion" id="nutritionPlanAccordion">
                         
-                        {% if plan.protein_grams %}
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Proteínas</div>
-                                <div class="h4 mb-0 fw-bold text-success">{{ plan.protein_grams }}</div>
-                                <div class="text-muted small">gramos</div>
+                        <!-- 1. Descripción -->
+                        {% if plan.description %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingDescription">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
+                                    <i class="bi bi-file-text me-2"></i><strong>Descripción del Plan</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.description | markdown }}</div>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
-                        
-                        {% if plan.carbs_grams %}
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Carbohidratos</div>
-                                <div class="h4 mb-0 fw-bold text-warning">{{ plan.carbs_grams }}</div>
-                                <div class="text-muted small">gramos</div>
+
+                        <!-- 2. Objetivo -->
+                        {% if plan.goal %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingGoal">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGoal" aria-expanded="false" aria-controls="collapseGoal">
+                                    <i class="bi bi-bullseye me-2"></i><strong>Objetivo</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseGoal" class="accordion-collapse collapse" aria-labelledby="headingGoal">
+                                <div class="accordion-body">
+                                    <p class="mb-0 fw-medium fs-5">{{ plan.goal }}</p>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
-                        
-                        {% if plan.fats_grams %}
-                        <div class="col-md-3 col-6">
-                            <div class="text-center p-3 border rounded">
-                                <div class="text-muted small mb-1">Grasas</div>
-                                <div class="h4 mb-0 fw-bold text-info">{{ plan.fats_grams }}</div>
-                                <div class="text-muted small">gramos</div>
+
+                        <!-- 3. Requerimientos Nutricionales -->
+                        {% if plan.daily_calories or plan.protein_grams or plan.carbs_grams or plan.fats_grams %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingMacros">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMacros" aria-expanded="false" aria-controls="collapseMacros">
+                                    <i class="bi bi-calculator me-2"></i><strong>Requerimientos Nutricionales Diarios</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseMacros" class="accordion-collapse collapse" aria-labelledby="headingMacros">
+                                <div class="accordion-body">
+                                    <div class="row g-3">
+                                        {% if plan.daily_calories %}
+                                        <div class="col-md-3 col-6">
+                                            <div class="text-center p-3 border rounded">
+                                                <div class="text-muted small mb-1">Calorías</div>
+                                                <div class="h4 mb-0 fw-bold">{{ plan.daily_calories }}</div>
+                                                <div class="text-muted small">kcal</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if plan.protein_grams %}
+                                        <div class="col-md-3 col-6">
+                                            <div class="text-center p-3 border rounded">
+                                                <div class="text-muted small mb-1">Proteínas</div>
+                                                <div class="h4 mb-0 fw-bold text-success">{{ plan.protein_grams }}</div>
+                                                <div class="text-muted small">gramos</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if plan.carbs_grams %}
+                                        <div class="col-md-3 col-6">
+                                            <div class="text-center p-3 border rounded">
+                                                <div class="text-muted small mb-1">Carbohidratos</div>
+                                                <div class="h4 mb-0 fw-bold text-warning">{{ plan.carbs_grams }}</div>
+                                                <div class="text-muted small">gramos</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                        
+                                        {% if plan.fats_grams %}
+                                        <div class="col-md-3 col-6">
+                                            <div class="text-center p-3 border rounded">
+                                                <div class="text-muted small mb-1">Grasas</div>
+                                                <div class="h4 mb-0 fw-bold text-info">{{ plan.fats_grams }}</div>
+                                                <div class="text-muted small">gramos</div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         {% endif %}
+
+                        <!-- 4. Plan de Comidas (Principal) -->
+                        {% if plan.meals %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingMeals">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMeals" aria-expanded="false" aria-controls="collapseMeals">
+                                    <i class="bi bi-egg-fried me-2"></i><strong>Plan de Comidas</strong> <span class="badge bg-success ms-2">Principal</span>
+                                </button>
+                            </h2>
+                            <div id="collapseMeals" class="accordion-collapse collapse" aria-labelledby="headingMeals">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.meals | markdown }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- 5. Suplementación -->
+                        {% if plan.supplements %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingSupplements">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSupplements" aria-expanded="false" aria-controls="collapseSupplements">
+                                    <i class="bi bi-capsule me-2"></i><strong>Suplementación Recomendada</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseSupplements" class="accordion-collapse collapse" aria-labelledby="headingSupplements">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.supplements | markdown }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <!-- 6. Indicaciones del Entrenador -->
+                        {% if plan.notes %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingNotes">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNotes" aria-expanded="false" aria-controls="collapseNotes">
+                                    <i class="bi bi-chat-left-text me-2"></i><strong>Indicaciones del Entrenador</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseNotes" class="accordion-collapse collapse" aria-labelledby="headingNotes">
+                                <div class="accordion-body">
+                                    <div class="markdown-content">{{ plan.notes | markdown }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
                     </div>
                 </div>
-                {% endif %}
-
-                <!-- Plan de Comidas -->
-                {% if plan.meals %}
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <h5 class="mb-4 pb-2 border-bottom">
-                        <i class="bi bi-egg-fried me-2" style="color: #E67E22;"></i>
-                        Plan de Comidas
-                    </h5>
-                    
-                    <div class="markdown-content">{{ plan.meals | markdown }}</div>
-                </div>
-                {% endif %}
-
-                <!-- Suplementación -->
-                {% if plan.supplements %}
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <h5 class="mb-4 pb-2 border-bottom">Suplementación Recomendada</h5>
-                    <div class="markdown-content">{{ plan.supplements | markdown }}</div>
-                </div>
-                {% endif %}
-
-                <!-- Notas del Entrenador -->
-                {% if plan.notes %}
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <h5 class="mb-4 pb-2 border-bottom">Indicaciones del Entrenador</h5>
-                    <div class="markdown-content">{{ plan.notes | markdown }}</div>
-                </div>
-                {% endif %}
 
                 <!-- Análisis Relacionado -->
                 {% if plan.analysis %}

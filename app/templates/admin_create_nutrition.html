@@ -26,57 +26,106 @@
                 </div>
 
                 <div class="card-body">
-                    <!-- Título -->
-                    <div class="mb-3">
+                    <!-- Título (siempre visible) -->
+                    <div class="mb-4">
                         <label class="form-label"><strong>Título del Plan *</strong></label>
-                        <input type="text" name="title" class="form-control" required 
+                        <input type="text" name="title" class="form-control form-control-lg" required 
                                placeholder="Ej: Plan Definición Marzo 2025">
                         <small class="text-muted">Nombre descriptivo del plan</small>
                     </div>
 
-                    <!-- Descripción -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Descripción (Markdown)</strong></label>
-                        <textarea name="description" class="form-control" rows="3" style="font-family: 'Courier New', monospace;" 
-                                  placeholder="Descripción general del plan en formato Markdown"></textarea>
-                    </div>
+                    <!-- Accordion de Secciones -->
+                    <div class="accordion" id="nutritionPlanAccordion">
+                        
+                        <!-- 1. Descripción -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingDescription">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDescription" aria-expanded="true" aria-controls="collapseDescription">
+                                    <i class="bi bi-file-text me-2"></i><strong>1. Descripción General</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseDescription" class="accordion-collapse collapse show" aria-labelledby="headingDescription">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Descripción (Markdown)</strong></label>
+                                    <textarea name="description" class="form-control" rows="3" style="font-family: 'Courier New', monospace;" 
+                                              placeholder="Descripción general del plan en formato Markdown"></textarea>
+                                    <small class="text-muted">Explica brevemente en qué consiste el plan</small>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Objetivo -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Objetivo</strong></label>
-                        <input type="text" name="goal" class="form-control" 
-                               placeholder="Ej: Pérdida de grasa, Ganancia muscular, Mantenimiento">
-                    </div>
+                        <!-- 2. Objetivo -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingGoal">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGoal" aria-expanded="false" aria-controls="collapseGoal">
+                                    <i class="bi bi-bullseye me-2"></i><strong>2. Objetivo</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseGoal" class="accordion-collapse collapse" aria-labelledby="headingGoal">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Objetivo del Plan</strong></label>
+                                    <input type="text" name="goal" class="form-control" 
+                                           placeholder="Ej: Pérdida de grasa, Ganancia muscular, Mantenimiento">
+                                    <small class="text-muted">Meta principal que se busca alcanzar</small>
+                                </div>
+                            </div>
+                        </div>
 
-                    <!-- Macros -->
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <label class="form-label"><strong>Calorías Diarias</strong></label>
-                            <input type="number" name="daily_calories" class="form-control" 
-                                   placeholder="2200">
+                        <!-- 3. Macronutrientes -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingMacros">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMacros" aria-expanded="false" aria-controls="collapseMacros">
+                                    <i class="bi bi-calculator me-2"></i><strong>3. Macronutrientes Diarios</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseMacros" class="accordion-collapse collapse" aria-labelledby="headingMacros">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label"><strong>Calorías Diarias</strong></label>
+                                            <input type="number" name="daily_calories" class="form-control" 
+                                                   placeholder="2200">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label"><strong>Proteínas (g)</strong></label>
+                                            <input type="number" name="protein_grams" class="form-control" 
+                                                   placeholder="165">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label"><strong>Carbohidratos (g)</strong></label>
+                                            <input type="number" name="carbs_grams" class="form-control" 
+                                                   placeholder="220">
+                                        </div>
+                                        <div class="col-md-3 mb-3">
+                                            <label class="form-label"><strong>Grasas (g)</strong></label>
+                                            <input type="number" name="fats_grams" class="form-control" 
+                                                   placeholder="73">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label"><strong>Proteínas (g)</strong></label>
-                            <input type="number" name="protein_grams" class="form-control" 
-                                   placeholder="165">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label"><strong>Carbohidratos (g)</strong></label>
-                            <input type="number" name="carbs_grams" class="form-control" 
-                                   placeholder="220">
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label"><strong>Grasas (g)</strong></label>
-                            <input type="number" name="fats_grams" class="form-control" 
-                                   placeholder="73">
-                        </div>
-                    </div>
 
-                    <!-- Comidas en Markdown -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Comidas (Markdown)</strong></label>
-                        <textarea name="meals_text" class="form-control" style="font-size: 14px; min-height: 300px; resize: vertical; font-family: 'Courier New', monospace;" 
-                                  placeholder='## Desayuno (08:00)
+                        <!-- 4. Plan de Comidas (Principal) -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingMeals">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseMeals" aria-expanded="false" aria-controls="collapseMeals">
+                                    <i class="bi bi-egg-fried me-2"></i><strong>4. Plan de Comidas</strong> <span class="badge bg-success ms-2">Principal</span>
+                                </button>
+                            </h2>
+                            <div id="collapseMeals" class="accordion-collapse collapse" aria-labelledby="headingMeals">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Comidas (Markdown)</strong></label>
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-sm btn-outline-success preview-toggle" data-target="meals-preview">
+                                            <i class="bi bi-eye me-1"></i>Ver Preview
+                                        </button>
+                                        <a href="/static/MARKDOWN_GUIDE.md" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">
+                                            <i class="bi bi-question-circle me-1"></i>Guía Markdown
+                                        </a>
+                                    </div>
+                                    <textarea name="meals_text" id="meals-textarea" class="form-control markdown-input" style="font-size: 14px; min-height: 300px; resize: vertical; font-family: 'Courier New', monospace;" 
+                                              placeholder='## Desayuno (08:00)
 
 **Proteínas:**
 - 4 claras de huevo
@@ -96,52 +145,110 @@
 - 200g pechuga de pollo
 - ...
 '></textarea>
-                        <small class="text-muted">
-                            Usa formato Markdown. <a href="/static/MARKDOWN_GUIDE.md" target="_blank">Ver guía de Markdown</a>
-                        </small>
-                    </div>
-
-                    <!-- Suplementación -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Suplementación (Markdown)</strong></label>
-                        <textarea name="supplements" class="form-control" rows="4" style="font-family: 'Courier New', monospace;" 
-                                  placeholder="## Suplementos Recomendados&#10;&#10;- **Proteína Whey:** 1 scoop post-entreno&#10;- **Creatina:** 5g diarios&#10;- **Omega 3:** 2g diarios"></textarea>
-                    </div>
-
-                    <!-- Notas -->
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Notas del Entrenador (Markdown)</strong></label>
-                        <textarea name="notes" class="form-control" rows="5" style="font-family: 'Courier New', monospace;" 
-                                  placeholder="## Indicaciones Importantes&#10;&#10;- Beber mínimo **3L de agua** al día&#10;- Ajustar carbos según actividad&#10;- Pesarse cada lunes en ayunas&#10;&#10;> 💡 **Tip:** Prepara comidas el domingo"></textarea>
-                    </div>
-
-                    <!-- Fechas -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label"><strong>Fecha de Inicio</strong></label>
-                            <input type="date" name="start_date" class="form-control">
+                                    <div id="meals-preview" class="markdown-preview border rounded p-3 mt-2 bg-light" style="display:none; max-height: 500px; overflow-y: auto;"></div>
+                                    <small class="text-muted">Este es el contenido principal del plan nutricional</small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label"><strong>Fecha de Fin</strong></label>
-                            <input type="date" name="end_date" class="form-control">
+
+                        <!-- 5. Suplementación -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingSupplements">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSupplements" aria-expanded="false" aria-controls="collapseSupplements">
+                                    <i class="bi bi-capsule me-2"></i><strong>5. Suplementación</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseSupplements" class="accordion-collapse collapse" aria-labelledby="headingSupplements">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Suplementación (Markdown)</strong></label>
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary preview-toggle" data-target="supplements-preview">
+                                            <i class="bi bi-eye me-1"></i>Ver Preview
+                                        </button>
+                                    </div>
+                                    <textarea name="supplements" id="supplements-textarea" class="form-control markdown-input" rows="6" style="font-family: 'Courier New', monospace;" 
+                                              placeholder="## Suplementos Recomendados&#10;&#10;- **Proteína Whey:** 1 scoop post-entreno&#10;- **Creatina:** 5g diarios&#10;- **Omega 3:** 2g diarios"></textarea>
+                                    <div id="supplements-preview" class="markdown-preview border rounded p-3 mt-2 bg-light" style="display:none;"></div>
+                                    <small class="text-muted">Suplementos recomendados y dosis</small>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- 6. Notas del Entrenador -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingNotes">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseNotes" aria-expanded="false" aria-controls="collapseNotes">
+                                    <i class="bi bi-chat-left-text me-2"></i><strong>6. Notas del Entrenador</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseNotes" class="accordion-collapse collapse" aria-labelledby="headingNotes">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Notas y Recomendaciones (Markdown)</strong></label>
+                                    <div class="mb-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary preview-toggle" data-target="notes-preview">
+                                            <i class="bi bi-eye me-1"></i>Ver Preview
+                                        </button>
+                                    </div>
+                                    <textarea name="notes" id="notes-textarea" class="form-control markdown-input" rows="6" style="font-family: 'Courier New', monospace;" 
+                                              placeholder="## Indicaciones Importantes&#10;&#10;- Beber mínimo **3L de agua** al día&#10;- Ajustar carbos según actividad&#10;- Pesarse cada lunes en ayunas&#10;&#10;> 💡 **Tip:** Prepara comidas el domingo"></textarea>
+                                    <div id="notes-preview" class="markdown-preview border rounded p-3 mt-2 bg-light" style="display:none;"></div>
+                                    <small class="text-muted">Consejos, advertencias y recomendaciones personalizadas</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 7. Fechas de Vigencia -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingDates">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDates" aria-expanded="false" aria-controls="collapseDates">
+                                    <i class="bi bi-calendar-range me-2"></i><strong>7. Fechas de Inicio y Fin</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseDates" class="accordion-collapse collapse" aria-labelledby="headingDates">
+                                <div class="accordion-body">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label"><strong>Fecha de Inicio</strong></label>
+                                            <input type="date" name="start_date" class="form-control">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label class="form-label"><strong>Fecha de Fin</strong></label>
+                                            <input type="date" name="end_date" class="form-control">
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">Define el período de vigencia del plan</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 8. Análisis Relacionado -->
+                        {% if analyses %}
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingAnalysis">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseAnalysis" aria-expanded="false" aria-controls="collapseAnalysis">
+                                    <i class="bi bi-graph-up me-2"></i><strong>8. Análisis Biométrico Relacionado</strong>
+                                </button>
+                            </h2>
+                            <div id="collapseAnalysis" class="accordion-collapse collapse" aria-labelledby="headingAnalysis">
+                                <div class="accordion-body">
+                                    <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
+                                    <select name="analysis_id" class="form-select">
+                                        <option value="">-- Sin análisis relacionado --</option>
+                                        {% for analysis in analyses %}
+                                        <option value="{{ analysis.id }}">
+                                            {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
+                                            Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
+                                            IMC: {{ '%.1f'|format(analysis.bmi) }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <small class="text-muted">Vincula este plan con un análisis biométrico específico</small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
                     </div>
-                    <!-- Análisis Relacionado -->
-                    {% if analyses %}
-                    <div class="mb-3">
-                        <label class="form-label"><strong>Análisis Relacionado (Opcional)</strong></label>
-                            <select name="analysis_id" class="form-select">
-                                <option value="">-- Sin análisis relacionado --</option>
-                                {% for analysis in analyses %}
-                                <option value="{{ analysis.id }}">
-                                    {{ analysis.created_at.strftime('%d/%m/%Y') }} - 
-                                    Peso: {{ '%.1f'|format(analysis.weight) }}kg - 
-                                    IMC: {{ '%.1f'|format(analysis.bmi) }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                    {% endif %}
                 </div>
 
                 <div class="card-footer bg-white">
@@ -171,4 +278,83 @@
 </div>
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+<!-- Marked.js para renderizar Markdown -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<style>
+    .markdown-preview {
+        min-height: 100px;
+    }
+    .markdown-preview h1, .markdown-preview h2, .markdown-preview h3 {
+        color: #198754;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 0.3em;
+    }
+    .markdown-preview ul, .markdown-preview ol {
+        padding-left: 1.5em;
+    }
+    .markdown-preview blockquote {
+        border-left: 4px solid #198754;
+        padding-left: 1em;
+        margin-left: 0;
+        color: #6c757d;
+        background: #f8f9fa;
+        padding: 0.5em 1em;
+    }
+    .markdown-preview hr {
+        border-top: 2px solid #198754;
+        opacity: 0.3;
+    }
+    .markdown-preview strong {
+        color: #495057;
+    }
+    .accordion-button:not(.collapsed) {
+        background-color: #d1f4e0;
+        color: #198754;
+    }
+    .preview-toggle.active {
+        background-color: #198754;
+        color: white;
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    marked.setOptions({
+        breaks: true,
+        gfm: true
+    });
+    
+    document.querySelectorAll('.preview-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            const preview = document.getElementById(targetId);
+            const textareaId = targetId.replace('-preview', '-textarea');
+            const textarea = document.getElementById(textareaId);
+            
+            if (preview.style.display === 'none') {
+                preview.style.display = 'block';
+                preview.innerHTML = marked.parse(textarea.value || '<em>Escribe algo para ver la preview...</em>');
+                this.classList.add('active');
+                this.innerHTML = '<i class="bi bi-eye-slash me-1"></i>Ocultar Preview';
+            } else {
+                preview.style.display = 'none';
+                this.classList.remove('active');
+                this.innerHTML = '<i class="bi bi-eye me-1"></i>Ver Preview';
+            }
+        });
+    });
+    
+    document.querySelectorAll('.markdown-input').forEach(function(textarea) {
+        textarea.addEventListener('input', function() {
+            const previewId = this.id.replace('-textarea', '-preview');
+            const preview = document.getElementById(previewId);
+            if (preview && preview.style.display !== 'none') {
+                preview.innerHTML = marked.parse(this.value || '<em>Escribe algo para ver la preview...</em>');
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
