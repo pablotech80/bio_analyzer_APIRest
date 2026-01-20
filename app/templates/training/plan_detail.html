@@ -137,52 +137,92 @@
     .accordion-body {
         padding: 1.5rem;
     }
+    
+    /* Mobile-first optimizations */
+    @media (max-width: 768px) {
+        .accordion-button {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+        .accordion-body {
+            padding: 1rem;
+        }
+        .container {
+            padding-left: 0.5rem;
+            padding-right: 0.5rem;
+        }
+        .bg-white.shadow-sm.rounded.p-4 {
+            padding: 1rem !important;
+        }
+    }
+    
+    .text-truncate {
+        max-width: 70vw;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid" style="background: #f8f9fa;">
-    <div class="container py-4">
+<div class="container-fluid px-2 px-md-3" style="background: #f8f9fa;">
+    <div class="container py-2 py-md-4">
         <div class="row">
             <div class="col-12">
-                <!-- Header -->
-                <div class="bg-white shadow-sm rounded p-4 mb-3">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div>
-                            <h1 class="h4 mb-2 fw-bold text-dark">{{ plan.title }}</h1>
-                            <div class="text-muted small">
-                                <span>Creado: {{ plan.created_at.strftime('%d/%m/%Y') }}</span>
-                                {% if plan.start_date and plan.end_date %}
-                                <span class="mx-2">|</span>
-                                <span>{{ plan.start_date.strftime('%d/%m/%Y') }} - {{ plan.end_date.strftime('%d/%m/%Y') }}</span>
-                                {% endif %}
+                <!-- Header Compacto Mobile-First -->
+                <div class="bg-white shadow-sm rounded p-3 mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="flex-grow-1 me-2">
+                            <h1 class="h5 mb-1 fw-bold text-dark text-truncate">{{ plan.title }}</h1>
+                            <div class="text-muted small d-flex flex-wrap align-items-center gap-1">
+                                <span>{{ plan.created_at.strftime('%d/%m/%Y') }}</span>
                                 {% if plan.is_active %}
-                                <span class="badge bg-success ms-2">Activo</span>
+                                <span class="badge bg-success">Activo</span>
                                 {% endif %}
                             </div>
                         </div>
-                        <div class="d-flex gap-2">
-                            {% if current_user.is_admin %}
-                            <!-- Botones Admin -->
-                            <a class="btn btn-sm btn-warning" href="{{ url_for('admin.edit_training_plan', plan_id=plan.id) }}" title="Editar plan">
-                                <i class="bi bi-pencil-square"></i> Editar
-                            </a>
-                            <form method="POST" action="{{ url_for('admin.delete_training_plan', plan_id=plan.id) }}" class="d-inline" onsubmit="return confirm('¿Estás seguro de eliminar este plan de entrenamiento?');">
-                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                <button type="submit" class="btn btn-sm btn-danger" title="Eliminar plan">
-                                    <i class="bi bi-trash"></i> Eliminar
-                                </button>
-                            </form>
-                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
-                                ← Volver
-                            </a>
-                            {% else %}
-                            <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('training.my_plans') }}">
-                                ← Mis Planes
-                            </a>
-                            {% endif %}
+                        
+                        <!-- Menú Hamburguesa para Acciones -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                {% if current_user.is_admin %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('admin.edit_training_plan', plan_id=plan.id) }}">
+                                        <i class="bi bi-pencil-square me-2"></i>Editar
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
+                                        <i class="bi bi-arrow-left me-2"></i>Dashboard Usuario
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="POST" action="{{ url_for('admin.delete_training_plan', plan_id=plan.id) }}" onsubmit="return confirm('¿Eliminar este plan?');">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="dropdown-item text-danger">
+                                            <i class="bi bi-trash me-2"></i>Eliminar
+                                        </button>
+                                    </form>
+                                </li>
+                                {% else %}
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('training.my_plans') }}">
+                                        <i class="bi bi-arrow-left me-2"></i>Mis Planes
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
                         </div>
                     </div>
+                    
+                    <!-- Info adicional -->
+                    {% if plan.start_date and plan.end_date %}
+                    <div class="mt-2 pt-2 border-top small text-muted">
+                        <i class="bi bi-calendar3 me-1"></i>{{ plan.start_date.strftime('%d/%m') }} - {{ plan.end_date.strftime('%d/%m/%Y') }}
+                    </div>
+                    {% endif %}
                 </div>
 
                 <!-- Accordion de Secciones del Plan -->
