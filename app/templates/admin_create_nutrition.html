@@ -34,130 +34,98 @@
                         <small class="text-muted">Nombre descriptivo del plan</small>
                     </div>
 
-                    <!-- Datos Biométricos del Usuario -->
+                    <!-- Panel Datos Biométricos - Mobile First -->
                     {% if latest_analysis %}
-                    <div class="alert alert-info mb-4" style="background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border: 2px solid #1976d2;">
-                        <h6 class="alert-heading mb-3">
-                            <i class="bi bi-activity me-2"></i><strong>Datos Biométricos Recientes</strong>
-                            <span class="badge bg-primary ms-2">{{ latest_analysis.created_at.strftime('%d/%m/%Y') }}</span>
-                        </h6>
-                        
-                        <div class="row g-3 mb-3">
-                            <!-- Datos básicos -->
-                            <div class="col-md-2 col-6">
-                                <div class="text-center p-2 bg-white rounded shadow-sm">
-                                    <small class="text-muted d-block">Peso</small>
-                                    <strong class="text-primary">{{ '%.1f'|format(latest_analysis.weight) }} kg</strong>
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-6">
-                                <div class="text-center p-2 bg-white rounded shadow-sm">
-                                    <small class="text-muted d-block">Altura</small>
-                                    <strong class="text-primary">{{ '%.0f'|format(latest_analysis.height) }} cm</strong>
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-6">
-                                <div class="text-center p-2 bg-white rounded shadow-sm">
-                                    <small class="text-muted d-block">IMC</small>
-                                    <strong class="text-primary">{{ '%.1f'|format(latest_analysis.bmi) }}</strong>
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-6">
-                                <div class="text-center p-2 bg-white rounded shadow-sm">
-                                    <small class="text-muted d-block">% Grasa</small>
-                                    <strong class="text-primary">{{ '%.1f'|format(latest_analysis.body_fat_percentage) }}%</strong>
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-6">
-                                <div class="text-center p-2 bg-white rounded shadow-sm">
-                                    <small class="text-muted d-block">TMB</small>
-                                    <strong class="text-success" id="display-bmr">{{ '%.0f'|format(latest_analysis.bmr) }}</strong>
-                                </div>
-                            </div>
-                            <div class="col-md-2 col-6">
-                                <div class="text-center p-2 bg-white rounded shadow-sm">
-                                    <small class="text-muted d-block">TDEE</small>
-                                    <strong class="text-success" id="display-tdee">{{ '%.0f'|format(latest_analysis.tdee) }}</strong>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Calculadora de Macros -->
-                        <div class="bg-white p-3 rounded shadow-sm">
-                            <h6 class="mb-3"><i class="bi bi-calculator me-2"></i><strong>Calculadora de Macronutrientes</strong></h6>
-                            
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label"><strong>Objetivo Nutricional</strong></label>
-                                    <select id="calc-goal" class="form-select">
-                                        <option value="deficit">Déficit Calórico (-20%)</option>
-                                        <option value="maintenance" selected>Mantenimiento (0%)</option>
-                                        <option value="surplus">Superávit Calórico (+15%)</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label"><strong>Distribución de Macros</strong></label>
-                                    <select id="calc-distribution" class="form-select">
-                                        <option value="balanced" selected>Balanceada (30/40/30)</option>
-                                        <option value="high-protein">Alta Proteína (40/30/30)</option>
-                                        <option value="low-carb">Baja en Carbos (40/20/40)</option>
-                                        <option value="keto">Cetogénica (30/5/65)</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <button type="button" class="btn btn-primary btn-sm mb-3" onclick="calculateMacros()">
-                                <i class="bi bi-calculator-fill me-1"></i>Calcular Macros
+                    <div class="bio-panel mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small text-muted"><i class="bi bi-activity me-1"></i>Datos {{ latest_analysis.created_at.strftime('%d/%m/%Y') }}</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="collapse" data-bs-target="#bioDataPanel">
+                                <i class="bi bi-chevron-down"></i>
                             </button>
-
-                            <div id="macro-results" class="row g-2" style="display:none;">
-                                <div class="col-md-3 col-6">
-                                    <div class="text-center p-2 border rounded bg-light">
-                                        <small class="text-muted d-block">Calorías</small>
-                                        <strong class="text-dark" id="calc-calories">0</strong>
-                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyCalorias()">
-                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
-                                        </button>
-                                    </div>
+                        </div>
+                        
+                        <!-- Resumen compacto (siempre visible) -->
+                        <div class="row g-2 text-center mb-2">
+                            <div class="col-3">
+                                <div class="bg-light rounded p-2">
+                                    <div class="fw-bold text-primary">{{ '%.0f'|format(latest_analysis.weight) }}</div>
+                                    <small class="text-muted">kg</small>
                                 </div>
-                                <div class="col-md-3 col-6">
-                                    <div class="text-center p-2 border rounded bg-light">
-                                        <small class="text-muted d-block">Proteínas (g)</small>
-                                        <strong class="text-success" id="calc-protein">0</strong>
-                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyProteinas()">
-                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
-                                        </button>
-                                    </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="bg-light rounded p-2">
+                                    <div class="fw-bold text-primary">{{ '%.0f'|format(latest_analysis.tdee) }}</div>
+                                    <small class="text-muted">kcal</small>
                                 </div>
-                                <div class="col-md-3 col-6">
-                                    <div class="text-center p-2 border rounded bg-light">
-                                        <small class="text-muted d-block">Carbos (g)</small>
-                                        <strong class="text-warning" id="calc-carbs">0</strong>
-                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyCarbos()">
-                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
-                                        </button>
-                                    </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="bg-light rounded p-2">
+                                    <div class="fw-bold text-success">{{ '%.0f'|format(latest_analysis.protein_grams or 0) }}</div>
+                                    <small class="text-muted">prot</small>
                                 </div>
-                                <div class="col-md-3 col-6">
-                                    <div class="text-center p-2 border rounded bg-light">
-                                        <small class="text-muted d-block">Grasas (g)</small>
-                                        <strong class="text-info" id="calc-fats">0</strong>
-                                        <button type="button" class="btn btn-sm btn-outline-success mt-1 w-100" onclick="applyGrasas()">
-                                            <i class="bi bi-arrow-down-circle me-1"></i>Aplicar
-                                        </button>
-                                    </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="bg-light rounded p-2">
+                                    <div class="fw-bold text-warning">{{ '%.1f'|format(latest_analysis.body_fat_percentage) }}%</div>
+                                    <small class="text-muted">grasa</small>
                                 </div>
                             </div>
                         </div>
 
-                        <input type="hidden" id="base-tdee" value="{{ latest_analysis.tdee }}">
-                        <input type="hidden" id="user-weight" value="{{ latest_analysis.weight }}">
+                        <!-- Panel expandible con más datos -->
+                        <div class="collapse" id="bioDataPanel">
+                            <div class="row g-2 text-center mt-2">
+                                <div class="col-4">
+                                    <div class="border rounded p-2">
+                                        <small class="text-muted d-block">IMC</small>
+                                        <strong>{{ '%.1f'|format(latest_analysis.bmi) }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="border rounded p-2">
+                                        <small class="text-muted d-block">TMB</small>
+                                        <strong>{{ '%.0f'|format(latest_analysis.bmr) }}</strong>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="border rounded p-2">
+                                        <small class="text-muted d-block">Altura</small>
+                                        <strong>{{ '%.0f'|format(latest_analysis.height) }}cm</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Macros recomendados del análisis -->
+                            {% if latest_analysis.protein_grams or latest_analysis.carbs_grams or latest_analysis.fats_grams %}
+                            <div class="mt-3 p-2 bg-success bg-opacity-10 rounded">
+                                <small class="text-success fw-bold"><i class="bi bi-lightning-fill me-1"></i>Macros Recomendados</small>
+                                <div class="row g-2 mt-1">
+                                    <div class="col-4 text-center">
+                                        <span class="d-block fw-bold">{{ '%.0f'|format(latest_analysis.protein_grams or 0) }}g</span>
+                                        <small>Proteína</small>
+                                        <button type="button" class="btn btn-xs btn-outline-success w-100 mt-1" onclick="applyMacro('protein_grams', {{ latest_analysis.protein_grams or 0 }})">Usar</button>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <span class="d-block fw-bold">{{ '%.0f'|format(latest_analysis.carbs_grams or 0) }}g</span>
+                                        <small>Carbos</small>
+                                        <button type="button" class="btn btn-xs btn-outline-success w-100 mt-1" onclick="applyMacro('carbs_grams', {{ latest_analysis.carbs_grams or 0 }})">Usar</button>
+                                    </div>
+                                    <div class="col-4 text-center">
+                                        <span class="d-block fw-bold">{{ '%.0f'|format(latest_analysis.fats_grams or 0) }}g</span>
+                                        <small>Grasas</small>
+                                        <button type="button" class="btn btn-xs btn-outline-success w-100 mt-1" onclick="applyMacro('fats_grams', {{ latest_analysis.fats_grams or 0 }})">Usar</button>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-success btn-sm w-100 mt-2" onclick="applyAllMacros({{ latest_analysis.maintenance_calories or latest_analysis.tdee }}, {{ latest_analysis.protein_grams or 0 }}, {{ latest_analysis.carbs_grams or 0 }}, {{ latest_analysis.fats_grams or 0 }})">
+                                    <i class="bi bi-check-all me-1"></i>Aplicar Todos
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
                     {% else %}
-                    <div class="alert alert-warning mb-4">
-                        <i class="bi bi-exclamation-triangle me-2"></i>
-                        <strong>Sin datos biométricos:</strong> El usuario no tiene análisis biométricos registrados. 
-                        Se recomienda crear un análisis antes de diseñar el plan nutricional.
+                    <div class="alert alert-warning py-2 mb-3">
+                        <small><i class="bi bi-exclamation-triangle me-1"></i>Sin análisis biométrico. <a href="#">Crear análisis</a></small>
                     </div>
                     {% endif %}
 
@@ -444,6 +412,57 @@
         background-color: #198754;
         color: white;
     }
+    
+    /* Mobile-first styles */
+    .bio-panel {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 8px;
+        padding: 12px;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn-xs {
+        padding: 2px 6px;
+        font-size: 11px;
+    }
+    
+    .toast-msg {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #198754;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        z-index: 9999;
+        animation: fadeInOut 1.5s ease;
+    }
+    
+    @keyframes fadeInOut {
+        0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+        80% { opacity: 1; }
+        100% { opacity: 0; }
+    }
+    
+    /* Accordion más compacto en móvil */
+    @media (max-width: 768px) {
+        .accordion-button {
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+        }
+        .accordion-body {
+            padding: 1rem;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .form-control-lg {
+            font-size: 1rem;
+        }
+    }
 </style>
 
 <script>
@@ -484,93 +503,42 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// Calculadora de Macronutrientes
-function calculateMacros() {
-    const baseTdee = parseFloat(document.getElementById('base-tdee').value);
-    const userWeight = parseFloat(document.getElementById('user-weight').value);
-    const goal = document.getElementById('calc-goal').value;
-    const distribution = document.getElementById('calc-distribution').value;
+// Aplicar macros del análisis biométrico (calculados en backend)
+function applyMacro(field, value) {
+    const input = document.querySelector('input[name="' + field + '"]');
+    if (input) {
+        input.value = Math.round(value);
+        showToast('✓ Aplicado');
+        // Abrir accordion de macros
+        const macrosCollapse = document.getElementById('collapseMacros');
+        if (macrosCollapse && !macrosCollapse.classList.contains('show')) {
+            new bootstrap.Collapse(macrosCollapse, { show: true });
+        }
+    }
+}
+
+function applyAllMacros(calories, protein, carbs, fats) {
+    document.querySelector('input[name="daily_calories"]').value = Math.round(calories);
+    document.querySelector('input[name="protein_grams"]').value = Math.round(protein);
+    document.querySelector('input[name="carbs_grams"]').value = Math.round(carbs);
+    document.querySelector('input[name="fats_grams"]').value = Math.round(fats);
     
-    if (!baseTdee || !userWeight) {
-        alert('No hay datos biométricos disponibles para calcular');
-        return;
+    // Abrir accordion de macros
+    const macrosCollapse = document.getElementById('collapseMacros');
+    if (macrosCollapse) {
+        new bootstrap.Collapse(macrosCollapse, { show: true });
+        macrosCollapse.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
     
-    // Ajustar calorías según objetivo
-    let targetCalories = baseTdee;
-    if (goal === 'deficit') {
-        targetCalories = baseTdee * 0.8; // -20%
-    } else if (goal === 'surplus') {
-        targetCalories = baseTdee * 1.15; // +15%
-    }
-    
-    // Distribuciones de macros (proteína/carbos/grasas)
-    const distributions = {
-        'balanced': { protein: 0.30, carbs: 0.40, fats: 0.30 },
-        'high-protein': { protein: 0.40, carbs: 0.30, fats: 0.30 },
-        'low-carb': { protein: 0.40, carbs: 0.20, fats: 0.40 },
-        'keto': { protein: 0.30, carbs: 0.05, fats: 0.65 }
-    };
-    
-    const dist = distributions[distribution];
-    
-    // Calcular gramos de cada macro (4 cal/g proteína, 4 cal/g carbos, 9 cal/g grasas)
-    const proteinGrams = Math.round((targetCalories * dist.protein) / 4);
-    const carbsGrams = Math.round((targetCalories * dist.carbs) / 4);
-    const fatsGrams = Math.round((targetCalories * dist.fats) / 9);
-    
-    // Mostrar resultados
-    document.getElementById('calc-calories').textContent = Math.round(targetCalories) + ' kcal';
-    document.getElementById('calc-protein').textContent = proteinGrams + ' g';
-    document.getElementById('calc-carbs').textContent = carbsGrams + ' g';
-    document.getElementById('calc-fats').textContent = fatsGrams + ' g';
-    
-    document.getElementById('macro-results').style.display = 'flex';
+    showToast('✓ Macros aplicados');
 }
 
-function applyCalorias() {
-    const value = document.getElementById('calc-calories').textContent.replace(' kcal', '');
-    document.querySelector('input[name="daily_calories"]').value = value;
-    showAppliedFeedback('Calorías aplicadas');
-}
-
-function applyProteinas() {
-    const value = document.getElementById('calc-protein').textContent.replace(' g', '');
-    document.querySelector('input[name="protein_grams"]').value = value;
-    showAppliedFeedback('Proteínas aplicadas');
-}
-
-function applyCarbos() {
-    const value = document.getElementById('calc-carbs').textContent.replace(' g', '');
-    document.querySelector('input[name="carbs_grams"]').value = value;
-    showAppliedFeedback('Carbohidratos aplicados');
-}
-
-function applyGrasas() {
-    const value = document.getElementById('calc-fats').textContent.replace(' g', '');
-    document.querySelector('input[name="fats_grams"]').value = value;
-    showAppliedFeedback('Grasas aplicadas');
-}
-
-function showAppliedFeedback(message) {
-    // Scroll suave al accordion de macros
-    document.getElementById('collapseMacros').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    
-    // Abrir el accordion de macros si está cerrado
-    const macrosCollapse = new bootstrap.Collapse(document.getElementById('collapseMacros'), {
-        show: true
-    });
-    
-    // Mostrar feedback visual
+function showToast(message) {
     const toast = document.createElement('div');
-    toast.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
-    toast.style.zIndex = '9999';
-    toast.innerHTML = '<i class="bi bi-check-circle me-2"></i>' + message;
+    toast.className = 'toast-msg';
+    toast.innerHTML = message;
     document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.remove();
-    }, 2000);
+    setTimeout(() => toast.remove(), 1500);
 }
 </script>
 {% endblock %}
