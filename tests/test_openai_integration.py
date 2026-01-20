@@ -27,5 +27,5 @@ class TestOpenAIIntegration(unittest.TestCase):
         }
 
         out = runner.run(spec, payload)
-        assert isinstance(out.interpretation, str)
-        assert len(out.interpretation) > 0
+        assert isinstance(out.summary, str)
+        assert len(out.summary) > 0

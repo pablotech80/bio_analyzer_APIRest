@@ -11,6 +11,11 @@ def build_emitter() -> TelemetryEmitter:
     if name in ("stdout", "console"):
         return StdoutEmitter()
 
+    if name in ("db", "database"):
+        from .telemetry import DBEmitter
+
+        return DBEmitter()
+
     if name in ("null", "none", "off"):
         return NullEmitter()
 

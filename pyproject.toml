@@ -29,7 +29,8 @@ dependencies = [
     "psycopg2-binary~=2.9",
     "python-dotenv~=1.0",
     "openai>=2.2",
-    "pydantic~=2.7"
+    "pydantic~=2.7",
+    "pytest-django~=4.8"
 ]
 
 # tool define de donde se va a obtener la descripción del proyecto en este caso del fichero README.md
@@ -58,6 +59,7 @@ addopts = "-v"
 testpaths = ["tests"]
 markers = [
     "integration: integration tests that may call external services",
+    "django_db: marks tests that require database access",
 ]
 
 # Black - Code formatter

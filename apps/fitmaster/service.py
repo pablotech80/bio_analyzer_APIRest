@@ -32,7 +32,7 @@ class FitMasterService:
         )
 
     @staticmethod
-    def run_from_form_payload(form_payload: Dict[str, Any]) -> FitMasterOutput:
+    def run_from_form_payload(form_payload: Dict[str, Any], *, output_version: Optional[str] = None) -> FitMasterOutput:
         """End-to-end FitMaster execution using SSD AgentRunner.
 
         This reuses the existing Flask biometric core (`run_biometric_analysis`) without rewriting it.
@@ -51,7 +51,7 @@ class FitMasterService:
         features_pack = FitMasterService._to_features_pack(payload, notes=notes)
 
         provider, model_name = build_provider()
-        spec = build_fitmaster_spec(model_name=model_name)
+        spec = build_fitmaster_spec(model_name=model_name, output_version=output_version)
 
         emitter: TelemetryEmitter = build_emitter()
         runner = AgentRunner(provider=provider, emitter=emitter)
