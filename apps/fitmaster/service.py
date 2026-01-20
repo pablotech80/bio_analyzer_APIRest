@@ -5,11 +5,12 @@ from typing import Any, Dict, Optional
 from werkzeug.datastructures import MultiDict
 
 from apps.ai_core.runner import AgentRunner
-from apps.ai_core.telemetry import StdoutEmitter
+from apps.ai_core.telemetry import TelemetryEmitter
 
-from app.blueprints.bioanalyze.services import AnalysisPayload, run_biometric_analysis
+from apps.bioanalyze.core import AnalysisPayload, run_biometric_analysis
 
 from .provider_factory import build_provider
+from .telemetry_factory import build_emitter
 from .schemas import FitMasterInput, FitMasterOutput
 from .spec import build_fitmaster_spec
 
@@ -52,6 +53,7 @@ class FitMasterService:
         provider, model_name = build_provider()
         spec = build_fitmaster_spec(model_name=model_name)
 
-        runner = AgentRunner(provider=provider, emitter=StdoutEmitter())
+        emitter: TelemetryEmitter = build_emitter()
+        runner = AgentRunner(provider=provider, emitter=emitter)
         # AgentRunner expects dict payloads
         return runner.run(spec, features_pack.model_dump(exclude_none=True))
