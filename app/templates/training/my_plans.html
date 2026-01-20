@@ -3,108 +3,79 @@
 {% block title %}Mis Planes de Entrenamiento{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-xl-10 col-lg-11 mx-auto">
-            <!-- Header -->
-            <div class="mb-4">
-                <h1 class="h3 mb-1">
-                    <i class="bi bi-lightning-charge-fill me-2" style="color: #E67E22;"></i>
-                    Mis Planes de Entrenamiento
-                </h1>
-                <p class="text-muted mb-0">Rutinas personalizadas creadas por tu entrenador</p>
-            </div>
-
-            {% if plans %}
-            <!-- Lista de Planes -->
-            <div class="row g-4">
-                {% for plan in plans %}
-                <div class="col-md-6">
-                    <div class="card shadow-sm h-100 hover-card" style="transition: all 0.3s ease;">
-                        <div class="card-header text-white" style="background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h5 class="mb-0">
-                                    <i class="bi bi-calendar-check me-2"></i>
-                                    {{ plan.title }}
-                                </h5>
-                                {% if plan.is_active %}
-                                <span class="badge bg-light text-dark">
-                                    <i class="bi bi-check-circle me-1"></i>Activo
-                                </span>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            {% set training = plan %}
-                            
-                            <!-- Descripción -->
-                            {% if plan.description %}
-                            <p class="text-muted mb-3">{{ plan.description }}</p>
-                            {% endif %}
-
-                            <!-- Frecuencia -->
-                            {% if plan.frequency %}
-                            <p class="mb-3">
-                                <strong><i class="bi bi-calendar-week me-2" style="color: #E67E22;"></i>Frecuencia:</strong><br>
-                                <span class="ms-4">{{ plan.frequency }}</span>
-                            </p>
-                            {% endif %}
-
-                            <!-- Tipo de Rutina -->
-                            {% if plan.routine_type %}
-                            <div class="alert alert-info mb-3">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-lightning-charge-fill me-2" style="font-size: 1.5rem;"></i>
-                                    <div>
-                                        <strong>Tipo de Rutina</strong><br>
-                                        <span>{{ plan.routine_type }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            {% endif %}
-
-                            <!-- Número de entrenamientos -->
-                            {% if plan.workouts %}
-                            <p class="text-muted mb-0">
-                                <i class="bi bi-list-check me-2"></i>{{ plan.workouts|length }} entrenamientos semanales
-                            </p>
-                            {% endif %}
-                        </div>
-                        <div class="card-footer bg-white">
-                            <a href="{{ url_for('training.view_plan', plan_id=plan.id) }}" 
-                               class="btn btn-sm btn-outline-primary rounded-pill w-100">
-                                <i class="bi bi-eye me-1"></i>Ver Plan Completo
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-            {% else %}
-            <!-- Sin Planes -->
-            <div class="text-center py-5">
-                <div class="mb-4">
-                    <i class="bi bi-lightning-charge-fill" style="font-size: 5rem; color: #E67E22; opacity: 0.3;"></i>
-                </div>
-                <h4 class="text-muted mb-3">No tienes planes de entrenamiento aún</h4>
-                <p class="text-muted mb-4">
-                    Tu entrenador te creará un plan de entrenamiento personalizado después de tu análisis biométrico
-                </p>
-                <p class="text-muted">
-                    <i class="bi bi-info-circle me-2"></i>
-                    Los planes de entrenamiento son creados por tu entrenador basándose en tus objetivos y condición física
-                </p>
-            </div>
-            {% endif %}
+<div class="container-fluid px-2 px-md-3" style="background: #f8f9fa; min-height: 100vh;">
+    <div class="container py-3">
+        <!-- Header Minimalista -->
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h5 mb-0 fw-bold">Planes de Entrenamiento</h1>
+            <span class="text-muted small">{{ plans|length }} plan{{ 'es' if plans|length != 1 else '' }}</span>
         </div>
+
+        {% if plans %}
+        <!-- Lista Clickeable Minimalista -->
+        <div class="list-group list-group-flush">
+            {% for plan in plans %}
+            <a href="{{ url_for('training.view_plan', plan_id=plan.id) }}" 
+               class="list-group-item list-group-item-action bg-white mb-2 rounded border-0 shadow-sm plan-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <h6 class="mb-0 fw-bold">{{ plan.title }}</h6>
+                            {% if plan.is_active %}
+                            <span class="badge bg-primary-subtle text-primary border border-primary">Activo</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-secondary">Inactivo</span>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex flex-wrap gap-3 small text-muted mt-2">
+                            {% if plan.frequency %}
+                            <span><i class="bi bi-calendar-week me-1"></i>{{ plan.frequency }}</span>
+                            {% endif %}
+                            {% if plan.routine_type %}
+                            <span><i class="bi bi-lightning me-1"></i>{{ plan.routine_type }}</span>
+                            {% endif %}
+                            <span><i class="bi bi-calendar3 me-1"></i>{{ plan.created_at.strftime('%d/%m/%Y') }}</span>
+                        </div>
+                        
+                        {% if plan.goal %}
+                        <p class="text-muted small mb-0 mt-2">{{ plan.goal[:80] }}{{ '...' if plan.goal|length > 80 else '' }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <!-- Estado Vacío Minimalista -->
+        <div class="text-center py-5">
+            <i class="bi bi-lightning-charge text-muted" style="font-size: 3rem; opacity: 0.3;"></i>
+            <p class="text-muted mt-3 mb-0">No hay planes de entrenamiento</p>
+            <small class="text-muted">Tu entrenador creará uno para ti</small>
+        </div>
+        {% endif %}
     </div>
 </div>
 
 <style>
-    .hover-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    .plan-item {
+        transition: all 0.2s ease;
+        padding: 1rem;
+    }
+    .plan-item:hover {
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+    .plan-item:active {
+        transform: translateX(2px);
+    }
+    @media (max-width: 768px) {
+        .plan-item {
+            padding: 0.75rem;
+        }
     }
 </style>
 {% endblock %}

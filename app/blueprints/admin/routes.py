@@ -364,6 +364,48 @@ def delete_training_plan(plan_id):
     return redirect(url_for("admin.user_analyses", user_id=user_id))
 
 
+@admin_bp.route("/nutrition/<int:plan_id>/toggle", methods=["POST"])
+@login_required
+def toggle_nutrition_plan(plan_id):
+    """Activar/Desactivar plan nutricional"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    plan = NutritionPlan.query.get_or_404(plan_id)
+    
+    try:
+        plan.is_active = not plan.is_active
+        db.session.commit()
+        status = "activado" if plan.is_active else "desactivado"
+        flash(f"✅ Plan {status} correctamente", "success")
+    except Exception as e:
+        flash(f"❌ Error al cambiar estado: {str(e)}", "danger")
+        db.session.rollback()
+    
+    return redirect(url_for("nutrition.view_plan", plan_id=plan.id))
+
+
+@admin_bp.route("/training/<int:plan_id>/toggle", methods=["POST"])
+@login_required
+def toggle_training_plan(plan_id):
+    """Activar/Desactivar plan de entrenamiento"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    plan = TrainingPlan.query.get_or_404(plan_id)
+    
+    try:
+        plan.is_active = not plan.is_active
+        db.session.commit()
+        status = "activado" if plan.is_active else "desactivado"
+        flash(f"✅ Plan {status} correctamente", "success")
+    except Exception as e:
+        flash(f"❌ Error al cambiar estado: {str(e)}", "danger")
+        db.session.rollback()
+    
+    return redirect(url_for("training.view_plan", plan_id=plan.id))
+
+
 @admin_bp.route("/users/<int:user_id>/delete", methods=["POST"])
 @login_required
 def delete_user(user_id):

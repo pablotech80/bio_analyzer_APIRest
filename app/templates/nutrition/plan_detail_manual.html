@@ -181,35 +181,43 @@
                             </div>
                         </div>
                         
-                        <!-- Menú Hamburguesa para Acciones -->
+                        <!-- Menú Burger Minimalista -->
                         <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-three-dots-vertical"></i>
+                            <button class="btn btn-link text-dark p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-list fs-3"></i>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
                                 {% if current_user.is_admin %}
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('admin.edit_nutrition_plan', plan_id=plan.id) }}">
-                                        <i class="bi bi-pencil-square me-2"></i>Editar
+                                    <a class="dropdown-item py-2" href="{{ url_for('admin.edit_nutrition_plan', plan_id=plan.id) }}">
+                                        <i class="bi bi-pencil me-2"></i>Editar
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
-                                        <i class="bi bi-arrow-left me-2"></i>Dashboard Usuario
+                                    <form method="POST" action="{{ url_for('admin.toggle_nutrition_plan', plan_id=plan.id) }}" class="m-0">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                        <button type="submit" class="dropdown-item py-2">
+                                            <i class="bi bi-{{ 'pause-circle' if plan.is_active else 'play-circle' }} me-2"></i>{{ 'Desactivar' if plan.is_active else 'Activar' }}
+                                        </button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item py-2" href="{{ url_for('admin.user_analyses', user_id=plan.user_id) }}">
+                                        <i class="bi bi-arrow-left me-2"></i>Volver
                                     </a>
                                 </li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li><hr class="dropdown-divider my-1"></li>
                                 <li>
                                     <form method="POST" action="{{ url_for('admin.delete_nutrition_plan', plan_id=plan.id) }}" onsubmit="return confirm('¿Eliminar este plan?');">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                        <button type="submit" class="dropdown-item text-danger">
+                                        <button type="submit" class="dropdown-item py-2 text-danger">
                                             <i class="bi bi-trash me-2"></i>Eliminar
                                         </button>
                                     </form>
                                 </li>
                                 {% else %}
                                 <li>
-                                    <a class="dropdown-item" href="{{ url_for('nutrition.my_plans') }}">
+                                    <a class="dropdown-item py-2" href="{{ url_for('nutrition.my_plans') }}">
                                         <i class="bi bi-arrow-left me-2"></i>Mis Planes
                                     </a>
                                 </li>
