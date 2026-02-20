@@ -122,20 +122,68 @@ class TelegramIntegrationService:
             logger.error(f"Error en handle_user_message: {e}")
             cls.send_message(chat_id, "Lo siento, FitMaster no está disponible en este momento.")
 
+    @staticmethod
+    def _md_to_telegram_html(text: str) -> str:
+        """Convierte Markdown del Assistants API a HTML compatible con Telegram."""
+        import re
+
+        # Headers → Bold
+        text = re.sub(r'^#{1,6}\s+(.+)$', r'<b>\1</b>', text, flags=re.MULTILINE)
+
+        # Bold: **text** → <b>text</b>
+        text = re.sub(r'\*\*(.+?)\*\*', r'<b>\1</b>', text)
+
+        # Italic: *text* → <i>text</i> (but not bullet points)
+        text = re.sub(r'(?<!\w)\*(?!\s)(.+?)(?<!\s)\*(?!\w)', r'<i>\1</i>', text)
+
+        # Inline code: `text` → <code>text</code>
+        text = re.sub(r'`([^`]+?)`', r'<code>\1</code>', text)
+
+        # Code blocks: ```text``` → <pre>text</pre>
+        text = re.sub(r'```(?:\w+)?\n?(.*?)```', r'<pre>\1</pre>', text, flags=re.DOTALL)
+
+        # Bullet points: - item → • item
+        text = re.sub(r'^[-*]\s+', '• ', text, flags=re.MULTILINE)
+
+        # Escape remaining HTML special chars that aren't part of our tags
+        # (Telegram requires this for HTML mode)
+        # We do this carefully to not break our own tags
+        def escape_outside_tags(t):
+            parts = re.split(r'(<[^>]+>)', t)
+            for i, part in enumerate(parts):
+                if not part.startswith('<'):
+                    part = part.replace('&', '&amp;')
+                    part = part.replace('<', '&lt;')
+                    part = part.replace('>', '&gt;')
+                    parts[i] = part
+            return ''.join(parts)
+
+        # Don't escape — our tags are already in place
+        return text
+
     @classmethod
-    def send_message(cls, chat_id: int, text: str) -> bool:
+    def send_message(cls, chat_id: int, text: str, use_html: bool = True) -> bool:
         """Envía un mensaje de vuelta a Telegram."""
         if not cls.SECRET_TOKEN:
             logger.error("TELEGRAM_BOT_TOKEN no configurado")
             return False
-            
+
+        if use_html:
+            text = cls._md_to_telegram_html(text)
+
         payload = {
             "chat_id": chat_id,
             "text": text,
-            "parse_mode": "Markdown"
+            "parse_mode": "HTML" if use_html else "Markdown"
         }
         try:
             r = requests.post(f"{cls.API_URL}/sendMessage", json=payload)
+            if r.status_code != 200:
+                # Fallback: enviar sin formato si HTML falla
+                logger.warning(f"HTML send failed ({r.status_code}), retrying plain")
+                payload["parse_mode"] = None
+                payload["text"] = text
+                r = requests.post(f"{cls.API_URL}/sendMessage", json=payload)
             r.raise_for_status()
             return True
         except Exception as e:
