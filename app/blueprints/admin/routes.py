@@ -9,9 +9,9 @@ from app.models.nutrition_plan import NutritionPlan
 from app.models.training_plan import TrainingPlan
 from app.models.user import User
 from app.models.notification import Notification
+from app.models.telegram import LLMUsageLedger
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
-
 
 @admin_bp.route("/usage")
 @login_required
@@ -20,7 +20,7 @@ def usage_dashboard():
     if not current_user.is_admin:
         return render_template("errors/403.html"), 403
     
-    from app.models.telegram import LLMUsageLedger
+
     usage_records = LLMUsageLedger.query.order_by(LLMUsageLedger.created_at.desc()).limit(100).all()
     
     # Agrupar por usuario para resumen
