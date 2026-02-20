@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Uso de LLM - FitMaster Admin{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>📊 Control de Consumo LLM (OpenAI)</h2>
+        <div class="btn-group">
+            <button class="btn btn-outline-secondary btn-sm" onclick="location.reload()">
+                <i class="bi bi-arrow-clockwise"></i> Actualizar
+            </button>
+        </div>
+    </div>
+
+    <!-- Resumen de Costes -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white font-weight-bold">
+                    <i class="bi bi-pie-chart-fill text-primary"></i> Resumen por Usuario (Últimos registros)
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Usuario</th>
+                                    <th>Consultas</th>
+                                    <th>Tokens Totales</th>
+                                    <th>Coste Est. (USD)</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in summary %}
+                                <tr>
+                                    <td><strong>{{ item.username }}</strong></td>
+                                    <td>{{ item.records_count }}</td>
+                                    <td>{{ "{:,}".format(item.total_tokens) }}</td>
+                                    <td class="text-success font-weight-bold">${{ "{:.4f}".format(item.total_cost) }}
+                                    </td>
+                                    <td>
+                                        <a href="{{ url_for('admin.user_analyses', user_id=item.user_id) if item.user_id else '#' }}"
+                                            class="btn btn-sm btn-light">Ver Usuario</a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="text-center py-4">No hay datos de consumo registrados
+                                        todavía.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Historial Detallado -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-list-check text-primary"></i> Historial Reciente (Últimos 100)</span>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Usuario</th>
+                                    <th>Modelo</th>
+                                    <th>Tokens</th>
+                                    <th>Coste</th>
+                                    <th>Canal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for record in usage_records %}
+                                <tr>
+                                    <td><small>{{ record.created_at.strftime('%Y-%m-%d %H:%M') }}</small></td>
+                                    <td>{{ record.user_id }}</td>
+                                    <td><span class="badge bg-light text-dark">{{ record.model_name }}</span></td>
+                                    <td>{{ record.total_tokens }}</td>
+                                    <td>${{ "{:.5f}".format(record.cost_usd or 0) }}</td>
+                                    <td>
+                                        {% if record.channel == 'telegram' %}
+                                        <span class="badge bg-info text-dark"><i class="bi bi-telegram"></i>
+                                            Telegram</span>
+                                        {% else %}
+                                        <span class="badge bg-secondary text-white">{{ record.channel }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border-radius: 12px;
+    }
+
+    .card-header {
+        border-radius: 12px 12px 0 0 !important;
+        font-weight: 600;
+    }
+
+    .table thead th {
+        border-top: none;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        color: #6c757d;
+    }
+
+    .badge {
+        border-radius: 6px;
+    }
+</style>
+{% endblock %}

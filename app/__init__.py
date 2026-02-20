@@ -1,8 +1,8 @@
 # app/__init__.py
-import os # Importa os si no lo tienes
-from flask import Flask, jsonify, send_from_directory
+import os  # Importa os si no lo tienes
+from flask import Flask, send_from_directory
 from flask_bcrypt import Bcrypt
-from flask_cors import CORS # Importa CORS
+from flask_cors import CORS  # Importa CORS
 from flask_jwt_extended import JWTManager
 from flask_login import LoginManager
 from flask_migrate import Migrate
@@ -18,23 +18,24 @@ login_manager = LoginManager()
 bcrypt = Bcrypt()
 jwt = JWTManager()
 csrf = CSRFProtect()
-cors = CORS() # <--- 2. INICIALIZA CORS
-swagger = Swagger() # <--- 3. INICIALIZA Swagger
-mail = Mail() # <--- 4. INICIALIZA Mail
+cors = CORS()  # INICIALIZA CORS
+swagger = Swagger()  # INICIALIZA Swagger
+mail = Mail()  # INICIALIZA Mail
+
 
 def create_app(config_name="development"):
     app = Flask(__name__, template_folder="templates", static_folder="static")
 
     from app.config import config_by_name
     app.config.from_object(config_by_name[config_name])
-    
+
     # Configurar logging para producción
     import logging
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
-    
+
     # Aumentar límite de upload para videos (100MB)
     app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 
@@ -53,21 +54,21 @@ def create_app(config_name="development"):
         app,
         resources={
             # Permite a OpenAI leer el esquema OpenAPI generado por Flasgger
-            r"/apidocs/*": { # Flasgger sirve en /apidocs/ y /apidocs/openapi.json
-                "origins": ["https://chat.openai.com"], # Permite SOLO a OpenAI
+            r"/apidocs/*": {  # Flasgger sirve en /apidocs/ y /apidocs/openapi.json
+                "origins": ["https://chat.openai.com"],  # Permite SOLO a OpenAI
                 "methods": ["GET"],
                 "allow_headers": ["Content-Type"],
             },
             # Mantiene tu configuración API existente (puedes añadir OpenAI si es necesario)
             r"/api/*": {
                 "origins": [
-                    "http://localhost:3000", # Frontend local React
-                    "http://localhost:5173", # Frontend local Vite
-                    "http://localhost:5001", # Flask dev server
-                    "https://*.vercel.app", # Frontend Vercel
-                    "https://app.coachbodyfit360.com", # Producción
-                    "https://coachbodyfit360.com", # Dominio principal
-                    "https://chat.openai.com" # OpenAI Agent
+                    "http://localhost:3000",  # Frontend local React
+                    "http://localhost:5173",  # Frontend local Vite
+                    "http://localhost:5001",  # Flask dev server
+                    "https://*.vercel.app",  # Frontend Vercel
+                    "https://app.coachbodyfit360.com",  # Producción
+                    "https://coachbodyfit360.com",  # Dominio principal
+                    "https://chat.openai.com"  # OpenAI Agent
                 ],
                 "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
                 "allow_headers": ["Content-Type", "Authorization"],
@@ -78,7 +79,7 @@ def create_app(config_name="development"):
             #     "origins": "*" # O orígenes específicos
             # }
         },
-        supports_credentials=True # Habilita credenciales globalmente
+        supports_credentials=True  # Habilita credenciales globalmente
     )
 
     # ---> 5. INICIALIZA Swagger DESPUÉS de CORS <---
@@ -90,20 +91,14 @@ def create_app(config_name="development"):
     # IMPORTANTE: SQLAlchemy necesita que los modelos estén importados
     # ANTES de db.create_all() para que se registren en db.metadata
     with app.app_context():
-        # Importar TODOS los modelos para registrarlos en db.metadata
-        from app.models import (
-            User, Role, Permission,              # Autenticación
-            BiometricAnalysis, ContactMessage,   # Core
-            Notification,                        # Notificaciones
-            NutritionPlan, TrainingPlan,         # Planes
-            BlogPost, MediaFile                  # Blog y Media
-        )
-    
+        # Importar modelos para registrarlos en db.metadata y evitar errores de 'unused'
+        from app import models  # noqa: F401
+
     # ========================================================================
     # INICIALIZAR STORAGE SERVICE (S3)
     # ========================================================================
     from app.services.storage_service import get_storage_service
-    storage = get_storage_service(app)
+    get_storage_service(app)
 
     # Configurar Flask-Login
     login_manager.login_view = "auth.login"
@@ -112,8 +107,8 @@ def create_app(config_name="development"):
 
     @login_manager.user_loader
     def load_user(user_id):
-       from app.models.user import User
-       return User.query.get(int(user_id))
+        from app.models import User
+        return User.query.get(int(user_id))
 
     # Registrar Blueprints
     from app.blueprints.admin.routes import admin_bp
@@ -126,17 +121,19 @@ def create_app(config_name="development"):
     from app.blueprints.nutrition import nutrition_bp
     from app.blueprints.training import training_bp
     from app.blueprints.notifications import notifications_bp
+    from app.blueprints.integrations.routes import telegram_bp
 
     app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp, url_prefix = "/auth")
+    app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(bioanalyze_bp)
     app.register_blueprint(blog_bp)
     app.register_blueprint(nutrition_bp)
     app.register_blueprint(training_bp)
-    app.register_blueprint(api_bp, url_prefix = "/api/v1")
+    app.register_blueprint(api_bp, url_prefix="/api/v1")
     app.register_blueprint(contact_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(notifications_bp)
+    app.register_blueprint(telegram_bp, url_prefix="/integrations/telegram")
 
     # Registrar error handlers
     from app.middleware.error_handlers import register_error_handlers
@@ -144,42 +141,42 @@ def create_app(config_name="development"):
 
     # Jinja globals
     from datetime import datetime
-    app.jinja_env.globals.update(now = datetime.now)
-    
+    app.jinja_env.globals.update(now=datetime.now)
+
     # Filtro Markdown para renderizar MD en templates
     import mistune
     from markupsafe import Markup
-    
+
     def markdown_filter(text):
         """Convierte Markdown a HTML seguro"""
         if not text:
             return ""
-        
+
         # Si es una lista (JSON antiguo), convertir a texto formateado
         if isinstance(text, list):
             import json
             text = json.dumps(text, indent=2, ensure_ascii=False)
-        
+
         # Si no es string en este punto, convertir a string
         if not isinstance(text, str):
             text = str(text)
-        
+
         html = mistune.html(text)
         return Markup(html)
-    
+
     app.jinja_env.filters['markdown'] = markdown_filter
 
     @app.shell_context_processor
     def make_shell_context():
-       from app.models.user import Permission, Role, User
-       return {"db": db, "User": User, "Role": Role, "Permission": Permission}
+        from app.models import Permission, Role, User
+        return {"db": db, "User": User, "Role": Role, "Permission": Permission}
 
     @app.route('/favicon.ico')
     def favicon():
-       return send_from_directory(
-          os.path.join(app.root_path, 'static'),
-          'favicon.ico',
-          mimetype = 'image/vnd.microsoft.icon'
-          )
+        return send_from_directory(
+            os.path.join(app.root_path, 'static'),
+            'favicon.ico',
+            mimetype='image/vnd.microsoft.icon'
+        )
 
     return app

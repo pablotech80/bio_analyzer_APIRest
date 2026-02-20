@@ -13,6 +13,40 @@ from app.models.notification import Notification
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
 
+@admin_bp.route("/usage")
+@login_required
+def usage_dashboard():
+    """Dashboard de uso de tokens y costes de LLM (FitMaster)"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    from app.models.telegram import LLMUsageLedger
+    usage_records = LLMUsageLedger.query.order_by(LLMUsageLedger.created_at.desc()).limit(100).all()
+    
+    # Agrupar por usuario para resumen
+    summary_dict = {}
+    for record in usage_records:
+        user_id = record.user_id
+        if user_id not in summary_dict:
+            user = User.query.get(user_id)
+            summary_dict[user_id] = {
+                'username': user.username if user else f"User {user_id}",
+                'total_tokens': 0,
+                'total_cost': 0.0,
+                'records_count': 0
+            }
+        summary_dict[user_id]['total_tokens'] += record.total_tokens
+        summary_dict[user_id]['total_cost'] += (record.cost_usd or 0.0)
+        summary_dict[user_id]['records_count'] += 1
+        
+    return render_template(
+        "admin_usage_dashboard.html",
+        usage_records=usage_records,
+        summary=summary_dict.values()
+    )
+
+
+
 @admin_bp.route("/users")
 @login_required
 def users():

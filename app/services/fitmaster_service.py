@@ -3,8 +3,8 @@ import logging
 import os
 import re
 from typing import Dict, Optional
-
 from openai import OpenAI
+from app import db
 
 # Configurar logging
 logger = logging.getLogger(__name__)
@@ -106,6 +106,82 @@ class FitMasterService:
             return FitMasterService._get_fallback_response(
                 f"Error de conexión: {str(exc)}"
             )
+
+    @staticmethod
+    def chat_query(query: str, user_id: int, context: Optional[Dict] = None) -> str:
+        """
+        Maneja una consulta de chat genérica incorporando memoria de mensajes previos (RAG).
+        """
+        if not client:
+            return "Lo siento, el motor de inteligencia artificial no está configurado."
+
+        # 1. Recuperar historial reciente (Memoria de 3 capas)
+        from app.models.telegram import ConversationMessage
+        history = ConversationMessage.query.filter_by(user_id=user_id).order_by(ConversationMessage.created_at.desc()).limit(10).all()
+        history = sorted(history, key=lambda x: x.created_at)
+
+        messages = [
+            {"role": "system", "content": "Eres FitMaster, una IA experta en fitness y nutrición. Responde de forma concisa, profesional y motivadora."},
+        ]
+
+        if context:
+            messages[0]["content"] += f" Contexto biométrico actual del cliente: {json.dumps(context, ensure_ascii=False)}"
+
+        # Añadir historial a los mensajes
+        for msg in history:
+            messages.append({"role": msg.role, "content": msg.content})
+
+        # Añadir pregunta actual
+        messages.append({"role": "user", "content": query})
+
+        try:
+            # Guardar pregunta del usuario
+            user_msg = ConversationMessage(user_id=user_id, role="user", content=query)
+            db.session.add(user_msg)
+            
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=0.7,
+                max_tokens=600,
+            )
+            reply = response.choices[0].message.content
+            
+            # Guardar respuesta del asistente
+            asst_msg = ConversationMessage(user_id=user_id, role="assistant", content=reply)
+            db.session.add(asst_msg)
+
+            # Registrar consumo
+            FitMasterService._record_usage(user_id, "gpt-4o-mini", response.usage)
+            
+            db.session.commit()
+            return reply
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Error en FitMaster chat_query: {e}")
+            return "Lo siento, tuve un problema al procesar tu consulta estratégica."
+
+    @staticmethod
+    def _record_usage(user_id: int, model: str, usage_obj) -> None:
+        """Registra el consumo de tokens en el ledger."""
+        from app.models.telegram import LLMUsageLedger
+        try:
+            # Costes gpt-4o-mini (estimados: $0.15/1M input, $0.60/1M output)
+            prompt_cost = (usage_obj.prompt_tokens / 1000000) * 0.15
+            completion_cost = (usage_obj.completion_tokens / 1000000) * 0.60
+            
+            entry = LLMUsageLedger(
+                user_id=user_id,
+                model_name=model,
+                prompt_tokens=usage_obj.prompt_tokens,
+                completion_tokens=usage_obj.completion_tokens,
+                total_tokens=usage_obj.total_tokens,
+                cost_usd=prompt_cost + completion_cost,
+                channel="telegram"
+            )
+            db.session.add(entry)
+        except Exception as e:
+            logger.error(f"Error registrando uso de tokens: {e}")
 
     @staticmethod
     def _build_prompt(bio_payload: Dict) -> str:

@@ -6,6 +6,7 @@ from app.models.nutrition_plan import NutritionPlan
 from app.models.blog_post import BlogPost
 from app.models.media_file import MediaFile
 from app.models.training_plan import TrainingPlan
+from app.models.telegram import UserTelegramLink, TelegramLinkToken, ConversationMessage, LLMUsageLedger
 from app.models.user import Permission, Role, User
 
-__all__ = ["User", "Role", "Permission", "BiometricAnalysis", "ContactMessage", "Notification", "NutritionPlan", "TrainingPlan", "BlogPost", "MediaFile"]
+__all__ = ["User", "Role", "Permission", "BiometricAnalysis", "ContactMessage", "Notification", "NutritionPlan", "TrainingPlan", "BlogPost", "MediaFile", "UserTelegramLink", "TelegramLinkToken", "ConversationMessage", "LLMUsageLedger"]
