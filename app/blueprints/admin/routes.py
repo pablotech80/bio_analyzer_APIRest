@@ -9,7 +9,7 @@ from app.models.nutrition_plan import NutritionPlan
 from app.models.training_plan import TrainingPlan
 from app.models.user import User
 from app.models.notification import Notification
-from app.models.telegram import LLMUsageLedger
+from app.models.telegram import LLMUsageLedger, TelegramLinkToken
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -45,6 +45,27 @@ def usage_dashboard():
         usage_records=usage_records,
         summary=summary_dict.values()
     )
+
+
+@admin_bp.route("/users/<int:user_id>/telegram/token", methods=["POST"])
+@login_required
+def generate_telegram_token(user_id):
+    """Genera un nuevo token de vinculación de Telegram para un usuario"""
+    if not current_user.is_admin:
+        return render_template("errors/403.html"), 403
+    
+    user = User.query.get_or_404(user_id)
+    
+    # Eliminar tokens anteriores no usados
+    TelegramLinkToken.query.filter_by(user_id=user.id, used_at=None).delete()
+    
+    # Crear nuevo token (15 minutos de validez por defecto)
+    new_token = TelegramLinkToken(user_id=user.id)
+    db.session.add(new_token)
+    db.session.commit()
+    
+    flash(f"Token de Telegram generado para {user.first_name}: {new_token.token}", "telegram_token")
+    return redirect(url_for('admin.user_analyses', user_id=user.id))
 
 
 
