@@ -14,6 +14,7 @@ class UserTelegramLink(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
     telegram_user_id = db.Column(db.String(50), nullable=False, unique=True, index=True)
     telegram_chat_id = db.Column(db.String(50), nullable=True)
+    openai_thread_id = db.Column(db.String(100), nullable=True)
 
     status = db.Column(db.Enum("pending", "verified", "revoked", name="telegram_link_status"), default="verified")
 

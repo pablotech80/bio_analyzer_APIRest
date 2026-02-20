@@ -107,81 +107,130 @@ class FitMasterService:
                 f"Error de conexión: {str(exc)}"
             )
 
+    # ── Assistants API config ──────────────────────────────────
+    ASSISTANT_ID = os.getenv(
+        "OPENAI_ASSISTANT_ID", "asst_h2VGSmUO36ONu9Wf8am36oBT"
+    )
+
     @staticmethod
     def chat_query(query: str, user_id: int, context: Optional[Dict] = None) -> str:
         """
-        Maneja una consulta de chat genérica incorporando memoria de mensajes previos (RAG).
+        Maneja consultas via Assistants API con threads persistentes y RAG.
         """
         if not client:
             return "Lo siento, el motor de inteligencia artificial no está configurado."
 
-        # 1. Recuperar historial reciente (Memoria de 3 capas)
-        from app.models.telegram import ConversationMessage
-        history = ConversationMessage.query.filter_by(user_id=user_id).order_by(ConversationMessage.created_at.desc()).limit(10).all()
-        history = sorted(history, key=lambda x: x.created_at)
-
-        messages = [
-            {"role": "system", "content": "Eres FitMaster, una IA experta en fitness y nutrición. Responde de forma concisa, profesional y motivadora."},
-        ]
-
-        if context:
-            messages[0]["content"] += f" Contexto biométrico actual del cliente: {json.dumps(context, ensure_ascii=False)}"
-
-        # Añadir historial a los mensajes
-        for msg in history:
-            messages.append({"role": msg.role, "content": msg.content})
-
-        # Añadir pregunta actual
-        messages.append({"role": "user", "content": query})
+        from app.models.telegram import UserTelegramLink
+        link = UserTelegramLink.query.filter_by(user_id=user_id).first()
+        if not link:
+            return "No se encontró tu vinculación de Telegram."
 
         try:
-            # Guardar pregunta del usuario
-            user_msg = ConversationMessage(user_id=user_id, role="user", content=query)
-            db.session.add(user_msg)
-            
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=messages,
-                temperature=0.7,
-                max_tokens=600,
-            )
-            reply = response.choices[0].message.content
-            
-            # Guardar respuesta del asistente
-            asst_msg = ConversationMessage(user_id=user_id, role="assistant", content=reply)
-            db.session.add(asst_msg)
+            # 1. Obtener o crear Thread
+            thread_id = link.openai_thread_id
+            if not thread_id:
+                thread = client.beta.threads.create()
+                thread_id = thread.id
+                link.openai_thread_id = thread_id
+                db.session.commit()
+                logger.info(f"Nuevo thread creado para user {user_id}: {thread_id}")
 
-            # Registrar consumo
-            FitMasterService._record_usage(user_id, "gpt-4o-mini", response.usage)
-            
-            db.session.commit()
+                # Inyectar contexto biométrico como primer mensaje del thread
+                if context:
+                    context_msg = (
+                        "CONTEXTO DEL BACKEND CoachBodyFit360 — "
+                        "Estos son los datos biométricos actuales del cliente. "
+                        "Úsalos como fuente de verdad, NO pidas al usuario "
+                        "que los repita:\n\n"
+                        f"{json.dumps(context, ensure_ascii=False, indent=2)}"
+                    )
+                    client.beta.threads.messages.create(
+                        thread_id=thread_id,
+                        role="user",
+                        content=context_msg,
+                    )
+                    # Run rápido para que el asistente "ingiera" el contexto
+                    init_run = client.beta.threads.runs.create_and_poll(
+                        thread_id=thread_id,
+                        assistant_id=FitMasterService.ASSISTANT_ID,
+                        timeout=30,
+                    )
+                    logger.info(f"Context ingestion run status: {init_run.status}")
+
+            # 2. Enviar mensaje del usuario al thread
+            client.beta.threads.messages.create(
+                thread_id=thread_id,
+                role="user",
+                content=query,
+            )
+
+            # 3. Ejecutar el Assistant y esperar respuesta
+            run = client.beta.threads.runs.create_and_poll(
+                thread_id=thread_id,
+                assistant_id=FitMasterService.ASSISTANT_ID,
+                timeout=60,
+            )
+
+            if run.status != "completed":
+                logger.error(f"Assistant run failed: {run.status} — {run.last_error}")
+                return "Lo siento, tuve un problema al procesar tu consulta."
+
+            # 4. Extraer el último mensaje del asistente
+            messages = client.beta.threads.messages.list(
+                thread_id=thread_id, order="desc", limit=1
+            )
+            reply = ""
+            for msg in messages.data:
+                if msg.role == "assistant":
+                    for block in msg.content:
+                        if block.type == "text":
+                            reply = block.text.value
+                    break
+
+            if not reply:
+                reply = "No obtuve una respuesta válida. Intenta de nuevo."
+
+            # 5. Limpiar anotaciones de file_search (citas [0†source])
+            import re
+            reply = re.sub(r'【\d+[:\u2020†].*?】', '', reply).strip()
+
+            # 6. Registrar consumo
+            if run.usage:
+                FitMasterService._record_usage(user_id, "assistants-api", run.usage)
+
             return reply
+
         except Exception as e:
-            db.session.rollback()
-            logger.error(f"Error en FitMaster chat_query: {e}")
-            return "Lo siento, tuve un problema al procesar tu consulta estratégica."
+            logger.error(f"Error en FitMaster Assistants chat_query: {e}")
+            return "Lo siento, tuve un problema al procesar tu consulta."
 
     @staticmethod
     def _record_usage(user_id: int, model: str, usage_obj) -> None:
         """Registra el consumo de tokens en el ledger."""
         from app.models.telegram import LLMUsageLedger
         try:
-            # Costes gpt-4o-mini (estimados: $0.15/1M input, $0.60/1M output)
-            prompt_cost = (usage_obj.prompt_tokens / 1000000) * 0.15
-            completion_cost = (usage_obj.completion_tokens / 1000000) * 0.60
-            
+            prompt_tokens = getattr(usage_obj, 'prompt_tokens', 0) or 0
+            completion_tokens = getattr(usage_obj, 'completion_tokens', 0) or 0
+            total_tokens = getattr(usage_obj, 'total_tokens', 0) or 0
+
+            # Costes estimados gpt-4o-mini via Assistants
+            prompt_cost = (prompt_tokens / 1_000_000) * 0.15
+            completion_cost = (completion_tokens / 1_000_000) * 0.60
+
             entry = LLMUsageLedger(
                 user_id=user_id,
                 model_name=model,
-                prompt_tokens=usage_obj.prompt_tokens,
-                completion_tokens=usage_obj.completion_tokens,
-                total_tokens=usage_obj.total_tokens,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                total_tokens=total_tokens,
                 cost_usd=prompt_cost + completion_cost,
                 channel="telegram"
             )
             db.session.add(entry)
+            db.session.commit()
         except Exception as e:
             logger.error(f"Error registrando uso de tokens: {e}")
+
 
     @staticmethod
     def _build_prompt(bio_payload: Dict) -> str:
