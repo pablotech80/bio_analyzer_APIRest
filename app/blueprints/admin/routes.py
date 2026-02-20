@@ -31,6 +31,7 @@ def usage_dashboard():
             user = User.query.get(user_id)
             summary_dict[user_id] = {
                 'username': user.username if user else f"User {user_id}",
+                'user_id': user_id,
                 'total_tokens': 0,
                 'total_cost': 0.0,
                 'records_count': 0
