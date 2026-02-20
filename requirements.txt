@@ -62,3 +62,4 @@ Pillow==11.0.0
 black==25.9.0
 flake8==7.3.0
 isort==7.0.0
+requests==2.31.0
