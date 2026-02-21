@@ -113,10 +113,40 @@ class TelegramIntegrationService:
             if last_analysis:
                 context = last_analysis.to_dict(include_fitmaster=False)
             
-            # Usar el nuevo método chat_query con memoria multi-tenant
-            reply_text = FitMasterService.chat_query(text, user_id=link.user_id, context=context)
+            # Variables para streaming
+            message_id = None
+            accumulated_text = ""
             
-            cls.send_message(chat_id, reply_text)
+            def stream_callback(chunk: str):
+                """Callback para enviar chunks en tiempo real a Telegram."""
+                nonlocal message_id, accumulated_text
+                accumulated_text += chunk
+                
+                # Enviar/actualizar mensaje cada 50 caracteres o al final
+                if len(accumulated_text) >= 50 or chunk == "":
+                    if message_id:
+                        # Actualizar mensaje existente
+                        cls.edit_message(chat_id, message_id, accumulated_text)
+                    else:
+                        # Enviar primer mensaje
+                        msg_id = cls.send_message_get_id(chat_id, accumulated_text)
+                        if msg_id:
+                            message_id = msg_id
+            
+            # Usar chat_query con streaming
+            reply_text = FitMasterService.chat_query(
+                text, 
+                user_id=link.user_id, 
+                context=context,
+                stream_callback=stream_callback
+            )
+            
+            # Enviar mensaje final si no se envió nada por streaming
+            if not message_id:
+                cls.send_message(chat_id, reply_text)
+            elif accumulated_text != reply_text:
+                # Actualizar con el texto final limpio
+                cls.edit_message(chat_id, message_id, reply_text)
             
         except Exception as e:
             logger.error(f"Error en handle_user_message: {e}")
@@ -188,6 +218,56 @@ class TelegramIntegrationService:
             return True
         except Exception as e:
             logger.error(f"Error enviando mensaje a Telegram: {e}")
+            return False
+
+    @classmethod
+    def send_message_get_id(cls, chat_id: int, text: str, use_html: bool = True) -> int:
+        """Envía un mensaje y devuelve el message_id para poder editarlo después."""
+        if not cls.SECRET_TOKEN:
+            logger.error("TELEGRAM_BOT_TOKEN no configurado")
+            return None
+
+        if use_html:
+            text = cls._md_to_telegram_html(text)
+
+        payload = {
+            "chat_id": chat_id,
+            "text": text,
+            "parse_mode": "HTML" if use_html else None
+        }
+        try:
+            r = requests.post(f"{cls.API_URL}/sendMessage", json=payload)
+            if r.status_code == 200:
+                return r.json().get("result", {}).get("message_id")
+            else:
+                logger.warning(f"Failed to send message: {r.status_code}")
+                return None
+        except Exception as e:
+            logger.error(f"Error enviando mensaje a Telegram: {e}")
+            return None
+
+    @classmethod
+    def edit_message(cls, chat_id: int, message_id: int, text: str, use_html: bool = True) -> bool:
+        """Edita un mensaje existente (útil para streaming)."""
+        if not cls.SECRET_TOKEN:
+            logger.error("TELEGRAM_BOT_TOKEN no configurado")
+            return False
+
+        if use_html:
+            text = cls._md_to_telegram_html(text)
+
+        payload = {
+            "chat_id": chat_id,
+            "message_id": message_id,
+            "text": text,
+            "parse_mode": "HTML" if use_html else None
+        }
+        try:
+            r = requests.post(f"{cls.API_URL}/editMessageText", json=payload)
+            r.raise_for_status()
+            return True
+        except Exception as e:
+            logger.error(f"Error editando mensaje en Telegram: {e}")
             return False
 
     @classmethod

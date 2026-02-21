@@ -113,9 +113,15 @@ class FitMasterService:
     )
 
     @staticmethod
-    def chat_query(query: str, user_id: int, context: Optional[Dict] = None) -> str:
+    def chat_query(query: str, user_id: int, context: Optional[Dict] = None, stream_callback=None) -> str:
         """
         Maneja consultas via Assistants API con threads persistentes y RAG.
+        
+        Args:
+            query: Consulta del usuario
+            user_id: ID del usuario
+            context: Contexto biométrico opcional
+            stream_callback: Función callback para streaming (recibe chunks de texto)
         """
         if not client:
             return "Lo siento, el motor de inteligencia artificial no está configurado."
@@ -164,81 +170,153 @@ class FitMasterService:
                 content=query,
             )
 
-            # 3. Ejecutar el Assistant y esperar respuesta
-            run = client.beta.threads.runs.create_and_poll(
-                thread_id=thread_id,
-                assistant_id=FitMasterService.ASSISTANT_ID,
-                timeout=60,
-            )
-
-            # 3.5. Manejar tool calls (FASE 3: Agent Tools)
-            while run.status == 'requires_action':
-                tool_calls = run.required_action.submit_tool_outputs.tool_calls
-                tool_outputs = []
-                
-                for tool_call in tool_calls:
-                    function_name = tool_call.function.name
-                    arguments = json.loads(tool_call.function.arguments)
-                    
-                    logger.info(f"Asistente llamando a función: {function_name} con argumentos: {arguments}")
-                    
-                    try:
-                        # Despachador de funciones
-                        if function_name == "get_user_history":
-                            output = FitMasterService._tool_get_user_history(user_id, arguments)
-                        elif function_name == "get_current_plans":
-                            output = FitMasterService._tool_get_current_plans(user_id)
-                        else:
-                            output = json.dumps({"error": f"Unknown function: {function_name}"})
-                            
-                    except Exception as e:
-                        logger.error(f"Error ejecutando tool {function_name}: {e}")
-                        output = json.dumps({"error": str(e)})
-                        
-                    tool_outputs.append({
-                        "tool_call_id": tool_call.id,
-                        "output": output
-                    })
-                
-                # Enviar los resultados de las tools al Assistant
-                run = client.beta.threads.runs.submit_tool_outputs_and_poll(
+            # 3. Ejecutar el Assistant con streaming si hay callback
+            if stream_callback:
+                return FitMasterService._handle_streaming_run(
+                    thread_id, user_id, stream_callback
+                )
+            else:
+                # Modo sin streaming (polling)
+                run = client.beta.threads.runs.create_and_poll(
                     thread_id=thread_id,
-                    run_id=run.id,
-                    tool_outputs=tool_outputs,
+                    assistant_id=FitMasterService.ASSISTANT_ID,
+                    timeout=60,
                 )
 
-            if run.status != "completed":
-                logger.error(f"Assistant run failed: {run.status} — {run.last_error}")
-                return "Lo siento, tuve un problema al procesar tu consulta."
+                # 3.5. Manejar tool calls (FASE 3: Agent Tools)
+                while run.status == 'requires_action':
+                    tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                    tool_outputs = []
+                    
+                    for tool_call in tool_calls:
+                        function_name = tool_call.function.name
+                        arguments = json.loads(tool_call.function.arguments)
+                        
+                        logger.info(f"Asistente llamando a función: {function_name} con argumentos: {arguments}")
+                        
+                        try:
+                            # Despachador de funciones
+                            if function_name == "get_user_history":
+                                output = FitMasterService._tool_get_user_history(user_id, arguments)
+                            elif function_name == "get_current_plans":
+                                output = FitMasterService._tool_get_current_plans(user_id)
+                            else:
+                                output = json.dumps({"error": f"Unknown function: {function_name}"})
+                                
+                        except Exception as e:
+                            logger.error(f"Error ejecutando tool {function_name}: {e}")
+                            output = json.dumps({"error": str(e)})
+                            
+                        tool_outputs.append({
+                            "tool_call_id": tool_call.id,
+                            "output": output
+                        })
+                    
+                    # Enviar los resultados de las tools al Assistant
+                    run = client.beta.threads.runs.submit_tool_outputs_and_poll(
+                        thread_id=thread_id,
+                        run_id=run.id,
+                        tool_outputs=tool_outputs,
+                    )
 
-            # 4. Extraer el último mensaje del asistente
-            messages = client.beta.threads.messages.list(
-                thread_id=thread_id, order="desc", limit=1
-            )
-            reply = ""
-            for msg in messages.data:
-                if msg.role == "assistant":
-                    for block in msg.content:
-                        if block.type == "text":
-                            reply = block.text.value
-                    break
+                if run.status != "completed":
+                    logger.error(f"Assistant run failed: {run.status} — {run.last_error}")
+                    return "Lo siento, tuve un problema al procesar tu consulta."
 
-            if not reply:
-                reply = "No obtuve una respuesta válida. Intenta de nuevo."
+                # 4. Extraer el último mensaje del asistente
+                messages = client.beta.threads.messages.list(
+                    thread_id=thread_id, order="desc", limit=1
+                )
+                reply = ""
+                for msg in messages.data:
+                    if msg.role == "assistant":
+                        for block in msg.content:
+                            if block.type == "text":
+                                reply = block.text.value
+                        break
 
-            # 5. Limpiar anotaciones de file_search (citas [0†source])
-            import re
-            reply = re.sub(r'【\d+[:\u2020†].*?】', '', reply).strip()
+                if not reply:
+                    reply = "No obtuve una respuesta válida. Intenta de nuevo."
 
-            # 6. Registrar consumo
-            if run.usage:
-                FitMasterService._record_usage(user_id, "assistants-api", run.usage)
+                # 5. Limpiar anotaciones de file_search (citas [0†source])
+                import re
+                reply = re.sub(r'【\d+[:\u2020†].*?】', '', reply).strip()
 
-            return reply
+                # 6. Registrar consumo
+                if run.usage:
+                    FitMasterService._record_usage(user_id, "assistants-api", run.usage)
+
+                return reply
 
         except Exception as e:
             logger.error(f"Error en FitMaster Assistants chat_query: {e}")
             return "Lo siento, tuve un problema al procesar tu consulta."
+
+    @staticmethod
+    def _handle_streaming_run(thread_id: str, user_id: int, stream_callback) -> str:
+        """
+        Maneja la ejecución del assistant con streaming.
+        
+        Args:
+            thread_id: ID del thread de OpenAI
+            user_id: ID del usuario para tool calls
+            stream_callback: Función que recibe chunks de texto
+        
+        Returns:
+            Respuesta completa del asistente
+        """
+        full_response = ""
+        
+        with client.beta.threads.runs.stream(
+            thread_id=thread_id,
+            assistant_id=FitMasterService.ASSISTANT_ID,
+        ) as stream:
+            for event in stream:
+                # Text delta events (chunks de respuesta)
+                if event.event == 'thread.message.delta':
+                    for content in event.data.delta.content:
+                        if hasattr(content, 'text') and hasattr(content.text, 'value'):
+                            chunk = content.text.value
+                            full_response += chunk
+                            if stream_callback:
+                                stream_callback(chunk)
+                
+                # Tool call events
+                elif event.event == 'thread.run.requires_action':
+                    run_id = event.data.id
+                    tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
+                    tool_outputs = []
+                    
+                    for tool_call in tool_calls:
+                        function_name = tool_call.function.name
+                        arguments = json.loads(tool_call.function.arguments)
+                        
+                        logger.info(f"[Stream] Tool call: {function_name}")
+                        
+                        try:
+                            if function_name == "get_user_history":
+                                output = FitMasterService._tool_get_user_history(user_id, arguments)
+                            elif function_name == "get_current_plans":
+                                output = FitMasterService._tool_get_current_plans(user_id)
+                            else:
+                                output = json.dumps({"error": f"Unknown function: {function_name}"})
+                        except Exception as e:
+                            logger.error(f"Error en tool {function_name}: {e}")
+                            output = json.dumps({"error": str(e)})
+                        
+                        tool_outputs.append({
+                            "tool_call_id": tool_call.id,
+                            "output": output
+                        })
+                    
+                    # Submit tool outputs y continuar el stream
+                    stream.submit_tool_outputs(tool_outputs)
+        
+        # Limpiar anotaciones
+        import re
+        full_response = re.sub(r'【\d+[:\u2020†].*?】', '', full_response).strip()
+        
+        return full_response if full_response else "No obtuve una respuesta válida."
 
     @staticmethod
     def _record_usage(user_id: int, model: str, usage_obj) -> None:
@@ -273,7 +351,7 @@ class FitMasterService:
         """
         Lee el prompt base desde fitmaster_prompt.txt y lo formatea con los datos biométricos.
         """
-        prompt_path = os.path.join(os.path.dirname(__file__), "fitmaster_prompt.txt")
+        prompt_path = os.path.join(os.path.dirname(__file__), "fitmaster_prompt.yaml")
         try:
             with open(prompt_path, "r", encoding="utf-8") as f:
                 prompt_template = f.read()
