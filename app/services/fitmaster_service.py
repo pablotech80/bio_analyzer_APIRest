@@ -259,74 +259,83 @@ class FitMasterService:
     @staticmethod
     def _handle_streaming_run(thread_id: str, user_id: int, stream_callback) -> str:
         """
-        Maneja la ejecución del assistant con streaming.
-        
-        Args:
-            thread_id: ID del thread de OpenAI
-            user_id: ID del usuario para tool calls
-            stream_callback: Función que recibe chunks de texto
-        
-        Returns:
-            Respuesta completa del asistente
+        Maneja la ejecución del assistant con streaming usando AssistantEventHandler.
         """
-        full_response = ""
+        from openai import AssistantEventHandler
+        from typing_extensions import override
+        
+        class FitMasterEventHandler(AssistantEventHandler):
+            def __init__(self, current_thread_id, current_user_id, callback):
+                super().__init__()
+                self.thread_id = current_thread_id
+                self.user_id = current_user_id
+                self.stream_callback = callback
+                self.full_response = ""
+
+            @override
+            def on_text_delta(self, delta, snapshot):
+                self.full_response += delta.value
+                if self.stream_callback:
+                    self.stream_callback(delta.value)
+
+            @override
+            def on_event(self, event):
+                if event.event == 'thread.run.requires_action':
+                    run_id = event.data.id
+                    tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
+                    tool_outputs = []
+                    
+                    for tool_call in tool_calls:
+                        function_name = tool_call.function.name
+                        arguments = json.loads(tool_call.function.arguments)
+                        
+                        logger.info(f"[Stream] Tool call: {function_name}")
+                        
+                        try:
+                            if function_name == "get_user_history":
+                                output = FitMasterService._tool_get_user_history(self.user_id, arguments)
+                            elif function_name == "get_current_plans":
+                                output = FitMasterService._tool_get_current_plans(self.user_id)
+                            else:
+                                output = json.dumps({"error": f"Unknown function: {function_name}"})
+                        except Exception as e:
+                            logger.error(f"Error en tool {function_name}: {e}", exc_info=True)
+                            output = json.dumps({"error": str(e)})
+                        
+                        if not isinstance(output, str):
+                            output = json.dumps(output)
+                            
+                        tool_outputs.append({
+                            "tool_call_id": tool_call.id,
+                            "output": output
+                        })
+                    
+                    # Submit tool outputs using a new stream
+                    with client.beta.threads.runs.submit_tool_outputs_stream(
+                        thread_id=self.thread_id,
+                        run_id=run_id,
+                        tool_outputs=tool_outputs,
+                        event_handler=FitMasterEventHandler(self.thread_id, self.user_id, self.stream_callback),
+                    ) as stream:
+                        for _ in stream:
+                            pass
         
         try:
+            handler = FitMasterEventHandler(thread_id, user_id, stream_callback)
+            
             with client.beta.threads.runs.stream(
                 thread_id=thread_id,
                 assistant_id=FitMasterService.ASSISTANT_ID,
+                event_handler=handler,
             ) as stream:
-                for event in stream:
-                    # Text delta events (chunks de respuesta)
-                    if event.event == 'thread.message.delta':
-                        for content in event.data.delta.content:
-                            if hasattr(content, 'text') and hasattr(content.text, 'value'):
-                                chunk = content.text.value
-                                full_response += chunk
-                                if stream_callback:
-                                    stream_callback(chunk)
-                    
-                    # Tool call events
-                    elif event.event == 'thread.run.requires_action':
-                        run_id = event.data.id
-                        tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
-                        tool_outputs = []
-                        
-                        for tool_call in tool_calls:
-                            function_name = tool_call.function.name
-                            arguments = json.loads(tool_call.function.arguments)
-                            
-                            logger.info(f"[Stream] Tool call: {function_name}")
-                            
-                            try:
-                                if function_name == "get_user_history":
-                                    output = FitMasterService._tool_get_user_history(user_id, arguments)
-                                elif function_name == "get_current_plans":
-                                    output = FitMasterService._tool_get_current_plans(user_id)
-                                else:
-                                    output = json.dumps({"error": f"Unknown function: {function_name}"})
-                            except Exception as e:
-                                logger.error(f"Error en tool {function_name}: {e}", exc_info=True)
-                                output = json.dumps({"error": str(e)})
-                            
-                            # Validar que output es string (requerido por API de OpenAI)
-                            if not isinstance(output, str):
-                                output = json.dumps(output)
-                                
-                            tool_outputs.append({
-                                "tool_call_id": tool_call.id,
-                                "output": output
-                            })
-                        
-                        # Submit tool outputs y continuar el stream
-                        stream.submit_tool_outputs(tool_outputs)
+                stream.until_done()
             
             # Limpiar anotaciones
             import re
-            full_response = re.sub(r'【\d+[:\u2020†].*?】', '', full_response).strip()
+            final_text = re.sub(r'【\d+[:\u2020†].*?】', '', handler.full_response).strip()
             
-            return full_response if full_response else "No obtuve una respuesta válida."
-        
+            return final_text if final_text else "No obtuve una respuesta válida."
+            
         except Exception as e:
             logger.error(f"Error crítico en streaming: {type(e).__name__}: {e}", exc_info=True)
             raise
