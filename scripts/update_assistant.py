@@ -18,9 +18,13 @@ load_dotenv(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file_
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 ASSISTANT_ID = os.getenv("OPENAI_ASSISTANT_ID", "asst_h2VGSmUO36ONu9Wf8am36oBT")
+VECTOR_STORE_ID = os.getenv("OPENAI_VECTOR_STORE_ID", "vs_696e590964f081919aea03c44e93de54")
 
 # ── Tools Configuration ──────────────────────────────────────
 tools = [
+    {
+        "type": "file_search"
+    },
     {
         "type": "function",
         "function": {
@@ -73,6 +77,12 @@ CRITICAL RULE - READ CAREFULLY:
 YOUR CORE CAPABILITIES:
 - You have access to the user's complete biometric history via get_user_history()
 - You can view their REAL assigned nutrition and training plans via get_current_plans()
+- You have a knowledge base (file_search) with expert protocols and frameworks:
+  • Nutrition Hard Gate (boundaries and safety limits)
+  • Nutrition Boundaries & Habits (behavioral frameworks)
+  • Training Systems Knowledge (periodization, programming)
+  • Readaptation Protocols (injury recovery, return to training)
+  • FitMaster Behavioral Framework and Safety Guardrails
 - You provide personalized guidance based on ACTUAL user data, not generic advice
 
 COMMUNICATION GUIDELINES:
@@ -88,6 +98,8 @@ MANDATORY TOOL USAGE (YOU MUST FOLLOW THIS):
 3. User asks "¿Cómo va mi progreso?" → CALL get_user_history()
 4. User wants to compare analyses → CALL get_user_history(limit=3)
 5. User asks about Friday workout → CALL get_current_plans(), then check the actual training days
+6. User asks technical questions (periodization, injury recovery, nutrient timing) → USE file_search to consult knowledge base
+7. Use knowledge base to validate safety boundaries (e.g., extreme deficits, contraindicated exercises)
 
 RESPONSE PROTOCOL:
 1. Identify if question relates to plans or history
@@ -132,10 +144,14 @@ print(f"\n📋 Configuración:")
 print(f"   - Modelo: gpt-4o-mini")
 print(f"   - Temperatura: {model_params['temperature']}")
 print(f"   - Top P: {model_params['top_p']}")
-print(f"   - Tools: {len(tools)} funciones")
+print(f"   - Tools: {len(tools)} herramientas")
+print(f"   - Vector Store: {VECTOR_STORE_ID}")
 print(f"\n🔧 Herramientas configuradas:")
 for tool in tools:
-    print(f"   - {tool['function']['name']}")
+    if tool["type"] == "file_search":
+        print(f"   - file_search (RAG con base de conocimiento)")
+    else:
+        print(f"   - {tool['function']['name']}")
 
 try:
     assistant = client.beta.assistants.update(
@@ -143,12 +159,18 @@ try:
         tools=tools,
         instructions=instructions,
         temperature=model_params["temperature"],
-        top_p=model_params["top_p"]
+        top_p=model_params["top_p"],
+        tool_resources={
+            "file_search": {
+                "vector_store_ids": [VECTOR_STORE_ID]
+            }
+        }
     )
     print(f"\n✅ Asistente actualizado exitosamente")
     print(f"   ID: {assistant.id}")
     print(f"   Nombre: {assistant.name}")
     print(f"   Modelo: {assistant.model}")
+    print(f"   Vector Store asociado: {VECTOR_STORE_ID}")
 except Exception as e:
     print(f"\n❌ Error actualizando asistente: {e}")
     sys.exit(1)
