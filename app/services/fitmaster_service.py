@@ -356,9 +356,14 @@ class FitMasterService:
         """Registra el consumo de tokens en el ledger."""
         from app.models.telegram import LLMUsageLedger
         try:
-            prompt_tokens = getattr(usage_obj, 'prompt_tokens', 0) or 0
-            completion_tokens = getattr(usage_obj, 'completion_tokens', 0) or 0
-            total_tokens = getattr(usage_obj, 'total_tokens', 0) or 0
+            if isinstance(usage_obj, dict):
+                prompt_tokens = usage_obj.get('prompt_tokens', 0) or 0
+                completion_tokens = usage_obj.get('completion_tokens', 0) or 0
+                total_tokens = usage_obj.get('total_tokens', 0) or 0
+            else:
+                prompt_tokens = getattr(usage_obj, 'prompt_tokens', 0) or 0
+                completion_tokens = getattr(usage_obj, 'completion_tokens', 0) or 0
+                total_tokens = getattr(usage_obj, 'total_tokens', 0) or 0
 
             # Costes estimados gpt-4o-mini
             prompt_cost = (prompt_tokens / 1_000_000) * 0.15
