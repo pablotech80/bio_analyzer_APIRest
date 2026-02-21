@@ -111,7 +111,11 @@ class TelegramIntegrationService:
             
             context = {}
             if last_analysis:
+                # Ocultar intencionalmente fitmaster_data del contexto para evitar que el agente lea planes viejos/sugeridos
                 context = last_analysis.to_dict(include_fitmaster=False)
+                # Asegurar que fitmaster_data no esté presente incluso si to_dict falló en excluirlo
+                if 'fitmaster_data' in context:
+                    del context['fitmaster_data']
             
             # Variables para streaming
             message_id = None
