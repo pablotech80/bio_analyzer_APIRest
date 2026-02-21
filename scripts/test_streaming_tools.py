@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Script para probar el streaming con tools y diagnosticar el BadRequestError
+Test de la nueva implementación de streaming con tool calls usando _process_stream recursivo.
 """
 import os
 import sys
@@ -15,76 +15,74 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 ASSISTANT_ID = os.getenv("OPENAI_ASSISTANT_ID", "asst_h2VGSmUO36ONu9Wf8am36oBT")
 
 print("=" * 60)
-print("TEST: Probando tool calls en streaming")
+print("TEST: Nueva implementación _process_stream con tool calls")
 print("=" * 60)
+
+full_response_container = {"text": ""}
+
+def _execute_tools(tool_calls, thread_id):
+    tool_outputs = []
+    for tool_call in tool_calls:
+        function_name = tool_call.function.name
+        print(f"\n   [TOOL] Ejecutando: {function_name}")
+        output = json.dumps({
+            "status": "success",
+            "data": {
+                "training_plan": {
+                    "title": "Powerbuilding TEST",
+                    "frequency": "5 días",
+                    "workouts": [{"day": "Viernes", "name": "Piernas", "exercises": [{"name": "Sentadilla", "sets": 5, "reps": "5"}]}]
+                }
+            }
+        })
+        tool_outputs.append({"tool_call_id": tool_call.id, "output": output})
+    return tool_outputs
+
+def _process_stream(stream_obj, thread_id):
+    for event in stream_obj:
+        if event.event == 'thread.message.delta':
+            for content in event.data.delta.content:
+                if hasattr(content, 'text') and hasattr(content.text, 'value'):
+                    chunk = content.text.value
+                    full_response_container["text"] += chunk
+                    print(chunk, end='', flush=True)
+
+        elif event.event == 'thread.run.requires_action':
+            run_id = event.data.id
+            tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
+            tool_outputs = _execute_tools(tool_calls, thread_id)
+
+            print(f"\n   [STREAM] Abriendo sub-stream para tool outputs...")
+            with client.beta.threads.runs.submit_tool_outputs_stream(
+                thread_id=thread_id,
+                run_id=run_id,
+                tool_outputs=tool_outputs,
+            ) as tool_stream:
+                _process_stream(tool_stream, thread_id)
 
 try:
     thread = client.beta.threads.create()
-    print(f"✅ Thread creado: {thread.id}")
-    
-    # Mensaje que fuerza una tool call
-    message = client.beta.threads.messages.create(
+    print(f"✅ Thread: {thread.id}")
+
+    client.beta.threads.messages.create(
         thread_id=thread.id,
         role="user",
         content="Consulta mi entreno del viernes"
     )
-    print(f"✅ Mensaje enviado")
-    
-    print("\n📡 Iniciando streaming...")
-    full_response = ""
-    
+    print("✅ Mensaje enviado\n📡 Streaming...\n")
+
     with client.beta.threads.runs.stream(
         thread_id=thread.id,
         assistant_id=ASSISTANT_ID,
     ) as stream:
-        for event in stream:
-            print(f"   Event: {event.event}")
-            
-            if event.event == 'thread.message.delta':
-                for content in event.data.delta.content:
-                    if hasattr(content, 'text') and hasattr(content.text, 'value'):
-                        chunk = content.text.value
-                        full_response += chunk
-                        print(f"   Chunk: {chunk}", end='', flush=True)
-                        
-            elif event.event == 'thread.run.requires_action':
-                print("\n   [!] Requires Action Event")
-                run_id = event.data.id
-                tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
-                tool_outputs = []
-                
-                for tool_call in tool_calls:
-                    print(f"   [!] Tool call id: {tool_call.id}, name: {tool_call.function.name}")
-                    
-                    # Simular la respuesta de la tool
-                    output = json.dumps({
-                        "status": "success", 
-                        "data": {
-                            "training_plan": {
-                                "title": "TEST PLAN",
-                                "frequency": "5 days",
-                                "workouts": []
-                            }
-                        }
-                    })
-                    
-                    tool_outputs.append({
-                        "tool_call_id": tool_call.id,
-                        "output": output
-                    })
-                
-                print("   [!] Submitting tool outputs...")
-                try:
-                    # El error BadRequestError probablemente ocurre aquí
-                    stream.submit_tool_outputs(tool_outputs)
-                    print("   [!] Outputs submitted successfully")
-                except Exception as e:
-                    print(f"\n❌ Error enviando tool outputs: {type(e).__name__}: {e}")
-                    raise
-    
-    print(f"\n\n✅ Respuesta completa: {full_response[:100]}...")
-    
+        _process_stream(stream, thread.id)
+
+    print(f"\n\n✅ Respuesta completa ({len(full_response_container['text'])} chars)")
+    print(f"📝 {full_response_container['text'][:200]}...")
+
 except Exception as e:
-    print(f"\n❌ Error general: {type(e).__name__}: {e}")
+    import traceback
+    print(f"\n❌ Error: {type(e).__name__}: {e}")
+    traceback.print_exc()
 
 print("\n" + "=" * 60)
