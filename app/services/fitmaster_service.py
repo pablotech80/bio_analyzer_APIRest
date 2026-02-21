@@ -78,11 +78,22 @@ class FitMasterService:
             )
 
             # Registrar consumo si hay usage disponible
+            logger.info(f"Verificando registro de tokens - hasattr(response, 'usage'): {hasattr(response, 'usage')}")
+            if hasattr(response, 'usage'):
+                logger.info(f"response.usage existe: {response.usage}")
+            
             if hasattr(response, 'usage') and response.usage:
                 # Extraemos user_id del payload biométrico si existe para poder vincularlo
                 user_id = bio_payload.get('user_id', 0)
+                logger.info(f"user_id extraído del bio_payload: {user_id}")
                 if user_id > 0:
+                    logger.info(f"Registrando uso de tokens para user_id={user_id}, model={modelo_usado}")
                     FitMasterService._record_usage(user_id, modelo_usado, response.usage, channel="web")
+                    logger.info("✓ Tokens registrados exitosamente")
+                else:
+                    logger.warning(f"⚠️ user_id no válido en bio_payload: {user_id}")
+            else:
+                logger.warning("⚠️ response.usage no disponible o vacío")
 
             # Extraer y normalizar respuesta
             message = response.choices[0].message.content
@@ -356,6 +367,9 @@ class FitMasterService:
         """Registra el consumo de tokens en el ledger."""
         from app.models.telegram import LLMUsageLedger
         try:
+            logger.info(f"[_record_usage] Iniciando registro - user_id={user_id}, model={model}, channel={channel}")
+            logger.info(f"[_record_usage] Tipo de usage_obj: {type(usage_obj)}")
+            
             if isinstance(usage_obj, dict):
                 prompt_tokens = usage_obj.get('prompt_tokens', 0) or 0
                 completion_tokens = usage_obj.get('completion_tokens', 0) or 0
@@ -365,9 +379,13 @@ class FitMasterService:
                 completion_tokens = getattr(usage_obj, 'completion_tokens', 0) or 0
                 total_tokens = getattr(usage_obj, 'total_tokens', 0) or 0
 
+            logger.info(f"[_record_usage] Tokens extraídos - prompt: {prompt_tokens}, completion: {completion_tokens}, total: {total_tokens}")
+
             # Costes estimados gpt-4o-mini
             prompt_cost = (prompt_tokens / 1_000_000) * 0.15
             completion_cost = (completion_tokens / 1_000_000) * 0.60
+
+            logger.info(f"[_record_usage] Costes calculados - prompt: ${prompt_cost:.6f}, completion: ${completion_cost:.6f}")
 
             entry = LLMUsageLedger(
                 user_id=user_id,
@@ -380,8 +398,9 @@ class FitMasterService:
             )
             db.session.add(entry)
             db.session.commit()
+            logger.info(f"[_record_usage] ✓ Registro guardado en BD exitosamente")
         except Exception as e:
-            logger.error(f"Error registrando uso de tokens: {e}")
+            logger.error(f"[_record_usage] ❌ Error registrando uso de tokens: {e}", exc_info=True)
 
 
     @staticmethod
