@@ -143,15 +143,53 @@ class TelegramIntegrationService:
                 if 'fitmaster_data' in context:
                     del context['fitmaster_data']
             
-            # Usar chat_query SIN streaming (modo polling, más estable con tool calls)
-            reply_text = FitMasterService.chat_query(
-                text, 
-                user_id=link.user_id, 
-                context=context,
-                stream_callback=None
-            )
+            # Variables para streaming progresivo en Telegram
+            message_id = None
+            accumulated_text = ""
+            last_update_length = 0
             
-            cls.send_message(chat_id, reply_text)
+            def stream_callback(chunk: str):
+                """Callback para enviar chunks en tiempo real a Telegram."""
+                nonlocal message_id, accumulated_text, last_update_length
+                try:
+                    accumulated_text += chunk
+                    chars_since_update = len(accumulated_text) - last_update_length
+                    
+                    if chars_since_update >= 120:
+                        if message_id:
+                            success = cls.edit_message(chat_id, message_id, accumulated_text)
+                            if success:
+                                last_update_length = len(accumulated_text)
+                        elif len(accumulated_text) >= 60:
+                            msg_id = cls.send_message_get_id(chat_id, accumulated_text)
+                            if msg_id:
+                                message_id = msg_id
+                                last_update_length = len(accumulated_text)
+                except Exception as e:
+                    logger.warning(f"Error en stream_callback (no fatal): {e}")
+            
+            # Intentar con streaming; si falla, usar polling
+            try:
+                reply_text = FitMasterService.chat_query(
+                    text, 
+                    user_id=link.user_id, 
+                    context=context,
+                    stream_callback=stream_callback
+                )
+            except Exception as stream_err:
+                logger.warning(f"Streaming falló ({stream_err}), reintentando con polling...")
+                reply_text = FitMasterService.chat_query(
+                    text, 
+                    user_id=link.user_id, 
+                    context=context,
+                    stream_callback=None
+                )
+            
+            # Enviar o actualizar mensaje final
+            if not message_id:
+                cls.send_message(chat_id, reply_text)
+            elif accumulated_text != reply_text:
+                cls.edit_message(chat_id, message_id, reply_text)
             
         except Exception as e:
             logger.error(f"Error en handle_user_message: {type(e).__name__}: {e}", exc_info=True)
