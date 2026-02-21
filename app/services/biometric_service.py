@@ -179,8 +179,6 @@ def add_fitmaster_analysis(analysis_id: int, biometric_data: Dict) -> Optional[s
         # Structure the response
         fitmaster_data = {
             "interpretation": fitmaster_response.get("interpretation", ""),
-            "nutrition_plan": fitmaster_response.get("nutrition_plan", {}),
-            "training_plan": fitmaster_response.get("training_plan", {}),
             "generated_at": datetime.utcnow().isoformat(),
             "model_version": fitmaster_response.get("model_version", "fitmaster-v1.0"),
         }

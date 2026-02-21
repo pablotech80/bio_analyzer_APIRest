@@ -322,9 +322,7 @@ class FitMasterService:
 
         # Asegurar que tenga las claves requeridas
         validated_data = {
-            "interpretation": data.get("interpretation", "Análisis no disponible"),
-            "nutrition_plan": data.get("nutrition_plan"),
-            "training_plan": data.get("training_plan"),
+            "interpretation": data.get("interpretation", "Análisis no disponible")
         }
 
         return validated_data
@@ -333,9 +331,7 @@ class FitMasterService:
     def _get_fallback_response(error_msg: str) -> Dict:
         """Respuesta de respaldo cuando hay errores."""
         return {
-            "interpretation": f"No se pudo conectar con FitMaster AI. {error_msg}",
-            "nutrition_plan": None,
-            "training_plan": None,
+            "interpretation": f"No se pudo conectar con FitMaster AI. {error_msg}"
         }
 
     # ── Agent Tools (Fase 3) ───────────────────────────────────
@@ -371,19 +367,33 @@ class FitMasterService:
 
     @staticmethod
     def _tool_get_current_plans(user_id: int) -> str:
-        """Obtiene el plan de nutrición y entrenamiento del último análisis del usuario."""
+        """Obtiene el plan de nutrición y entrenamiento REALES asignados al usuario."""
         try:
-            from app.models.biometric_analysis import BiometricAnalysis
-            last_analysis = BiometricAnalysis.query.filter_by(user_id=user_id).order_by(BiometricAnalysis.created_at.desc()).first()
+            from app.models.nutrition_plan import NutritionPlan
+            from app.models.training_plan import TrainingPlan
             
-            if not last_analysis or not last_analysis.fitmaster_data:
-                return json.dumps({"status": "no_data", "message": "No se encontraron planes asignados actualmente."})
+            # Buscar el último plan de nutrición activo
+            nutrition = NutritionPlan.query.filter_by(
+                user_id=user_id, 
+                is_active=True
+            ).order_by(NutritionPlan.created_at.desc()).first()
             
-            data = {
-                "date_generated": last_analysis.created_at.strftime("%Y-%m-%d"),
-                "nutrition_plan": last_analysis.fitmaster_data.get("nutrition_plan"),
-                "training_plan": last_analysis.fitmaster_data.get("training_plan")
-            }
+            # Buscar el último plan de entrenamiento activo
+            training = TrainingPlan.query.filter_by(
+                user_id=user_id, 
+                is_active=True
+            ).order_by(TrainingPlan.created_at.desc()).first()
+            
+            if not nutrition and not training:
+                return json.dumps({"status": "no_data", "message": "El usuario no tiene planes de nutrición ni entrenamiento activos asignados."})
+            
+            data = {}
+            if nutrition:
+                data["nutrition_plan"] = nutrition.to_dict()
+                
+            if training:
+                data["training_plan"] = training.to_dict()
+                
             return json.dumps({"status": "success", "data": data})
         except Exception as e:
             logger.error(f"Error en _tool_get_current_plans: {e}")
