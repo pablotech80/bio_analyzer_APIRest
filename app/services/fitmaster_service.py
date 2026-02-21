@@ -77,6 +77,13 @@ class FitMasterService:
                 max_tokens=2600,
             )
 
+            # Registrar consumo si hay usage disponible
+            if hasattr(response, 'usage') and response.usage:
+                # Extraemos user_id del payload biométrico si existe para poder vincularlo
+                user_id = bio_payload.get('user_id', 0)
+                if user_id > 0:
+                    FitMasterService._record_usage(user_id, modelo_usado, response.usage)
+
             # Extraer y normalizar respuesta
             message = response.choices[0].message.content
             logger.info("Respuesta recibida de OpenAI")

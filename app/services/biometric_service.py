@@ -131,6 +131,8 @@ def create_analysis(
 
         # Request FitMaster analysis if enabled
         if request_fitmaster:
+            # Ensure user_id is in biometric_data for token tracking
+            biometric_data["user_id"] = user_id
             fitmaster_error = add_fitmaster_analysis(analysis.id, biometric_data)
             if fitmaster_error:
                 logger.warning(
