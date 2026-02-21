@@ -185,10 +185,12 @@ class TelegramIntegrationService:
                     stream_callback=None
                 )
             
-            # Enviar o actualizar mensaje final
+            # Enviar o actualizar mensaje final completo
             if not message_id:
-                cls.send_message(chat_id, reply_text)
-            elif accumulated_text != reply_text:
+                # No se envió nada por streaming, enviar completo
+                cls._send_long_message(chat_id, reply_text)
+            else:
+                # Actualizar con el texto final limpio (siempre)
                 cls.edit_message(chat_id, message_id, reply_text)
             
         except Exception as e:
@@ -233,6 +235,29 @@ class TelegramIntegrationService:
 
         # Don't escape — our tags are already in place
         return text
+
+    @classmethod
+    def _send_long_message(cls, chat_id: int, text: str) -> None:
+        """Envía un mensaje largo dividiéndolo en partes si supera 4096 chars."""
+        MAX_LEN = 4000  # Margen de seguridad (Telegram limit = 4096)
+        if len(text) <= MAX_LEN:
+            cls.send_message(chat_id, text)
+        else:
+            # Dividir por párrafos para no cortar frases
+            parts = []
+            current = ""
+            for line in text.split("\n"):
+                if len(current) + len(line) + 1 > MAX_LEN:
+                    if current:
+                        parts.append(current)
+                    current = line
+                else:
+                    current = current + "\n" + line if current else line
+            if current:
+                parts.append(current)
+            
+            for part in parts:
+                cls.send_message(chat_id, part)
 
     @classmethod
     def send_message(cls, chat_id: int, text: str, use_html: bool = True) -> bool:
