@@ -426,6 +426,11 @@
                             <strong>Masa grasa:</strong> {{ '%.2f'|format(analysis.fat_mass) }} kg
                         </div>
                         {% endif %}
+                        {% if analysis.body_water %}
+                        <div class="col-6 col-md-3">
+                            <strong>Agua corporal:</strong> {{ '%.2f'|format(analysis.body_water) }} L
+                        </div>
+                        {% endif %}
                         {% if analysis.ffmi %}
                         <div class="col-6 col-md-3">
                             <strong>FFMI:</strong> {{ '%.2f'|format(analysis.ffmi) }}
@@ -446,11 +451,46 @@
                             <strong>Calorías objetivo:</strong> {{ '%.2f'|format(analysis.maintenance_calories) }} kcal
                         </div>
                         {% endif %}
+                        {% if analysis.waist_height_ratio %}
+                        <div class="col-6 col-md-3">
+                            <strong>Ratio cintura-altura:</strong> {{ '%.2f'|format(analysis.waist_height_ratio) }}
+                        </div>
+                        {% endif %}
+                        {% if analysis.waist_hip_ratio %}
+                        <div class="col-6 col-md-3">
+                            <strong>RCC:</strong> {{ '%.2f'|format(analysis.waist_hip_ratio) }}
+                        </div>
+                        {% endif %}
                         {% if analysis.metabolic_age %}
                         <div class="col-6 col-md-3">
                             <strong>Edad metabólica:</strong> {{ '%.0f'|format(analysis.metabolic_age) }} años
                         </div>
                         {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Macronutrientes -->
+            {% if analysis.protein_grams or analysis.carbs_grams or analysis.fats_grams %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-light">
+                    <h2 class="h5 mb-0">Macronutrientes Recomendados</h2>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <span class="text-muted d-block">Proteínas</span>
+                            <strong>{{ analysis.protein_grams and ('%.0f'|format(analysis.protein_grams)) or '—' }} g</strong>
+                        </div>
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <span class="text-muted d-block">Carbohidratos</span>
+                            <strong>{{ analysis.carbs_grams and ('%.0f'|format(analysis.carbs_grams)) or '—' }} g</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted d-block">Grasas</span>
+                            <strong>{{ analysis.fats_grams and ('%.0f'|format(analysis.fats_grams)) or '—' }} g</strong>
+                        </div>
                     </div>
                 </div>
             </div>
