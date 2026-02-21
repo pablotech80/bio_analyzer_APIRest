@@ -171,6 +171,42 @@ class FitMasterService:
                 timeout=60,
             )
 
+            # 3.5. Manejar tool calls (FASE 3: Agent Tools)
+            while run.status == 'requires_action':
+                tool_calls = run.required_action.submit_tool_outputs.tool_calls
+                tool_outputs = []
+                
+                for tool_call in tool_calls:
+                    function_name = tool_call.function.name
+                    arguments = json.loads(tool_call.function.arguments)
+                    
+                    logger.info(f"Asistente llamando a función: {function_name} con argumentos: {arguments}")
+                    
+                    try:
+                        # Despachador de funciones
+                        if function_name == "get_user_history":
+                            output = FitMasterService._tool_get_user_history(user_id, arguments)
+                        elif function_name == "get_current_plans":
+                            output = FitMasterService._tool_get_current_plans(user_id)
+                        else:
+                            output = json.dumps({"error": f"Unknown function: {function_name}"})
+                            
+                    except Exception as e:
+                        logger.error(f"Error ejecutando tool {function_name}: {e}")
+                        output = json.dumps({"error": str(e)})
+                        
+                    tool_outputs.append({
+                        "tool_call_id": tool_call.id,
+                        "output": output
+                    })
+                
+                # Enviar los resultados de las tools al Assistant
+                run = client.beta.threads.runs.submit_tool_outputs_and_poll(
+                    thread_id=thread_id,
+                    run_id=run.id,
+                    tool_outputs=tool_outputs,
+                )
+
             if run.status != "completed":
                 logger.error(f"Assistant run failed: {run.status} — {run.last_error}")
                 return "Lo siento, tuve un problema al procesar tu consulta."
@@ -301,3 +337,54 @@ class FitMasterService:
             "nutrition_plan": None,
             "training_plan": None,
         }
+
+    # ── Agent Tools (Fase 3) ───────────────────────────────────
+    @staticmethod
+    def _tool_get_user_history(user_id: int, arguments: Dict) -> str:
+        """Obtiene el historial biométrico del usuario para el agente."""
+        try:
+            from app.models.biometric_analysis import BiometricAnalysis
+            limit = arguments.get("limit", 5)
+            analyses = BiometricAnalysis.query.filter_by(user_id=user_id).order_by(BiometricAnalysis.created_at.desc()).limit(limit).all()
+            
+            if not analyses:
+                return json.dumps({"status": "no_data", "message": "El usuario no tiene análisis biométricos registrados."})
+            
+            data = []
+            for a in analyses:
+                data.append({
+                    "id": a.id,
+                    "date": a.created_at.strftime("%Y-%m-%d"),
+                    "weight": a.weight,
+                    "height": a.height,
+                    "body_fat_percentage": a.body_fat_percentage,
+                    "bmi": a.bmi,
+                    "bmr": a.bmr,
+                    "tdee": a.tdee,
+                    "lean_mass": a.lean_mass,
+                    "fat_mass": a.fat_mass
+                })
+            return json.dumps({"status": "success", "data": data})
+        except Exception as e:
+            logger.error(f"Error en _tool_get_user_history: {e}")
+            return json.dumps({"error": str(e)})
+
+    @staticmethod
+    def _tool_get_current_plans(user_id: int) -> str:
+        """Obtiene el plan de nutrición y entrenamiento del último análisis del usuario."""
+        try:
+            from app.models.biometric_analysis import BiometricAnalysis
+            last_analysis = BiometricAnalysis.query.filter_by(user_id=user_id).order_by(BiometricAnalysis.created_at.desc()).first()
+            
+            if not last_analysis or not last_analysis.fitmaster_data:
+                return json.dumps({"status": "no_data", "message": "No se encontraron planes asignados actualmente."})
+            
+            data = {
+                "date_generated": last_analysis.created_at.strftime("%Y-%m-%d"),
+                "nutrition_plan": last_analysis.fitmaster_data.get("nutrition_plan"),
+                "training_plan": last_analysis.fitmaster_data.get("training_plan")
+            }
+            return json.dumps({"status": "success", "data": data})
+        except Exception as e:
+            logger.error(f"Error en _tool_get_current_plans: {e}")
+            return json.dumps({"error": str(e)})
