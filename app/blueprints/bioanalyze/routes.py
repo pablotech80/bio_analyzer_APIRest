@@ -509,6 +509,9 @@ def request_ai_analysis(analysis_id: int):
 
     # Agregar nombre del usuario para personalización
     biometric_data["name"] = analysis.user.first_name or analysis.user.username
+    
+    # Asegurar que user_id esté presente para tracking de tokens
+    biometric_data["user_id"] = analysis.user_id
 
     # Solicitar análisis FitMaster
     error = add_fitmaster_analysis(analysis_id, biometric_data)
