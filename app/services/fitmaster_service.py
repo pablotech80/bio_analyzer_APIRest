@@ -82,7 +82,7 @@ class FitMasterService:
                 # Extraemos user_id del payload biométrico si existe para poder vincularlo
                 user_id = bio_payload.get('user_id', 0)
                 if user_id > 0:
-                    FitMasterService._record_usage(user_id, modelo_usado, response.usage)
+                    FitMasterService._record_usage(user_id, modelo_usado, response.usage, channel="web")
 
             # Extraer y normalizar respuesta
             message = response.choices[0].message.content
@@ -352,7 +352,7 @@ class FitMasterService:
             raise
 
     @staticmethod
-    def _record_usage(user_id: int, model: str, usage_obj) -> None:
+    def _record_usage(user_id: int, model: str, usage_obj, channel: str = "telegram") -> None:
         """Registra el consumo de tokens en el ledger."""
         from app.models.telegram import LLMUsageLedger
         try:
@@ -360,7 +360,7 @@ class FitMasterService:
             completion_tokens = getattr(usage_obj, 'completion_tokens', 0) or 0
             total_tokens = getattr(usage_obj, 'total_tokens', 0) or 0
 
-            # Costes estimados gpt-4o-mini via Assistants
+            # Costes estimados gpt-4o-mini
             prompt_cost = (prompt_tokens / 1_000_000) * 0.15
             completion_cost = (completion_tokens / 1_000_000) * 0.60
 
@@ -371,7 +371,7 @@ class FitMasterService:
                 completion_tokens=completion_tokens,
                 total_tokens=total_tokens,
                 cost_usd=prompt_cost + completion_cost,
-                channel="telegram"
+                channel=channel
             )
             db.session.add(entry)
             db.session.commit()
