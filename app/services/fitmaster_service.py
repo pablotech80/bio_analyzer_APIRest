@@ -204,8 +204,12 @@ class FitMasterService:
                                 output = json.dumps({"error": f"Unknown function: {function_name}"})
                                 
                         except Exception as e:
-                            logger.error(f"Error ejecutando tool {function_name}: {e}")
+                            logger.error(f"Error ejecutando tool {function_name}: {e}", exc_info=True)
                             output = json.dumps({"error": str(e)})
+                            
+                        # Validar que output es string (requerido por API de OpenAI)
+                        if not isinstance(output, str):
+                            output = json.dumps(output)
                             
                         tool_outputs.append({
                             "tool_call_id": tool_call.id,
@@ -305,6 +309,10 @@ class FitMasterService:
                                 logger.error(f"Error en tool {function_name}: {e}", exc_info=True)
                                 output = json.dumps({"error": str(e)})
                             
+                            # Validar que output es string (requerido por API de OpenAI)
+                            if not isinstance(output, str):
+                                output = json.dumps(output)
+                                
                             tool_outputs.append({
                                 "tool_call_id": tool_call.id,
                                 "output": output
