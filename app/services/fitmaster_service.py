@@ -142,12 +142,14 @@ class FitMasterService:
                 logger.info(f"Nuevo thread creado para user {user_id}: {thread_id}")
 
                 # Inyectar contexto biométrico como primer mensaje del thread
+                # NO ejecutar un run aquí — el asistente lo leerá con el run principal
                 if context:
                     context_msg = (
                         "CONTEXTO DEL BACKEND CoachBodyFit360 — "
                         "Estos son los datos biométricos actuales del cliente. "
-                        "Úsalos como fuente de verdad, NO pidas al usuario "
-                        "que los repita:\n\n"
+                        "Úsalos como referencia. Para planes de nutrición y "
+                        "entrenamiento SIEMPRE usa las herramientas get_current_plans() "
+                        "y get_user_history().\n\n"
                         f"{json.dumps(context, ensure_ascii=False, indent=2)}"
                     )
                     client.beta.threads.messages.create(
@@ -155,13 +157,7 @@ class FitMasterService:
                         role="user",
                         content=context_msg,
                     )
-                    # Run rápido para que el asistente "ingiera" el contexto
-                    init_run = client.beta.threads.runs.create_and_poll(
-                        thread_id=thread_id,
-                        assistant_id=FitMasterService.ASSISTANT_ID,
-                        timeout=30,
-                    )
-                    logger.info(f"Context ingestion run status: {init_run.status}")
+                    logger.info(f"Contexto biométrico inyectado en thread {thread_id}")
 
             # 2. Cancelar runs activos/fallidos para evitar BadRequestError
             try:
