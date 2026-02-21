@@ -375,7 +375,7 @@ class FitMasterService:
     @staticmethod
     def _build_prompt(bio_payload: Dict) -> str:
         """
-        Lee el prompt base desde fitmaster_prompt.txt y lo formatea con los datos biométricos.
+        Lee el prompt base desde fitmaster_prompt.yaml y lo formatea con los datos biométricos.
         """
         prompt_path = os.path.join(os.path.dirname(__file__), "fitmaster_prompt.yaml")
         try:
