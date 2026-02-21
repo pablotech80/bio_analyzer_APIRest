@@ -163,14 +163,24 @@ class FitMasterService:
                     )
                     logger.info(f"Context ingestion run status: {init_run.status}")
 
-            # 2. Enviar mensaje del usuario al thread
+            # 2. Cancelar runs activos/fallidos para evitar BadRequestError
+            try:
+                runs = client.beta.threads.runs.list(thread_id=thread_id, limit=5)
+                for r in runs.data:
+                    if r.status in ('in_progress', 'requires_action', 'queued'):
+                        logger.warning(f"Cancelando run {r.id} en estado {r.status}")
+                        client.beta.threads.runs.cancel(thread_id=thread_id, run_id=r.id)
+            except Exception as cancel_err:
+                logger.warning(f"Error cancelando runs previos: {cancel_err}")
+
+            # 3. Enviar mensaje del usuario al thread
             client.beta.threads.messages.create(
                 thread_id=thread_id,
                 role="user",
                 content=query,
             )
 
-            # 3. Ejecutar el Assistant con streaming si hay callback
+            # 4. Ejecutar el Assistant con streaming si hay callback
             if stream_callback:
                 return FitMasterService._handle_streaming_run(
                     thread_id, user_id, stream_callback
