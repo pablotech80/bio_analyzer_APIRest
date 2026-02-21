@@ -287,7 +287,7 @@ class FitMasterService:
         Usa submit_tool_outputs_stream para continuar el stream tras tool calls.
         El texto acumulado se comparte entre el stream principal y los sub-streams.
         """
-        full_response_container = {"text": ""}
+        full_response_container = {"text": "", "run_id": None}
 
         def _execute_tools(tool_calls) -> list:
             """Ejecuta las tool calls y devuelve los outputs."""
@@ -324,6 +324,10 @@ class FitMasterService:
         def _process_stream(stream_obj):
             """Procesa un stream de eventos, manejando tool calls recursivamente."""
             for event in stream_obj:
+                # Capturar run_id para obtener usage después
+                if hasattr(event, 'data') and hasattr(event.data, 'id'):
+                    full_response_container["run_id"] = event.data.id
+                
                 if event.event == 'thread.message.delta':
                     for content in event.data.delta.content:
                         if hasattr(content, 'text') and hasattr(content.text, 'value'):
@@ -337,6 +341,7 @@ class FitMasterService:
 
                 elif event.event == 'thread.run.requires_action':
                     run_id = event.data.id
+                    full_response_container["run_id"] = run_id
                     tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
                     tool_outputs = _execute_tools(tool_calls)
 
@@ -356,6 +361,22 @@ class FitMasterService:
                 _process_stream(stream)
 
             final_text = re.sub(r'【\d+[:\u2020†].*?】', '', full_response_container["text"]).strip()
+            
+            # Registrar consumo de tokens después del streaming
+            run_id = full_response_container.get("run_id")
+            if run_id:
+                try:
+                    run = client.beta.threads.runs.retrieve(thread_id=thread_id, run_id=run_id)
+                    if run.usage:
+                        logger.info(f"[Streaming] Registrando tokens para run_id={run_id}")
+                        FitMasterService._record_usage(user_id, "gpt-4o-mini", run.usage, channel="telegram")
+                    else:
+                        logger.warning(f"[Streaming] run.usage no disponible para run_id={run_id}")
+                except Exception as usage_err:
+                    logger.error(f"[Streaming] Error obteniendo usage: {usage_err}", exc_info=True)
+            else:
+                logger.warning("[Streaming] No se capturó run_id, no se puede registrar consumo")
+            
             return final_text if final_text else "No obtuve una respuesta válida."
 
         except Exception as e:
