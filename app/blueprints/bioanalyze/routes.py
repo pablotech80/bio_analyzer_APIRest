@@ -102,6 +102,7 @@ def new_analysis():
             "protein_grams": payload.results["macronutrientes"].get("proteinas"),
             "carbs_grams": payload.results["macronutrientes"].get("carbohidratos"),
             "fats_grams": payload.results["macronutrientes"].get("grasas"),
+            "user_id": current_user.id,  # Add user_id for token tracking
         }
 
         # Crear análisis usando el servicio
