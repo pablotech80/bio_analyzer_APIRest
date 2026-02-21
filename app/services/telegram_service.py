@@ -116,22 +116,34 @@ class TelegramIntegrationService:
             # Variables para streaming
             message_id = None
             accumulated_text = ""
+            last_update_length = 0
             
             def stream_callback(chunk: str):
                 """Callback para enviar chunks en tiempo real a Telegram."""
-                nonlocal message_id, accumulated_text
-                accumulated_text += chunk
+                nonlocal message_id, accumulated_text, last_update_length
                 
-                # Enviar/actualizar mensaje cada 50 caracteres o al final
-                if len(accumulated_text) >= 50 or chunk == "":
-                    if message_id:
-                        # Actualizar mensaje existente
-                        cls.edit_message(chat_id, message_id, accumulated_text)
-                    else:
-                        # Enviar primer mensaje
-                        msg_id = cls.send_message_get_id(chat_id, accumulated_text)
-                        if msg_id:
-                            message_id = msg_id
+                try:
+                    accumulated_text += chunk
+                    
+                    # Enviar/actualizar mensaje cada 100 caracteres (evitar rate limit)
+                    chars_since_update = len(accumulated_text) - last_update_length
+                    
+                    if chars_since_update >= 100:
+                        if message_id:
+                            # Actualizar mensaje existente
+                            success = cls.edit_message(chat_id, message_id, accumulated_text)
+                            if success:
+                                last_update_length = len(accumulated_text)
+                        else:
+                            # Enviar primer mensaje (esperar al menos 50 caracteres)
+                            if len(accumulated_text) >= 50:
+                                msg_id = cls.send_message_get_id(chat_id, accumulated_text)
+                                if msg_id:
+                                    message_id = msg_id
+                                    last_update_length = len(accumulated_text)
+                except Exception as e:
+                    logger.error(f"Error en stream_callback: {e}")
+                    # No re-lanzar la excepción para no romper el stream
             
             # Usar chat_query con streaming
             reply_text = FitMasterService.chat_query(
@@ -149,8 +161,8 @@ class TelegramIntegrationService:
                 cls.edit_message(chat_id, message_id, reply_text)
             
         except Exception as e:
-            logger.error(f"Error en handle_user_message: {e}")
-            cls.send_message(chat_id, "Lo siento, FitMaster no está disponible en este momento.")
+            logger.error(f"Error en handle_user_message: {type(e).__name__}: {e}", exc_info=True)
+            cls.send_message(chat_id, f"Lo siento, FitMaster no está disponible en este momento. ({type(e).__name__})")
 
     @staticmethod
     def _md_to_telegram_html(text: str) -> str:

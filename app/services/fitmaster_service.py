@@ -249,8 +249,8 @@ class FitMasterService:
                 return reply
 
         except Exception as e:
-            logger.error(f"Error en FitMaster Assistants chat_query: {e}")
-            return "Lo siento, tuve un problema al procesar tu consulta."
+            logger.error(f"Error en FitMaster Assistants chat_query: {type(e).__name__}: {e}", exc_info=True)
+            return f"Lo siento, tuve un problema al procesar tu consulta. Error: {type(e).__name__}"
 
     @staticmethod
     def _handle_streaming_run(thread_id: str, user_id: int, stream_callback) -> str:
@@ -267,56 +267,61 @@ class FitMasterService:
         """
         full_response = ""
         
-        with client.beta.threads.runs.stream(
-            thread_id=thread_id,
-            assistant_id=FitMasterService.ASSISTANT_ID,
-        ) as stream:
-            for event in stream:
-                # Text delta events (chunks de respuesta)
-                if event.event == 'thread.message.delta':
-                    for content in event.data.delta.content:
-                        if hasattr(content, 'text') and hasattr(content.text, 'value'):
-                            chunk = content.text.value
-                            full_response += chunk
-                            if stream_callback:
-                                stream_callback(chunk)
-                
-                # Tool call events
-                elif event.event == 'thread.run.requires_action':
-                    run_id = event.data.id
-                    tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
-                    tool_outputs = []
+        try:
+            with client.beta.threads.runs.stream(
+                thread_id=thread_id,
+                assistant_id=FitMasterService.ASSISTANT_ID,
+            ) as stream:
+                for event in stream:
+                    # Text delta events (chunks de respuesta)
+                    if event.event == 'thread.message.delta':
+                        for content in event.data.delta.content:
+                            if hasattr(content, 'text') and hasattr(content.text, 'value'):
+                                chunk = content.text.value
+                                full_response += chunk
+                                if stream_callback:
+                                    stream_callback(chunk)
                     
-                    for tool_call in tool_calls:
-                        function_name = tool_call.function.name
-                        arguments = json.loads(tool_call.function.arguments)
+                    # Tool call events
+                    elif event.event == 'thread.run.requires_action':
+                        run_id = event.data.id
+                        tool_calls = event.data.required_action.submit_tool_outputs.tool_calls
+                        tool_outputs = []
                         
-                        logger.info(f"[Stream] Tool call: {function_name}")
+                        for tool_call in tool_calls:
+                            function_name = tool_call.function.name
+                            arguments = json.loads(tool_call.function.arguments)
+                            
+                            logger.info(f"[Stream] Tool call: {function_name}")
+                            
+                            try:
+                                if function_name == "get_user_history":
+                                    output = FitMasterService._tool_get_user_history(user_id, arguments)
+                                elif function_name == "get_current_plans":
+                                    output = FitMasterService._tool_get_current_plans(user_id)
+                                else:
+                                    output = json.dumps({"error": f"Unknown function: {function_name}"})
+                            except Exception as e:
+                                logger.error(f"Error en tool {function_name}: {e}", exc_info=True)
+                                output = json.dumps({"error": str(e)})
+                            
+                            tool_outputs.append({
+                                "tool_call_id": tool_call.id,
+                                "output": output
+                            })
                         
-                        try:
-                            if function_name == "get_user_history":
-                                output = FitMasterService._tool_get_user_history(user_id, arguments)
-                            elif function_name == "get_current_plans":
-                                output = FitMasterService._tool_get_current_plans(user_id)
-                            else:
-                                output = json.dumps({"error": f"Unknown function: {function_name}"})
-                        except Exception as e:
-                            logger.error(f"Error en tool {function_name}: {e}")
-                            output = json.dumps({"error": str(e)})
-                        
-                        tool_outputs.append({
-                            "tool_call_id": tool_call.id,
-                            "output": output
-                        })
-                    
-                    # Submit tool outputs y continuar el stream
-                    stream.submit_tool_outputs(tool_outputs)
+                        # Submit tool outputs y continuar el stream
+                        stream.submit_tool_outputs(tool_outputs)
+            
+            # Limpiar anotaciones
+            import re
+            full_response = re.sub(r'【\d+[:\u2020†].*?】', '', full_response).strip()
+            
+            return full_response if full_response else "No obtuve una respuesta válida."
         
-        # Limpiar anotaciones
-        import re
-        full_response = re.sub(r'【\d+[:\u2020†].*?】', '', full_response).strip()
-        
-        return full_response if full_response else "No obtuve una respuesta válida."
+        except Exception as e:
+            logger.error(f"Error crítico en streaming: {type(e).__name__}: {e}", exc_info=True)
+            raise
 
     @staticmethod
     def _record_usage(user_id: int, model: str, usage_obj) -> None:
