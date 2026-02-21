@@ -417,11 +417,23 @@ class FitMasterService:
                 cost_usd=prompt_cost + completion_cost,
                 channel=channel
             )
+            logger.info(f"[_record_usage] Añadiendo entry a la sesión...")
             db.session.add(entry)
+            
+            logger.info(f"[_record_usage] Ejecutando flush...")
+            db.session.flush()
+            
+            logger.info(f"[_record_usage] Ejecutando commit...")
             db.session.commit()
-            logger.info(f"[_record_usage] ✓ Registro guardado en BD exitosamente")
+            
+            logger.info(f"[_record_usage] ✓✓✓ Registro guardado en BD exitosamente - ID: {entry.id}")
         except Exception as e:
             logger.error(f"[_record_usage] ❌ Error registrando uso de tokens: {e}", exc_info=True)
+            try:
+                db.session.rollback()
+                logger.info(f"[_record_usage] Rollback ejecutado")
+            except Exception as rb_err:
+                logger.error(f"[_record_usage] Error en rollback: {rb_err}")
 
 
     @staticmethod
