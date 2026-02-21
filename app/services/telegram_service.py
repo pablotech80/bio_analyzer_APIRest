@@ -36,13 +36,39 @@ class TelegramIntegrationService:
         text = message.get("text", "")
 
         if text.startswith("/start"):
-            cls.send_message(chat_id, "¡Hola! Soy FitMaster. Para vincular tu cuenta, usa el comando `/link TU_TOKEN` que generaste en la web.")
+            cls.send_message(chat_id, "¡Hola! Soy FitMaster. Para vincular tu cuenta, usa el comando `/link TU_TOKEN` que generaste en la web. Si ya estás vinculado y quieres reiniciar la conversación, usa `/reset`.")
         
         elif text.startswith("/link"):
             cls.handle_link_command(chat_id, telegram_user_id, text)
+            
+        elif text.startswith("/reset"):
+            cls.handle_reset_command(chat_id, telegram_user_id)
         
         else:
             cls.handle_user_message(chat_id, telegram_user_id, text)
+
+    @classmethod
+    def handle_reset_command(cls, chat_id: int, telegram_user_id: int) -> None:
+        """
+        Borra el thread_id actual para forzar al agente a crear una nueva conversación limpia.
+        """
+        link = UserTelegramLink.query.filter_by(telegram_user_id=str(telegram_user_id), status="verified").first()
+        if not link:
+            cls.send_message(chat_id, "⚠️ Tu cuenta no está vinculada.")
+            return
+            
+        try:
+            # Borrar el thread_id forzará la creación de uno nuevo en el próximo mensaje
+            old_thread = link.openai_thread_id
+            link.openai_thread_id = None
+            db.session.commit()
+            
+            logger.info(f"Thread reseteado para usuario {link.user_id} (viejo: {old_thread})")
+            cls.send_message(chat_id, "🔄 Memoria de la conversación reiniciada. ¿En qué te puedo ayudar ahora con tu progreso o plan?")
+        except Exception as e:
+            db.session.rollback()
+            logger.error(f"Error reseteando thread: {e}")
+            cls.send_message(chat_id, "❌ Error al intentar reiniciar la conversación.")
 
     @classmethod
     def handle_link_command(cls, chat_id: int, telegram_user_id: int, text: str) -> None:
